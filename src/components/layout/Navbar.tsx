@@ -36,7 +36,7 @@ export default function Navbar() {
 
   const smoothSpring = {
     type: "spring",
-    stiffness: 300,
+    stiffness: 301,
     damping: 40,
     mass: 1
   };
