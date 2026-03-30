@@ -13,6 +13,8 @@ export default function Navbar() {
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [projectsDropdownOpen, setProjectsDropdownOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
 
@@ -32,6 +34,8 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setMobileServicesOpen(false);
+    setMobileProjectsOpen(false);
   }, [location.pathname]);
 
   const smoothSpring = {
