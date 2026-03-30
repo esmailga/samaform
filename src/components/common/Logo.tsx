@@ -14,7 +14,7 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
       {/* Icon (logo2) */}
       <motion.div 
         layoutId={noAnim ? undefined : "logo-img"}
-        className={`relative ${isHero ? 'w-48 h-48 md:w-64 md:h-64 mb-6' : 'w-20 h-20'}`}
+        className={`relative ${isHero ? 'w-48 h-48 md:w-64 md:h-64 mb-6' : 'w-12 h-12 md:w-20 md:h-20'}`}
       >
         <img src="/logo2.png"
         alt="Icon"
