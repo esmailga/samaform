@@ -8,7 +8,6 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
-    base: '/samaform/',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
