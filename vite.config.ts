@@ -8,7 +8,7 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
-    base: '/samaform/', // Replace with your actual GitHub repo name
+    base: '/samaform', // Replace with your actual GitHub repo name
 
     resolve: {
       alias: {
