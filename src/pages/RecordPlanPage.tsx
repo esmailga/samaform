@@ -9,6 +9,8 @@ type ProjectType = 'apartement' | 'villa' | 'shop' | 'restaurant' | 'office' | '
 type BudgetTier = 'Economy' | 'Standard' | 'Premium' | 'Luxury';
 type AreaTier = 'Small' | 'Medium' | 'Large' | 'Very Large';
 type TimeLine = 'Urgent' | 'Normal' | 'Relaxed' | 'Flexible';
+type DesignType = 'Modern' | 'Arabic' | 'Classic' | 'Contemporary';
+type PriorityType = 'Smart' | 'Eco-Friendly' | 'Storage' | 'Natural';
 
 interface FormData {
   // Section 1: Basic Info
@@ -22,6 +24,8 @@ interface FormData {
   vision: string;
   budget: string;
   timeline: TimeLine | '';
+  designType: DesignType | '';
+  priorityType: PriorityType | '';
   areaSize: string;
   budgetTier: BudgetTier | '';
   budgetExact: '',
@@ -44,6 +48,7 @@ const INITIAL_DATA: FormData = {
   vision: '',
   budget: '',
   timeline: '',
+  designType: '',
   areaSize: '',
   specifics: {},
   inspirationImages: [],
@@ -52,7 +57,8 @@ const INITIAL_DATA: FormData = {
   budgetExact: '',
   areaTier: '',
   areaExact: '',
-  projectDetails: ''
+  projectDetails: '',
+  priorityType: '',
 };
 
 export default function RecordPlanPage() {
@@ -122,7 +128,11 @@ export default function RecordPlanPage() {
         return formData.budgetTier !== '' && formData.areaTier !== '' && formData.timeline !== '';
       case 4:
         if (formData.projectType === 'apartement') {
-          return !!formData.specifics.rooms && !!formData.specifics.bathrooms;
+          return (
+            formData.rooms !== '' && 
+            formData.design !== '' && 
+            formData.opt !== ''
+          );
         }
         if (formData.projectType === 'villa') {
           return !!formData.specifics.floors && !!formData.specifics.gardenArea;
@@ -202,6 +212,21 @@ export default function RecordPlanPage() {
     { id: 'relaxed', label: t('relaxed') },
     { id: 'flexible', label: t('flexible') }
   ]
+
+  const designType = [
+    { id: 'modern', label: t('modern') },
+    { id: 'arabic', label: t('arabic') },
+    { id: 'classic', label: t('classic') },
+    { id: 'contemporary', label: t('contemporary') }
+  ]
+
+  const priorityType = [
+    { id: 'smartHome', label: t('smartHome') },
+    { id: 'ecoFriendly', label: t('ecoFriendly') },
+    { id: 'storageSolution', label: t('storageSolution') },
+    { id: 'naturalLight', label: t('naturalLight') }
+  ]
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -328,15 +353,15 @@ export default function RecordPlanPage() {
               className="space-y-8"
             >
               <div className="text-center mb-8">
-                <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepThree')}</h2>
+                <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepThree')}</h2>
                 <p className="text-4xl font-serif text-main-text">{t('stepThreeDesc')}</p>
               </div>
   
-              <div className="space-y-6">
+              <div className="space-y-8">
                 
                 {/* 1. Budget Section */}
-                <div className="space-y-3">
-                  <label className="text-white text-md font-medium px-3 gap-6">{t('budget') || 'Budget'}</label>
+                <div className="space-y-6">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('budget') || 'Budget'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                   {budgetTier.map((type) => (
                       <button
@@ -367,7 +392,7 @@ export default function RecordPlanPage() {
   
                 {/* 2. Project Area Section */}
                 <div className="space-y-3">
-                  <label className="text-white text-sm font-medium px-3 gap-6">{t('projectArea') || 'Project Area'}</label>
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('projectArea') || 'Project Area'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {areaTier.map((type) => (
                       <button
@@ -381,7 +406,7 @@ export default function RecordPlanPage() {
                         }`}
                       >
                         <div>
-                        <h3 className="font-medium text-lg">{type.label}</h3>
+                        <h3 className="font-medium text-md">{type.label}</h3>
                         </div>
                       </button>
                     ))}
@@ -397,7 +422,7 @@ export default function RecordPlanPage() {
   
                 {/* 3. Timeline Section */}
                 <div className="space-y-3">
-                  <label className="text-white text-sm font-medium px-1">{t('timeline') || 'Timeline'}</label>
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('timeline') || 'Timeline'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {timeline.map((time) => (
                       <button
@@ -418,7 +443,7 @@ export default function RecordPlanPage() {
   
                 {/* 4. Project Details Section (Optional) */}
                 <div className="space-y-3">
-                  <label className="text-white text-sm font-medium px-1 flex items-center gap-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
                     {t('projectDetails') || 'Project Details'} 
                     <span className="text-white/50 text-xs font-normal">({t('optional') || 'Optional'})</span>
                   </label>
@@ -444,43 +469,90 @@ export default function RecordPlanPage() {
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepFour')}</h2>
+              <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepFour')}</h2>
               <p className="text-4xl font-serif text-main-text">
                 {t('stepFourDesc', { type: t(formData.projectType as any) })}
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
               {formData.projectType === 'apartement' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('roomsCount')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.rooms || ''}
-                      onChange={e => updateSpecifics('rooms', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('roomsCount')}</label>
+                    <div className="flex flex-wrap gap-2 md:gap-4">
+                      {['1 - 2', '3 - 4', '5+'].map(num => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => updateSpecifics('rooms', num)}
+                          className={`flex-1 py-3 rounded-xl border transition-all ${
+                            formData.specifics.rooms === num 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('bathroomsCount')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.bathrooms || ''}
-                      onChange={e => updateSpecifics('bathrooms', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('interiorDesign')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {designType.map((design) => (
+                        <button
+                          key={design.id}
+                          type="button"
+                          onClick={() => updateFields({designType: design.id as DesignType})}
+                          className={`p-2 text-lg text-center rounded-xl border transition-all ${
+                            formData.designType === design.id 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                          }`}
+                        >
+                        <h3 className="font-medium text-md">{design.label}</h3>
+                        </button>
+                      ))}
+                    </div>
                   </div>
+                  <div className="md:col-span-2">
                   <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('floorLevel')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.floorLevel || ''}
-                      onChange={e => updateSpecifics('floorLevel', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('priorities')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {priorityType.map((priority) => (
+                        <button
+                        key={priority.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentPriorities = formData.priorityType || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentPriorities.includes(priority.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newPriorities = isSelected
+                            ? currentPriorities.filter((id) => id !== priority.id) 
+                            : [...currentPriorities, priority.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ priorityType: newPriorities });
+                        }}
+                        className={`p-2 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.priorityType || []).includes(priority.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{priority.label}</h3>
+                      </button>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('balcony')}</label>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('balcony')}</label>
                     <div className="flex gap-4">
                       {['yes', 'no'].map(opt => (
                         <button
