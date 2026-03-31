@@ -7,14 +7,14 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
   return (
     <motion.div 
       layoutId={noAnim ? undefined : "logo"}
-      transition={{ duration: 0.8, ease: [0.16, 1.2, 0.2, 1] }}
+      transition={{ duration: 0.3, ease: [0.4, 1.2, 0.33, 1] }}
       // Use space-x-4 to give gap between logo2 and logo3 in the header
-      className={`flex items-center ${isHero ? 'flex-col' : 'flex-row space-x-2 rtl:space-x-reverse'}`}
+      className={`flex items-center ${isHero ? 'flex-col gap-10' : 'flex-row gap-4'}`}
     >
       {/* Icon (logo2) */}
       <motion.div 
         layoutId={noAnim ? undefined : "logo-img"}
-        className={`relative ${isHero ? 'w-48 h-48 md:w-64 md:h-64 mb-6' : 'w-12 h-12 md:w-20 md:h-20'}`}
+        className={`relative ${isHero ? 'w-20 h-20 md:w-30 md:h-30 mb-6' : 'w-10 h-10 md:w-10 md:h-10'}`}
       >
         <img src="/logo2.png"
         alt="Icon"
@@ -28,11 +28,11 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
         {showText && (
           <motion.div 
             layoutId={noAnim ? undefined : "logo-title-img"}
-            className={`${isHero ? 'h-12 md:h-20' : 'h-8'}`} // Smaller h-6 for header
+            className={`${isHero ? 'h-10 md:h-18' : 'h-6 md:md:h-6'}`} // Smaller h-6 for header
           >
             <img src="/logo3.png"
             alt="SAMAFORM"
-            className="h-full w-auto object-contain"
+            className="adjust-center h-full w-auto object-contain"
 
             />
 
@@ -44,7 +44,7 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-xs tracking-[0.3em] mt-4 text-white/80 uppercase"
+            className="text-md tracking-[0.4em] mt-4 text-white/80 uppercase pl-[0.4em]"
           >
             {t('architectureAndInterior')}
           </motion.span>

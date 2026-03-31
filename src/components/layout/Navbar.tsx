@@ -21,14 +21,12 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      // Navbar gets background when scrolled past 50px
       setIsScrolled(scrollY > 80);
-      // Logo appears in navbar when scrolled past 100px (when hero logo hides)
       setShowNavbarLogo(scrollY > 97);
     };
     
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
+    handleScroll(); 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -40,9 +38,9 @@ export default function Navbar() {
 
   const smoothSpring = {
     type: "spring",
-    stiffness: 301,
-    damping: 40,
-    mass: 1
+    stiffness: 280,
+    damping: 45,
+    mass: 1,
   };
 
   return (
@@ -52,21 +50,21 @@ export default function Navbar() {
         y: 0,
         opacity: 1,
         backgroundColor: isScrolled || mobileMenuOpen ? 'rgba(38, 58, 64, 0.95)' : 'transparent',
-        backdropFilter: isScrolled || mobileMenuOpen ? 'blur(16px)' : 'blur(0px)',
         borderBottom: isScrolled || mobileMenuOpen ? '1px solid rgba(10, 34, 41, 0.2)' : '1px solid transparent'
       }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
       className="fixed top-0 inset-x-0 z-50 flex flex-col"
     >
       <div className="h-24 flex items-center">
         <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
           <motion.div 
-            layout 
+            layout="position"
             transition={smoothSpring}
-            className={`flex items-center w-full ${showNavbarLogo || !isHome ? 'justify-between' : 'justify-center'}`} 
-          >    
+            className={`flex items-center w-full ${showNavbarLogo || !isHome || mobileMenuOpen ? 'justify-between' : 'justify-start md:justify-center'}`}
+          >
+                
             <AnimatePresence>
-              {(showNavbarLogo || !isHome) && (
+            {(showNavbarLogo || !isHome || mobileMenuOpen) && (
                 <motion.div
                   layout
                   key="navbar-logo"
@@ -74,7 +72,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0 }}
                   transition={smoothSpring}
-                  className="overflow-hidden whitespace-nowrap"
+                  className="overflow-hidden whitespace-nowrap shrink-0"
                 >
                   <Link to="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center">
                     <Logo showText={true} noAnim={!isHome} />
@@ -83,17 +81,16 @@ export default function Navbar() {
               )}
             </AnimatePresence>
 
-            <div className="flex items-center">
-              {/* Desktop Nav */}
-              <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse text-sm font-medium tracking-wide text-white">
+            <motion.div layout transition={smoothSpring} className="flex items-center">
+              <div className="hidden md:flex items-center gap-3 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide text-white whitespace-nowrap">
                 
-                {/* Services Dropdown */}
+                {/* Desktop Services Dropdown */}
                 <div 
                   className="relative"
                   onMouseEnter={() => setServicesDropdownOpen(true)}
                   onMouseLeave={() => setServicesDropdownOpen(false)}
                 >
-                  <Link to="/services" className="flex items-center space-x-1 rtl:space-x-reverse hover:text-main-text transition-colors py-2">
+                  <Link to="/services" className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
                     <span>{t('services')}</span>
                     <ChevronDown size={14} className={`transition-transform duration-300 ${servicesDropdownOpen ? 'rotate-180' : ''}`} />
                   </Link>
@@ -105,22 +102,23 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full start-1/2 -translate-x-1/2 mt-2 w-56 rounded-xl overflow-hidden bg-header/95 backdrop-blur-md border border-main-text/20 shadow-xl"
+                        className="absolute top-full start-0 mt-2 w-56 rounded-xl overflow-hidden bg-header/95 border border-main-text/20 shadow-xl"
                       >
                         <div className="flex flex-col py-2">
+                          {/* UPDATED: Changed 'id' values to specific anchor tags instead of '/services' */}
                           {[
-                            { key: 'interiorDesign', path: '/services' },
-                            { key: 'architecturalDesign', path: '/services' },
-                            { key: 'landscapeDesign', path: '/services' },
-                            { key: 'commercialDesign', path: '/services' },
-                            { key: 'objectsDesign', path: '/services' }
+                            { name: 'interiorDesign', id: 'interior-design' },
+                            { name: 'architecturalDesign', id: 'architectural-design' },
+                            { name: 'landscapeDesign', id: 'landscape-design' },
+                            { name: 'commercialDesign', id: 'commercial-design' },
+                            { name: 'objectsDesign', id: 'objects-design' }
                           ].map((item) => (
                             <Link 
-                              key={item.key} 
-                              to={item.path} 
+                              key={item.id} 
+                              to={`/services#${item.id}`} 
                               className="px-4 py-2 hover:bg-secondary/50 transition-colors text-sm text-white hover:text-main-text"
                             >
-                              {t(item.key as any)}
+                              {t(item.name)}
                             </Link>
                           ))}
                         </div>
@@ -129,13 +127,13 @@ export default function Navbar() {
                   </AnimatePresence>
                 </div>
 
-                {/* Projects Dropdown */}
+                {/* Desktop Projects Dropdown */}
                 <div 
                   className="relative"
                   onMouseEnter={() => setProjectsDropdownOpen(true)}
                   onMouseLeave={() => setProjectsDropdownOpen(false)}
                 >
-                  <Link to="/projects" className="flex items-center space-x-1 rtl:space-x-reverse hover:text-main-text transition-colors py-2">
+                  <Link to="/projects" className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
                     <span>{t('ourProjects')}</span>
                     <ChevronDown size={14} className={`transition-transform duration-300 ${projectsDropdownOpen ? 'rotate-180' : ''}`} />
                   </Link>
@@ -147,7 +145,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full start-0 mt-2 w-48 rounded-xl overflow-hidden bg-header/95 backdrop-blur-md border border-main-text/20 shadow-xl"
+                        className="absolute top-full start-0 mt-2 w-48 rounded-xl overflow-hidden bg-header/95 border border-main-text/20 shadow-xl"
                       >
                         <div className="flex flex-col py-2">
                           {[
@@ -178,7 +176,7 @@ export default function Navbar() {
                   onMouseEnter={() => setLangDropdownOpen(true)}
                   onMouseLeave={() => setLangDropdownOpen(false)}
                 >
-                  <button className="flex items-center space-x-1 rtl:space-x-reverse hover:text-main-text transition-colors py-2">
+                  <button className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
                     <Globe size={16} />
                     <span className="uppercase text-xs">{lang === 'en' ? 'English' : 'العربية'}</span>
                     <ChevronDown size={14} className={`transition-transform duration-300 ${langDropdownOpen ? 'rotate-180' : ''}`} />
@@ -191,7 +189,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full end-0 mt-2 w-32 rounded-xl overflow-hidden bg-header/95 backdrop-blur-md border border-main-text/20 shadow-xl"
+                        className="absolute top-full end-0 mt-2 w-32 rounded-xl overflow-hidden bg-header/95 border border-main-text/20 shadow-xl"
                       >
                         <div className="flex flex-col py-2">
                           <button 
@@ -215,14 +213,14 @@ export default function Navbar() {
 
               {/* Mobile Toggle */}
               <button 
-                className="md:hidden text-white ms-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle Menu"
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                {mobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
               </button>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -235,10 +233,10 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden bg-header/95 backdrop-blur-md border-t border-main-text/10 overflow-hidden"
+            className="md:hidden bg-header/95 border-t border-main-text/10 overflow-hidden"
           >
             <div className="px-6 py-8 flex flex-col space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
-              {/* Services Mobile */}
+              {/* Mobile Services */}
               <div className="flex flex-col">
                 <button 
                   onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
@@ -256,19 +254,21 @@ export default function Navbar() {
                       exit={{ opacity: 0, height: 0 }}
                       className="flex flex-col space-y-3 ps-4 mt-2 border-s border-main-text/20"
                     >
+                      {/* UPDATED: Changed 'path' to 'id' to dynamically link to hashes */}
                       {[
-                        { key: 'interiorDesign', path: '/services' },
-                        { key: 'architecturalDesign', path: '/services' },
-                        { key: 'landscapeDesign', path: '/services' },
-                        { key: 'commercialDesign', path: '/services' },
-                        { key: 'objectsDesign', path: '/services' }
+                        { key: 'interiorDesign', id: 'interior-design' },
+                        { key: 'architecturalDesign', id: 'architectural-design' },
+                        { key: 'landscapeDesign', id: 'landscape-design' },
+                        { key: 'commercialDesign', id: 'commercial-design' },
+                        { key: 'objectsDesign', id: 'objects-design' }
                       ].map((item) => (
                         <Link 
-                          key={item.key} 
-                          to={item.path} 
+                          key={item.id} 
+                          to={`/services#${item.id}`}
+                          onClick={() => setMobileMenuOpen(false)} 
                           className="text-white/80 hover:text-main-text transition-colors py-1"
                         >
-                          {t(item.key as any)}
+                          {t(item.key)}
                         </Link>
                       ))}
                     </motion.div>
@@ -276,7 +276,7 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
-              {/* Projects Mobile */}
+              {/* Mobile Projects */}
               <div className="flex flex-col">
                 <button 
                   onClick={() => setMobileProjectsOpen(!mobileProjectsOpen)}
@@ -302,6 +302,7 @@ export default function Navbar() {
                         <Link 
                           key={item.id} 
                           to={`/projects#${item.id}`} 
+                          onClick={() => setMobileMenuOpen(false)}
                           className="text-white/80 hover:text-main-text transition-colors py-1"
                         >
                           {item.name}
@@ -312,12 +313,11 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
-              <Link to="/record-plan" className="text-xl text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
-              <Link to="/contact" className="text-xl text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
+              <Link to="/record-plan" onClick={() => setMobileMenuOpen(false)} className="text-xl text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
+              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-xl text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
               
               <div className="pt-6 border-t border-main-text/20 flex items-center justify-between">
-                <span className="text-sm text-white/60">{t('navigation')}</span>
-                <div className="flex space-x-6 rtl:space-x-reverse">
+                <div dir="ltr" className="flex justify-between w-full px-4">
                   <button 
                     onClick={() => setLang('en')} 
                     className={`text-sm font-medium transition-colors ${lang === 'en' ? 'text-main-text' : 'text-white/60 hover:text-white'}`}
@@ -337,6 +337,5 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </motion.nav>
-
   );
 }

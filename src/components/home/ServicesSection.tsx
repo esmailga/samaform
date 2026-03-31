@@ -30,23 +30,23 @@ export default function ServicesSection() {
   });
 
   return (
-    <section className="py-20 px-6 relative">
+    <section className="py-8 px-6 relative">
       <div className="absolute -top-14 end-1/4 w-96 h-96 bg-main-text/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
-        <div className="mb-16 text-center md:text-start">
-          <h2 className="text-4xl md:text-5xl font-serif mb-4 text-main-text">
+        <div className="mb-16 text-center md:text-center">
+          <h2 className="py-8 text-4xl md:py-12 text-5xl font-serif mb-4 text-main-text">
             {t('services')}
           </h2>
-          <p className="text-white font-light max-w-md mx-auto md:mx-0">
+          <p className="text-white font-light mx-auto md:text-2xl mx-auto">
             {t('servicesDesc')}
           </p>
         </div>
 
         {/* STACK CONTAINER */}
-        <div ref={containerRef} className="relative h-[350vh]">
+        <div ref={containerRef} className="relative h-[500vh] md:h-[320vh]">
 
           {servicesList.map((service, index) => {
             const start = index / servicesList.length;
@@ -67,7 +67,7 @@ export default function ServicesSection() {
                 style={{ scale, y, opacity}}
                 className="sticky top-32 mb-10 will-change-transform"
               >
-                <div className="bg-primary/90 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-12 md:gap-16 shadow-lg border-2 border-main-text">
+                <div className="bg-primary/90 rounded-3xl p-4 flex flex-col items-center md:flex-row items-center gap-6 md:gap-6 shadow-lg border-2 border-main-text">
 
                   {/* Image */}
                   <div className="w-full md:w-5/12 h-[300px] md:h-[400px] rounded-3xl overflow-hidden group">

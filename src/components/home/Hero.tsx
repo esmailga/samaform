@@ -23,12 +23,11 @@ export default function Hero() {
         transition={{ duration: 2, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-header/40 via-transparent to-transparent" />
       </motion.div>
 
       {/* Content */}
-      <div className="relative z-10 px-6 w-full max-w-5xl mx-auto flex flex-col items-center text-center gap-y-12 md:gap-y-20">
-      <div className="h-48 md:h-72 flex items-center justify-center mb-12">
+      <div className="relative z-10 px-6 w-full max-w-5xl mx-auto flex flex-col items-center text-center gap-y-12 md:gap-y-24">
+      <div className="h-90 md:h-70 mt-24 flex items-center justify-center">
           <AnimatePresence>
             {!isScrolled && (
               <motion.div
@@ -45,15 +44,15 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 2, delay: 0.5 }}
           className="max-w-4xl w-full"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif mb-6 leading-tight text-main-text">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif leading-tight text-main-text">
             {t('heroTitle1')}
           </h1>
-          <p className="text-xl md:text-3xl text-white font-light max-w-2xl mx-auto">
+          <h2 className="text-xl md:text-3xl text-white font-light max-w-2xl mx-auto">
             {t('heroTitle2')}
-          </p>
+          </h2>
         </motion.div>
       </div>
     </section>
