@@ -27,7 +27,7 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 px-6 w-full max-w-5xl mx-auto flex flex-col items-center text-center gap-y-12 md:gap-y-24">
-      <div className="h-90 md:h-70 mt-24 flex items-center justify-center">
+      <div className="h-90 md:h-7o mt-24 flex items-center justify-center">
           <AnimatePresence>
             {!isScrolled && (
               <motion.div
