@@ -14,8 +14,8 @@ export default function StepsSection() {
   ];
 
   return (
-    <section className="py-24 px-6 relative border-t border-main-text/10">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+    <section className="py-24 px-6 relative">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
         {steps.map((step, index) => (
           <motion.div
             key={step.number}
@@ -23,7 +23,7 @@ export default function StepsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
-            className={`p-8 md:p-10 rounded-3xl ${GLASS_CLASSES} flex items-center space-x-6 rtl:space-x-reverse`}
+            className={`p-8 md:p-10 rounded-3xl ${GLASS_CLASSES} flex items-center`}
           >
             {/* Animated Number */}
             <div className="text-5xl md:text-6xl font-serif text-main-text min-w-[80px]">
@@ -31,7 +31,7 @@ export default function StepsSection() {
             </div>
 
             {/* Divider Line (Optional for extra flair) */}
-            <div className="h-12 w-[1px] bg-main-text/20" />
+            <div className="h-12 w-[1px] bg-main-text/20 mx-6 md:mx-8" />
 
             {/* Text beside number */}
             <div className="flex flex-col">

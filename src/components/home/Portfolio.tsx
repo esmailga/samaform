@@ -29,10 +29,11 @@ export default function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mb-16 text-center md:text-start"
+          className="mb-16 text-center md:text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-serif mb-4 text-main-text">{t('ourProjects')}</h2>
-          <p className="text-white font-light max-w-md mx-auto md:mx-0">
+          <h2 className="py-8 text-4xl md:py-12 text-5xl font-serif mb-4 text-main-text">
+            {t('ourProjects')}</h2>
+            <p className="text-white font-light mx-auto md:text-2xl mx-auto">
             {t('projectsDesc')}
           </p>
         </motion.div>
