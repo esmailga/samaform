@@ -76,7 +76,7 @@ export const translations = {
     stepOne: 'Basic Information',
     stepTwo: 'Project Type',
     stepThree: 'Project Details',
-    stepFour: 'Project Specifics',
+    stepFour: 'Project Details',
     stepFive: 'Inspiration & Space',
     stepOneDesc: 'Tell us about yourself',
     stepTwoDesc: 'What kind of space are you planning?',
@@ -142,6 +142,15 @@ export const translations = {
     normal:'Normal (1 - 3 months)',
     relaxed:'Relaxed (3 - 6 months)',
     flexible:'Flexible',
+    modern: 'Modern Minimalist',
+    arabic:'Arabic Traditional',
+    classic: 'Classic Elegant',
+    contemporary: 'Contemporary',
+    smartHome: 'Smart Home Features',
+    ecoFriendly: 'Eco-Friendly Materials',
+    storageSolution: 'Storage Solutions',
+    naturalLight: 'Natural Lighting',
+    priorities: 'What are your priorities?',
 
 
     
