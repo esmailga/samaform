@@ -47,7 +47,7 @@ export default function Hero() {
           transition={{ duration: 2, delay: 0.5 }}
           className="max-w-4xl w-full"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif leading-tight text-main-text">
+          <h1 className="text-5xl mb-5 md:text-7xl mb-5 lg:text-8xl mb-5 font-serif leading-tight text-main-text">
             {t('heroTitle1')}
           </h1>
           <h2 className="text-xl md:text-3xl text-white font-light max-w-2xl mx-auto">

@@ -6,11 +6,19 @@ import { ArrowLeft, ArrowRight, Check, Upload, Home, Building, ShoppingBag, Uten
 import { Link, useNavigate } from 'react-router-dom';
 
 type ProjectType = 'apartement' | 'villa' | 'shop' | 'restaurant' | 'office' | 'beautySalon';
-type BudgetTier = 'Economy' | 'Standard' | 'Premium' | 'Luxury';
-type AreaTier = 'Small' | 'Medium' | 'Large' | 'Very Large';
-type TimeLine = 'Urgent' | 'Normal' | 'Relaxed' | 'Flexible';
-type DesignType = 'Modern' | 'Arabic' | 'Classic' | 'Contemporary';
-type PriorityType = 'Smart' | 'Eco-Friendly' | 'Storage' | 'Natural';
+type BudgetTier = 'economy' | 'standard' | 'premium' | 'luxury';
+type AreaTier = 'small' | 'medium' | 'large' | 'veryLarge';
+type TimeLine = 'urgent' | 'normal' | 'relaxed' | 'flexible';
+type DesignType = 'modern' | 'arabic' | 'classic' | 'contemporary';
+type PriorityType = 'smartHome' | 'ecoFriendly' | 'storageSolution' | 'naturalLight';
+type OutdoorType = 'landscaping' | 'poolArea' | 'terrace' | 'parking';
+type ArchitecturalStyle = 'modeCont' | 'mediterranean' | 'islamic' | 'palatial';
+type BalconyAns = 'Yes' | 'No';
+type RoomCount = '1 - 2' | '3 - 4' | '5+';
+type ShopType = 'fashion' | 'electronics' | 'grocery' | 'otherShop';
+type FeaturesType = 'displayWindows' | 'storageRoom' | 'fittingRoom' | 'cashierCounter';
+type Atmoshpere = 'premiumL' | 'trendy' | 'welcoming' | 'minimal';
+
 
 interface FormData {
   // Section 1: Basic Info
@@ -26,12 +34,24 @@ interface FormData {
   timeline: TimeLine | '';
   designType: DesignType | '';
   priorityType: PriorityType | '';
-  areaSize: string;
+  outdoorType: OutdoorType | '';
+  architecturalStyle: ArchitecturalStyle | '';
   budgetTier: BudgetTier | '';
-  budgetExact: '',
+  budgetExact: '';
   areaTier: AreaTier | '';
-  areaExact: '',
-  projectDetails: ''
+  areaExact: '';
+  balconyAns: BalconyAns | '';
+  roomCount: RoomCount | '';
+  projectDetails: '';
+  apartmentDetails: '';
+  villaDetails: '';
+  shopType: ShopType | '';
+  atmoshpere: Atmoshpere | '';
+  shopDetails: '';
+  spaceDetails: '';
+  officeDetails: '';
+  salonDetails: '';
+  featuresType: FeaturesType | '';
   // Section 4: Project Specifics
   specifics: Record<string, string>;
   // Section 5: Images
@@ -49,16 +69,28 @@ const INITIAL_DATA: FormData = {
   budget: '',
   timeline: '',
   designType: '',
-  areaSize: '',
   specifics: {},
   inspirationImages: [],
   currentSpaceImages: [],
   budgetTier: '',
   budgetExact: '',
   areaTier: '',
+  atmoshpere: '',
   areaExact: '',
   projectDetails: '',
+  apartmentDetails: '',
+  balconyAns: '',
+  villaDetails: '',
+  shopDetails: '',
+  spaceDetails: '',
+  officeDetails: '',
+  salonDetails: '',
   priorityType: '',
+  outdoorType: '',
+  architecturalStyle: '',
+  roomCount: '',
+  shopType: '',
+  featuresType: '',
 };
 
 export default function RecordPlanPage() {
@@ -110,17 +142,17 @@ export default function RecordPlanPage() {
   };
 
   const validatePhone = (phone: string) => {
-    return /^[\d\s+()-]{8,}$/.test(phone);
+    return /^[\d\s+()-]{7,}$/.test(phone);
   };
 
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
         return (
-          formData.name.trim().length >= 3 &&
+          formData.name.trim().length >= 6 &&
           validateEmail(formData.email) &&
           validatePhone(formData.phone) &&
-          formData.city.trim().length >= 2
+          formData.city.trim().length >= 3
         );
       case 2:
         return formData.projectType !== '';
@@ -129,16 +161,20 @@ export default function RecordPlanPage() {
       case 4:
         if (formData.projectType === 'apartement') {
           return (
-            formData.rooms !== '' && 
-            formData.design !== '' && 
-            formData.opt !== ''
+            formData.roomCount !== '' && formData.designType !== '' && formData.balconyAns !== ''
           );
         }
         if (formData.projectType === 'villa') {
-          return !!formData.specifics.floors && !!formData.specifics.gardenArea;
+          return (
+            formData.specifics.floors !== '' && 
+            formData.outdoorType !== ''
+          );
         }
         if (formData.projectType === 'shop') {
-          return !!formData.specifics.businessType;
+          return (
+            formData.shopType !== '' && 
+            formData.atmosphere !== ''
+          );
         }
         if (formData.projectType === 'restaurant') {
           return !!formData.specifics.capacity && !!formData.specifics.cuisine;
@@ -151,7 +187,7 @@ export default function RecordPlanPage() {
         }
         return true;
       case 5:
-        return true; // Optional
+        return true;
       default:
         return false;
     }
@@ -227,6 +263,53 @@ export default function RecordPlanPage() {
     { id: 'naturalLight', label: t('naturalLight') }
   ]
 
+  const outdoorType = [
+    { id: 'landscaping', label: t('landscaping') },
+    { id: 'poolArea', label: t('poolArea') },
+    { id: 'terrace', label: t('terrace') },
+    { id: 'parking', label: t('parking') }
+  ]
+
+  const architecturalStyle = [
+    { id: 'modeCont', label: t('modeCont') },
+    { id: 'mediterranean', label: t('mediterranean') },
+    { id: 'islamic', label: t('islamic') },
+    { id: 'palatial', label: t('palatial') }
+  ]
+  
+  const balconyAns = [
+    { id: 'yes', label: t('yes') },
+    { id: 'no', label: t('no') }
+  ]
+
+  const roomCount = [
+    { id: '1', label: t('roomc') },
+    { id: '2', label: t('roomcc') },
+    { id: '3', label: t('roomccc') }
+
+  ]
+
+  const shopType = [
+    { id: 'fashion', label: t('fashion') },
+    { id: 'electronics', label: t('electronics') },
+    { id: 'grocery', label: t('grocery') },
+    { id: 'otherShop', label: t('otherShop') }
+  ]
+
+  const featuresType = [
+    { id: 'displayWindows', label: t('displayWindows') },
+    { id: 'storageRoom', label: t('storageRoom') },
+    { id: 'fittingRoom', label: t('fittingRoom') },
+    { id: 'cashierCounter', label: t('cashierCounter') }
+  ]
+
+  const atmoshpere = [
+    { id: 'premiumL', label: t('premiumL') },
+    { id: 'trendy', label: t('trendy') },
+    { id: 'welcoming', label: t('welcoming') },
+    { id: 'minimal', label: t('minimal') }
+  ]
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -249,10 +332,10 @@ export default function RecordPlanPage() {
                   type="text" 
                   value={formData.name}
                   onChange={e => updateFields({ name: e.target.value })}
-                  className={`w-full bg-header/50 border ${formData.name.trim().length > 0 && formData.name.trim().length < 3 ? 'border-red-500' : 'border-main-text/20'} rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors`} 
+                  className={`w-full bg-header/50 border ${formData.name.trim().length > 0 && formData.name.trim().length < 6 ? 'border-red-500' : 'border-main-text/20'} rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors`} 
                   placeholder={t('namePlaceholder')} 
                 />
-                {formData.name.trim().length >= 3 && (
+                {formData.name.trim().length >= 6 && (
                   <div className="absolute end-4 top-10 text-main-text">
                     <Check size={18} />
                   </div>
@@ -272,7 +355,7 @@ export default function RecordPlanPage() {
                     <Check size={18} />
                   </div>
                 )}
-                {formData.email && !validateEmail(formData.email) && <span className="text-red-500 text-[10px] mt-1 uppercase tracking-tighter">{t('invalidEmail')}</span>}
+                {formData.email && !validateEmail(formData.email) && <span className="text-red-500 text-[10px] mt-1 px-1 uppercase tracking-tighter">{t('invalidEmail')}</span>}
               </div>
               <div className="relative">
                 <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('phone')}</label>
@@ -288,7 +371,7 @@ export default function RecordPlanPage() {
                     <Check size={18} />
                   </div>
                 )}
-                {formData.phone && !validatePhone(formData.phone) && <span className="text-red-500 text-[10px] mt-1 uppercase tracking-tighter">{t('invalidPhone')}</span>}
+                {formData.phone && !validatePhone(formData.phone) && <span className="text-red-500 text-[10px] mt-1 px-1 uppercase tracking-tighter">{t('invalidPhone')}</span>}
               </div>
               <div className="relative">
                 <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('city')}</label>
@@ -319,9 +402,9 @@ export default function RecordPlanPage() {
           >
             <div className="text-center mb-8">
               <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepTwo')}</h2>
-              <p className="text-4xl font-serif text-main-text">{t('stepTwoDesc')}</p>
+              <p className="text-4xl font-serif text-main-text mb-12">{t('stepTwoDesc')}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projectTypes.map((type) => (
                 <button
                   key={type.id}
@@ -360,7 +443,7 @@ export default function RecordPlanPage() {
               <div className="space-y-8">
                 
                 {/* 1. Budget Section */}
-                <div className="space-y-6">
+                <div className="md:col-span-2">
                   <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('budget') || 'Budget'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                   {budgetTier.map((type) => (
@@ -368,10 +451,10 @@ export default function RecordPlanPage() {
                         key={type.id}
                         type="button"
                         onClick={() => updateFields({ budgetTier: type.id as BudgetTier })}
-                        className={`p-3 rounded-xl border transition-all duration-300 text-center text-sm ${
+                        className={`p-4 rounded-xl border transition-all duration-300 text-center text-sm ${
                           formData.budgetTier === type.id 
                             ? 'bg-main-text border-main-text text-header' 
-                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/50'
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                         }`}
                       >
                         <div>
@@ -380,18 +463,16 @@ export default function RecordPlanPage() {
                       </button>
                     ))}
                   </div>
-                  {/* Existing/Custom Budget Input */}
                   <input
                     type="text"
                     placeholder={t('exactBudgetPlaceholder') || 'Or enter exact budget...'}
                     value={formData.budgetExact || ''}
                     onChange={(e) => updateFields({ budgetExact: e.target.value })}
-                    className="w-full bg-header/30 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
+                    className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
                   />
                 </div>
   
-                {/* 2. Project Area Section */}
-                <div className="space-y-3">
+                <div className="md:col-span-2">
                   <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('projectArea') || 'Project Area'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {areaTier.map((type) => (
@@ -399,10 +480,10 @@ export default function RecordPlanPage() {
                         key={type.id}
                         type="button"
                         onClick={() => updateFields({ areaTier: type.id as AreaTier })}
-                        className={`p-3 rounded-xl border transition-all duration-300 text-center text-sm ${
+                        className={`p-4 rounded-xl border transition-all duration-300 text-center text-sm ${
                           formData.areaTier === type.id 
                             ? 'bg-main-text border-main-text text-header' 
-                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/50'
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                         }`}
                       >
                         <div>
@@ -416,12 +497,11 @@ export default function RecordPlanPage() {
                     placeholder={t('exactAreaPlaceholder') || 'Or enter exact area in sqm...'}
                     value={formData.areaExact || ''}
                     onChange={(e) => updateFields({ areaExact: e.target.value })}
-                    className="w-full bg-header/30 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
+                    className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
                   />
                 </div>
   
-                {/* 3. Timeline Section */}
-                <div className="space-y-3">
+                <div className="md:col-span-2">
                   <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('timeline') || 'Timeline'}</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {timeline.map((time) => (
@@ -429,10 +509,10 @@ export default function RecordPlanPage() {
                         key={time.id}
                         type="button"
                         onClick={() => updateFields({ timeline: time.id  as TimeLine})}
-                        className={`p-3 rounded-xl border transition-all duration-300 text-center text-xs md:text-sm flex items-center justify-center ${
+                        className={`p-4 rounded-xl border transition-all duration-300 text-center text-xs md:text-sm flex items-center justify-center ${
                           formData.timeline === time.id 
                             ? 'bg-main-text border-main-text text-header' 
-                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/50'
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                         }`}
                       >
                         {t(time.id) || time.label}
@@ -441,9 +521,8 @@ export default function RecordPlanPage() {
                   </div>
                 </div>
   
-                {/* 4. Project Details Section (Optional) */}
-                <div className="space-y-3">
-                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                <div className="md:col-span-2">
+                  <label className="block text-white text-md tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
                     {t('projectDetails') || 'Project Details'} 
                     <span className="text-white/50 text-xs font-normal">({t('optional') || 'Optional'})</span>
                   </label>
@@ -452,7 +531,7 @@ export default function RecordPlanPage() {
                     placeholder={t('projectDetailsPlaceholder') || 'Tell us more about your vision, specific requirements, or any constraints...'}
                     value={formData.projectDetails || ''}
                     onChange={(e) => updateFields({ projectDetails: e.target.value })}
-                    className="w-full bg-header/30 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
                   />
                 </div>
   
@@ -480,18 +559,18 @@ export default function RecordPlanPage() {
                   <div className="md:col-span-2">
                     <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('roomsCount')}</label>
                     <div className="flex flex-wrap gap-2 md:gap-4">
-                      {['1 - 2', '3 - 4', '5+'].map(num => (
+                      {roomCount.map((num) => (
                         <button
-                          key={num}
+                          key={num.id}
                           type="button"
-                          onClick={() => updateSpecifics('rooms', num)}
+                          onClick={() => updateFields({roomCount: num.id as RoomCount})}
                           className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.rooms === num 
+                            formData.roomCount === num.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {num}
+                        <h3 className="font-medium text-md">{num.label}</h3>
                         </button>
                       ))}
                     </div>
@@ -504,10 +583,10 @@ export default function RecordPlanPage() {
                           key={design.id}
                           type="button"
                           onClick={() => updateFields({designType: design.id as DesignType})}
-                          className={`p-2 text-lg text-center rounded-xl border transition-all ${
+                          className={`p-4 text-lg text-center rounded-xl border transition-all ${
                             formData.designType === design.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
                         <h3 className="font-medium text-md">{design.label}</h3>
@@ -538,11 +617,11 @@ export default function RecordPlanPage() {
                           // 4. Update the form data
                           updateFields({ priorityType: newPriorities });
                         }}
-                        className={`p-2 text-lg text-center rounded-xl border transition-all ${
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
                           // Update the condition to check if the array includes this ID
                           (formData.priorityType || []).includes(priority.id)
                             ? 'bg-main-text border-main-text text-header' 
-                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                         }`}
                       >
                         <h3 className="font-medium text-md">{priority.label}</h3>
@@ -554,122 +633,211 @@ export default function RecordPlanPage() {
                   <div className="md:col-span-2">
                     <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('balcony')}</label>
                     <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                      {balconyAns.map((opt) => (
                         <button
-                          key={opt}
+                          key={opt.id}
                           type="button"
-                          onClick={() => updateSpecifics('balcony', opt)}
+                          onClick={() => updateFields({balconyAns: opt.id as BalconyAns})}
                           className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.balcony === opt 
+                            formData.balconyAns === opt.id
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {t(opt as any)}
+                        <h3 className="font-medium text-md">{opt.label}</h3>
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('apartmentDetails') || 'Apartment Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('apartmentDetailsPlaceholder') || 'Tell us more about your dream apartment...'}
+                    value={formData.apartmentDetails || ''}
+                    onChange={(e) => updateFields({ apartmentDetails: e.target.value })}
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
                   </div>
                 </>
               )}
               {formData.projectType === 'villa' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('floorsCount')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.floors || ''}
-                      onChange={e => updateSpecifics('floors', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
+                <div className="md:col-span-2">
+                  <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('floorsCount')}</label>
+                  <div className="flex flex-wrap gap-2 md:gap-4">
+                    {['1', '2', '3+'].map(num => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => updateSpecifics('floors', num)}
+                        className={`flex-1 py-3 rounded-xl border transition-all ${
+                          formData.specifics.floors === num 
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
                   </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('gardenArea')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.gardenArea || ''}
-                      onChange={e => updateSpecifics('gardenArea', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('parkingSpaces')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.parking || ''}
-                      onChange={e => updateSpecifics('parking', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('swimmingPool')}</label>
-                    <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('outdoorArea')}</label>
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {outdoorType.map((outdoor) => (
                         <button
-                          key={opt}
-                          type="button"
-                          onClick={() => updateSpecifics('pool', opt)}
-                          className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.pool === opt 
-                              ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
-                          }`}
-                        >
-                          {t(opt as any)}
-                        </button>
+                        key={outdoor.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentOutdoor = formData.outdoorType || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentOutdoor.includes(outdoor.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newOutdoor = isSelected
+                            ? currentOutdoor.filter((id) => id !== outdoor.id) 
+                            : [...currentOutdoor, outdoor.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ outdoorType: newOutdoor });
+                        }}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.outdoorType || []).includes(outdoor.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{outdoor.label}</h3>
+                      </button>
                       ))}
                     </div>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('architectural')}</label>
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                    {architecturalStyle.map((style) => (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => updateFields({architecturalStyle: style.id as ArchitecturalStyle})}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          formData.architecturalStyle === style.id 
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                        }`}
+                      >
+                      <h3 className="font-medium text-md">{style.label}</h3>
+                      </button>
+                    ))}
                   </div>
-                </>
+                </div>
+                <div className="space-y-3">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('villaDetails') || 'House Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('villaDetailsPlaceholder') || 'Tell us more about your dream home...'}
+                    value={formData.villaDetails || ''}
+                    onChange={(e) => updateFields({ villaDetails: e.target.value })}
+                    className="w-full bg-header/30 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
+                  </div>               
+              </>
               )}
               {formData.projectType === 'shop' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('businessType')}</label>
-                    <input 
-                      type="text" 
-                      value={formData.specifics.businessType || ''}
-                      onChange={e => updateSpecifics('businessType', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                      placeholder="e.g. Fashion, Electronics"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('displayArea')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.displayArea || ''}
-                      onChange={e => updateSpecifics('displayArea', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('storageArea')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.storageArea || ''}
-                      onChange={e => updateSpecifics('storageArea', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('fittingRooms')}</label>
-                    <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('businessType')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {shopType.map((shop) => (
                         <button
-                          key={opt}
+                          key={shop.id}
                           type="button"
-                          onClick={() => updateSpecifics('fittingRooms', opt)}
-                          className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.fittingRooms === opt 
+                          onClick={() => updateFields({shopType: shop.id as ShopType})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.shopType === shop.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {t(opt as any)}
+                        <h3 className="font-medium text-md">{shop.label}</h3>
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <div>
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('features')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {featuresType.map((features) => (
+                        <button
+                        key={features.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentFeatures = formData.featuresType || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentFeatures.includes(features.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newFeatures = isSelected
+                            ? currentFeatures.filter((id) => id !== features.id) 
+                            : [...currentFeatures, features.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ featuresType: newFeatures });
+                        }}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.featuresType || []).includes(features.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{features.label}</h3>
+                      </button>
+                      ))}
+                    </div>
+                  </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('atmoshpere')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {atmoshpere.map((atom) => (
+                        <button
+                          key={atom.id}
+                          type="button"
+                          onClick={() => updateFields({atmoshpere: atom.id as Atmoshpere})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.atmoshpere === atom.id 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                          }`}
+                        >
+                        <h3 className="font-medium text-md">{atom.label}</h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('shopDetails') || 'Shop Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('shopDetailsPlaceholder') || 'Tell us more about your dream shop...'}
+                    value={formData.shopDetails || ''}
+                    onChange={(e) => updateFields({ shopDetails: e.target.value })}
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
                   </div>
                 </>
               )}
