@@ -37,10 +37,10 @@ export default function Step5Images({
         {/* Inspiration Images */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="block text-white text-xs uppercase tracking-widest">{t('inspirationImages')} <span className="text-white/40 lowercase">{t('optional')}</span></label>
+            <label className="block text-white text-sm uppercase tracking-widest">{t('inspirationImages')}</label>
             <span className="text-[10px] text-white/40">{formData.inspirationImages.length}/5</span>
           </div>
-          <p className="text-white/40  text-xs lowercase">{t('inspirationImagesDesc')}</p>
+          <p className="text-white/40  text-sm lowercase">{t('inspirationImagesDesc')}</p>
           <div 
             onClick={() => inspirationInputRef.current?.click()}
             className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
@@ -74,10 +74,10 @@ export default function Step5Images({
         {/* Current Space Images */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="block text-white text-xs uppercase tracking-widest">{t('currentSpaceImages')} <span className="text-white/40 lowercase">{t('optional')}</span></label>
+            <label className="block text-white text-sm uppercase tracking-widest">{t('currentSpaceImages')}</label>
             <span className="text-[10px] text-white/40">{formData.currentSpaceImages.length}/5</span>
           </div>
-          <p className="text-white/40  text-xs lowercase">{t('currentSpaceImagesDesc')}</p>
+          <p className="text-white/40  text-sm lowercase">{t('currentSpaceImagesDesc')}</p>
           <div 
             onClick={() => currentSpaceInputRef.current?.click()}
             className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}

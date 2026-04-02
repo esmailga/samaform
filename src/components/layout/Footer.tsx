@@ -28,13 +28,7 @@ export default function Footer() {
             <li><Link to="/record-plan" className="hover:text-main-text transition-colors">{t('recordPlan')}</Link></li>
             <li><Link to="/contact" className="hover:text-main-text transition-colors">{t('contactUs')}</Link></li>
           </ul>
-
-          <div className="mt-12 pt-8 border-t border-main-text/10 flex flex-row space-x-6">
-            <Link to="/terms" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('termsOfService')}</Link>
-            <Link to="/privacy" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
-          </div>
         </div>
-
         <div>
           <h4 className="text-sm uppercase tracking-widest font-medium mb-8 text-white">{t('connect')}</h4>
           <div className="flex flex-col space-y-6">
@@ -56,6 +50,10 @@ export default function Footer() {
               </div>
               <span className="text-sm text-white/60 group-hover:text-white transition-colors">Email</span>
             </a>
+          </div>
+          <div className="mt-12 pt-8 border-t border-main-text/10 flex flex-row space-x-14">
+            <Link to="/terms" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('termsOfService')}</Link>
+            <Link to="/privacy" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
           </div>
         </div>
       </div>
