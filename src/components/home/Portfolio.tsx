@@ -21,7 +21,7 @@ export default function Portfolio() {
   
   return (
     <section className="py-20 px-6 relative">
-      <div className="absolute top-0 start-1/4 w-96 h-96 bg-main-text/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-6 mb-12" />
       
       <div className="max-w-7xl mx-auto relative z-10">
         <motion.div 
