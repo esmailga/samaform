@@ -14,7 +14,7 @@ export default function StepsSection() {
   ];
 
   return (
-    <section className="py-24 px-6 relative">
+    <section className="py-20 px-6 relative">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
         {steps.map((step, index) => (
           <motion.div

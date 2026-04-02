@@ -10,9 +10,9 @@ const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg
 });
 
 export const getProjectCategories = (t: any) => [
-  { id: 'residential', title: t('residentialProjects'), description: t('resDesc'), image: assetImages[ '../../assets/project1.png'] },
-  { id: 'commercial', title: t('commercialProjects'), description: t('comDesc'), image: assetImages[ '../../assets/project2.png'] },
-  { id: 'garden-terrace', title: t('gardenTerrace'), description: t('garDesc'), image: assetImages[ '../../assets/project3.png'] },
+  { id: 'residential', title: t('residentialProjects'), description: t('resDesc'), image: assetImages[ '../../assets/project1.jpg'] },
+  { id: 'commercial', title: t('commercialProjects'), description: t('comDesc'), image: assetImages[ '../../assets/project2.jpg'] },
+  { id: 'garden-terrace', title: t('gardenTerrace'), description: t('garDesc'), image: assetImages[ '../../assets/project3.jpg'] },
 ];
 
 export default function Portfolio() {
@@ -20,7 +20,7 @@ export default function Portfolio() {
   const projectCategories = getProjectCategories(t);
   
   return (
-    <section className="py-20 px-6 relative">
+    <section className="py-10 px-6 relative">
       <div className="max-w-7xl mx-auto px-6 mb-12" />
       
       <div className="max-w-7xl mx-auto relative z-10">
@@ -55,6 +55,7 @@ export default function Portfolio() {
                   alt={category.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
+                  loading= "lazy"
                 />
                 <div className="absolute inset-0 bg-header/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
