@@ -9,8 +9,8 @@ export default function HomePage() {
     <>
       <Hero />
       <StepsSection />
-      <StatsSection />
       <ServicesSection />
+      <StatsSection />
       <Portfolio />
     </>
   );

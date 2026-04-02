@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 relative z-10">
         <div className="col-span-1 md:col-span-2">
         <div className="mb-8">
-            <Logo noAnim={true} />
+            <Logo noAnim={true} isFooter={true} />
           </div>
           <p className="text-white font-light max-w-sm">
             {t('footerDesc')}
@@ -29,7 +29,7 @@ export default function Footer() {
             <li><Link to="/contact" className="hover:text-main-text transition-colors">{t('contactUs')}</Link></li>
           </ul>
 
-          <div className="mt-12 pt-8 border-t border-main-text/10 flex flex-col space-y-4">
+          <div className="mt-12 pt-8 border-t border-main-text/10 flex flex-row space-x-6">
             <Link to="/terms" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('termsOfService')}</Link>
             <Link to="/privacy" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
           </div>

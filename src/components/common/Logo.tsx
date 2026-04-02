@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
 
-export default function Logo({ isHero = false, showText = true, noAnim = false }: { isHero?: boolean; showText?: boolean; noAnim?: boolean }) {
+export default function Logo({ isHero = false, isFooter = false, showText = true, noAnim = false }: { isHero?: boolean; isFooter?: boolean; showText?: boolean; noAnim?: boolean }) {
   const { t } = useLanguage();
   
   return (
@@ -14,7 +14,7 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
       {/* Icon (logo2) */}
       <motion.div 
         layoutId={noAnim ? undefined : "logo-img"}
-        className={`relative ${isHero ? 'w-20 h-20 md:w-30 md:h-30 mb-6' : 'w-10 h-10 md:w-10 md:h-10'}`}
+        className={`relative ${isHero ? 'w-20 h-20 md:w-30 md:h-30 mb-6' : isFooter ? 'w-12 h-12 md:w-16 md:h-16' : 'w-10 h-10 md:w-10 md:h-10'}`}
       >
         <img src="/logo2.png"
         alt="Icon"
@@ -28,7 +28,7 @@ export default function Logo({ isHero = false, showText = true, noAnim = false }
         {showText && (
           <motion.div 
             layoutId={noAnim ? undefined : "logo-title-img"}
-            className={`${isHero ? 'h-10 md:h-18' : 'h-6 md:md:h-6'}`} // Smaller h-6 for header
+            className={`${isHero ? 'h-10 md:h-18' : isFooter ? 'h-8 md:h-10' : 'h-6 md:md:h-6'}`} // Smaller h-6 for header
           >
             <img src="/logo3.png"
             alt="SAMAFORM"
