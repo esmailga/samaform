@@ -18,8 +18,15 @@ type RoomCount = '1 - 2' | '3 - 4' | '5+';
 type ShopType = 'fashion' | 'electronics' | 'grocery' | 'otherShop';
 type FeaturesType = 'displayWindows' | 'storageRoom' | 'fittingRoom' | 'cashierCounter';
 type Atmoshpere = 'premiumL' | 'trendy' | 'welcoming' | 'minimal';
-
-
+type CuisineType = 'middleEastern' | 'international' | 'fastFood' | 'fineDining';
+type SeatingCapacity = 'thirtySeat' | 'thirtySixSeat' | 'sixtyHunSeat' | 'hundredSeat';
+type SpaceWanted = 'outdoorSeating' | 'privateRooms' | 'barCounter' | 'openKitchen';
+type EmployeeCount = 'tenEmployee' | 'thirtyEmployee' | 'fiftyEmployee' | 'fiftyMoreEmployee';
+type WorkEnvironment = 'openPlan' | 'privateOffices' | 'hybridMixed' | 'coWorkingStyle';
+type AmenitiesWanted = 'meetingRooms' | 'kitchenPantry' | 'receptionArea' | 'loungeArea';
+type SalonServices = 'hairStyling' | 'nailCare' | 'skinCare' | 'spaMassage';
+type StationsCount = 'threeStations' | 'sixStations' | 'sevenStations' | 'tenStations';
+type Ambiance = 'luxuryHigh' | 'modernTrendy' | 'zenRelaxing' | 'chicBoutique';
 interface FormData {
   // Section 1: Basic Info
   name: string;
@@ -48,8 +55,17 @@ interface FormData {
   shopType: ShopType | '';
   atmoshpere: Atmoshpere | '';
   shopDetails: '';
+  cuisineType: CuisineType | '';
   spaceDetails: '';
+  seatingCapacity: SeatingCapacity | '';
+  spaceWanted: SpaceWanted | '';
+  employeeCount: EmployeeCount | '';
+  workEnvironment: WorkEnvironment | '';
+  amenitiesWanted: AmenitiesWanted | '';
   officeDetails: '';
+  salonServices: SalonServices | '';
+  stationsCount: StationsCount | '';
+  ambiance: Ambiance | '';
   salonDetails: '';
   featuresType: FeaturesType | '';
   // Section 4: Project Specifics
@@ -89,8 +105,17 @@ const INITIAL_DATA: FormData = {
   outdoorType: '',
   architecturalStyle: '',
   roomCount: '',
+  employeeCount: '',
   shopType: '',
   featuresType: '',
+  cuisineType: '',
+  seatingCapacity: '',
+  spaceWanted: '',
+  workEnvironment: '',
+  amenitiesWanted: '',
+  salonServices: '',
+  stationsCount: '',
+  ambiance: '',
 };
 
 export default function RecordPlanPage() {
@@ -157,17 +182,21 @@ export default function RecordPlanPage() {
       case 2:
         return formData.projectType !== '';
       case 3:
-        return formData.budgetTier !== '' && formData.areaTier !== '' && formData.timeline !== '';
+        return formData.budgetTier !== '' &&
+        formData.areaTier !== '' &&
+        formData.timeline !== '';
       case 4:
         if (formData.projectType === 'apartement') {
           return (
-            formData.roomCount !== '' && formData.designType !== '' && formData.balconyAns !== ''
+            formData.roomCount !== '' &&
+            formData.designType !== '' &&
+            formData.balconyAns !== ''
           );
         }
         if (formData.projectType === 'villa') {
           return (
             formData.specifics.floors !== '' && 
-            formData.outdoorType !== ''
+            formData.architectural !== ''
           );
         }
         if (formData.projectType === 'shop') {
@@ -177,14 +206,21 @@ export default function RecordPlanPage() {
           );
         }
         if (formData.projectType === 'restaurant') {
-          return !!formData.specifics.capacity && !!formData.specifics.cuisine;
-        }
+          return (
+            formData.cuisineType !== '' && 
+            formData.seatingCapacity !== ''
+          );        }
         if (formData.projectType === 'office') {
-          return !!formData.specifics.employees && !!formData.specifics.meetingRooms;
-        }
+          return (
+            formData.employeeCount !== '' && 
+            formData.workEnvironment !== ''
+          );        }
         if (formData.projectType === 'beautySalon') {
-          return !!formData.specifics.services && !!formData.specifics.stations;
-        }
+          return (
+            formData.salonServices !== '' && 
+            formData.stationsCount !== '' &&
+            formData.ambiance !== ''
+          );        }
         return true;
       case 5:
         return true;
@@ -308,6 +344,68 @@ export default function RecordPlanPage() {
     { id: 'trendy', label: t('trendy') },
     { id: 'welcoming', label: t('welcoming') },
     { id: 'minimal', label: t('minimal') }
+  ]
+  const cuisineType = [
+    { id: 'middleEastern', label: t('middleEastern') },
+    { id: 'international', label: t('international') },
+    { id: 'fastFood', label: t('fastFood') },
+    { id: 'fineDining', label: t('fineDining') }
+  ]
+
+  const seatingCapacity = [
+    { id: 'thirtySeat', label: t('thirtySeat') },
+    { id: 'thirtySixSeat', label: t('thirtySixSeat') },
+    { id: 'sixtyHunSeat', label: t('sixtyHunSeat') },
+    { id: 'hundredSeat', label: t('hundredSeat') }
+  ]
+  
+  const spaceWanted = [
+    { id: 'outdoorSeating', label: t('outdoorSeating') },
+    { id: 'privateRooms', label: t('privateRooms') },
+    { id: 'barCounter', label: t('barCounter') },
+    { id: 'openKitchen', label: t('openKitchen') }
+  ]
+  
+  const employeeCount = [
+    { id: 'tenEmployee', label: t('tenEmployee') },
+    { id: 'thirtyEmployee', label: t('thirtyEmployee') },
+    { id: 'fiftyEmployee', label: t('fiftyEmployee') },
+    { id: 'fiftyMoreEmployee', label: t('fiftyMoreEmployee') }
+  ]
+
+  const workEnvironment = [
+    { id: 'openPlan', label: t('openPlan') },
+    { id: 'privateOffices', label: t('privateOffices') },
+    { id: 'hybridMixed', label: t('hybridMixed') },
+    { id: 'coWorkingStyle', label: t('coWorkingStyle') }
+  ]
+
+  const amenitiesWanted = [
+    { id: 'meetingRooms', label: t('meetingRooms') },
+    { id: 'kitchenPantry', label: t('kitchenPantry') },
+    { id: 'receptionArea', label: t('receptionArea') },
+    { id: 'coWorkingStyle', label: t('loungeArea') }
+  ]
+
+  const salonServices = [
+    { id: 'hairStyling', label: t('hairStyling') },
+    { id: 'nailCare', label: t('nailCare') },
+    { id: 'skinCare', label: t('skinCare') },
+    { id: 'spaMassage', label: t('spaMassage') }
+  ]
+
+  const stationsCount = [
+    { id: 'threeStations', label: t('threeStations') },
+    { id: 'sixStations', label: t('sixStations') },
+    { id: 'sevenStations', label: t('sevenStations') },
+    { id: 'tenStations', label: t('tenStations') }
+  ]
+
+  const ambiance = [
+    { id: 'luxuryHigh', label: t('luxuryHigh') },
+    { id: 'modernTrendy', label: t('modernTrendy') },
+    { id: 'zenRelaxing', label: t('zenRelaxing') },
+    { id: 'chicBoutique', label: t('chicBoutique') }
   ]
 
   const renderStep = () => {
@@ -595,7 +693,6 @@ export default function RecordPlanPage() {
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                  <div>
                     <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('priorities')}</label>
                     <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                       {priorityType.map((priority) => (
@@ -628,7 +725,6 @@ export default function RecordPlanPage() {
                       </button>
                       ))}
                     </div>
-                  </div>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('balcony')}</label>
@@ -773,7 +869,6 @@ export default function RecordPlanPage() {
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                  <div>
                     <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('features')}</label>
                     <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                       {featuresType.map((features) => (
@@ -807,9 +902,8 @@ export default function RecordPlanPage() {
                       ))}
                     </div>
                   </div>
-                  </div>
                   <div className="md:col-span-2">
-                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('atmoshpere')}</label>
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('atmosphere')}</label>
                     <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                       {atmoshpere.map((atom) => (
                         <button
@@ -843,153 +937,265 @@ export default function RecordPlanPage() {
               )}
               {formData.projectType === 'restaurant' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('seatingCapacity')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.capacity || ''}
-                      onChange={e => updateSpecifics('capacity', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('cuisineType')}</label>
-                    <input 
-                      type="text" 
-                      value={formData.specifics.cuisine || ''}
-                      onChange={e => updateSpecifics('cuisine', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                      placeholder="e.g. Italian, Japanese"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('kitchenSize')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.kitchenSize || ''}
-                      onChange={e => updateSpecifics('kitchenSize', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('outdoorSeating')}</label>
-                    <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('cuisineType')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {cuisineType.map((cuisine) => (
                         <button
-                          key={opt}
+                          key={cuisine.id}
                           type="button"
-                          onClick={() => updateSpecifics('outdoor', opt)}
-                          className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.outdoor === opt 
+                          onClick={() => updateFields({cuisineType: cuisine.id as CuisineType})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.cuisineType === cuisine.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {t(opt as any)}
+                        <h3 className="font-medium text-md">{cuisine.label}</h3>
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('seatingCapacity')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {seatingCapacity.map((seating) => (
+                        <button
+                          key={seating.id}
+                          type="button"
+                          onClick={() => updateFields({seatingCapacity: seating.id as SeatingCapacity})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.seatingCapacity === seating.id 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                          }`}
+                        >
+                        <h3 className="font-medium text-md">{seating.label}</h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('spaceWanted')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {spaceWanted.map((space) => (
+                        <button
+                        key={space.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentSpace = formData.spaceWanted || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentSpace.includes(space.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newSpace = isSelected
+                            ? currentSpace.filter((id) => id !== space.id) 
+                            : [...currentSpace, space.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ spaceWanted: newSpace });
+                        }}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.spaceWanted || []).includes(space.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{space.label}</h3>
+                      </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('spaceDetails') || 'Space Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('spaceDetailsPlaceholder') || 'Tell us more about your dream space...'}
+                    value={formData.spaceDetails || ''}
+                    onChange={(e) => updateFields({ spaceDetails: e.target.value })}
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
                   </div>
                 </>
               )}
               {formData.projectType === 'office' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('employeeCount')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.employees || ''}
-                      onChange={e => updateSpecifics('employees', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('meetingRooms')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.meetingRooms || ''}
-                      onChange={e => updateSpecifics('meetingRooms', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('privateOffices')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.privateOffices || ''}
-                      onChange={e => updateSpecifics('privateOffices', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('pantry')}</label>
-                    <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('employeeCount')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {employeeCount.map((employee) => (
                         <button
-                          key={opt}
+                          key={employee.id}
                           type="button"
-                          onClick={() => updateSpecifics('pantry', opt)}
-                          className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.pantry === opt 
+                          onClick={() => updateFields({employeeCount: employee.id as EmployeeCount})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.employeeCount === employee.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {t(opt as any)}
+                        <h3 className="font-medium text-md">{employee.label}</h3>
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('workEnvironment')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {workEnvironment.map((environment) => (
+                        <button
+                          key={environment.id}
+                          type="button"
+                          onClick={() => updateFields({workEnvironment: environment.id as WorkEnvironment})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.workEnvironment === environment.id 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                          }`}
+                        >
+                        <h3 className="font-medium text-md">{environment.label}</h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('amenitiesWanted')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {amenitiesWanted.map((amenities) => (
+                        <button
+                        key={amenities.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentAmenities = formData.amenitiesWanted || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentAmenities.includes(amenities.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newAmenities = isSelected
+                            ? currentAmenities.filter((id) => id !== amenities.id) 
+                            : [...currentAmenities, amenities.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ amenitiesWanted: newAmenities });
+                        }}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.amenitiesWanted || []).includes(amenities.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{amenities.label}</h3>
+                      </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('officeDetails') || 'Office Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('officeDetailsPlaceholder') || 'Tell us more about your dream office...'}
+                    value={formData.officeDetails || ''}
+                    onChange={(e) => updateFields({ officeDetails: e.target.value })}
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
                   </div>
                 </>
               )}
               {formData.projectType === 'beautySalon' && (
                 <>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('serviceTypes')}</label>
-                    <input 
-                      type="text" 
-                      value={formData.specifics.services || ''}
-                      onChange={e => updateSpecifics('services', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                      placeholder="e.g. Hair, Nails, Spa"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('stationsCount')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.stations || ''}
-                      onChange={e => updateSpecifics('stations', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('waitingArea')}</label>
-                    <input 
-                      type="number" 
-                      value={formData.specifics.waitingArea || ''}
-                      onChange={e => updateSpecifics('waitingArea', e.target.value)}
-                      className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('vipRoom')}</label>
-                    <div className="flex gap-4">
-                      {['yes', 'no'].map(opt => (
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('salonServices')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {salonServices.map((salon) => (
                         <button
-                          key={opt}
+                        key={salon.id}
+                        type="button"
+                        onClick={() => {
+                          // 1. Get the current array of selected priorities (fallback to empty array if undefined)
+                          const currentSalon = formData.salonServices || [];
+                          
+                          // 2. Check if the clicked priority is already in the array
+                          const isSelected = currentSalon.includes(salon.id);
+                          
+                          // 3. If selected, filter it out. If not, add it to the array.
+                          const newSalon = isSelected
+                            ? currentSalon.filter((id) => id !== salon.id) 
+                            : [...currentSalon, salon.id];
+                            
+                          // 4. Update the form data
+                          updateFields({ salonServices: newSalon });
+                        }}
+                        className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                          // Update the condition to check if the array includes this ID
+                          (formData.salonServices || []).includes(salon.id)
+                            ? 'bg-main-text border-main-text text-header' 
+                            : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                        }`}
+                      >
+                        <h3 className="font-medium text-md">{salon.label}</h3>
+                      </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('stationsCount')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {stationsCount.map((station) => (
+                        <button
+                          key={station.id}
                           type="button"
-                          onClick={() => updateSpecifics('vipRoom', opt)}
-                          className={`flex-1 py-3 rounded-xl border transition-all ${
-                            formData.specifics.vipRoom === opt 
+                          onClick={() => updateFields({stationsCount: station.id as StationsCount})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.stationsCount === station.id 
                               ? 'bg-main-text border-main-text text-header' 
-                              : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                           }`}
                         >
-                          {t(opt as any)}
+                        <h3 className="font-medium text-md">{station.label}</h3>
                         </button>
                       ))}
                     </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('ambiance')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
+                      {ambiance.map((ambi) => (
+                        <button
+                          key={ambi.id}
+                          type="button"
+                          onClick={() => updateFields({ambiance: ambi.id as Ambiance})}
+                          className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                            formData.ambiance === ambi.id 
+                              ? 'bg-main-text border-main-text text-header' 
+                              : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
+                          }`}
+                        >
+                        <h3 className="font-medium text-md">{ambi.label}</h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                  <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1 flex items-center gap-2">
+                    {t('salonDetails') || 'Salon Details'} 
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={t('salonDetailsPlaceholder') || 'Tell us more about your dream salon...'}
+                    value={formData.salonDetails || ''}
+                    onChange={(e) => updateFields({ salonDetails: e.target.value })}
+                    className="w-full bg-header/50 border border-main-text/10 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors resize-none"
+                  />
                   </div>
                 </>
               )}
@@ -1017,6 +1223,7 @@ export default function RecordPlanPage() {
                   <label className="block text-white text-xs uppercase tracking-widest">{t('inspirationImages')} <span className="text-white/40 lowercase">{t('optional')}</span></label>
                   <span className="text-[10px] text-white/40">{formData.inspirationImages.length}/5</span>
                 </div>
+                <p className="text-white/40  text-xs lowercase">{t('inspirationImagesDesc')}</p>
                 <div 
                   onClick={() => inspirationInputRef.current?.click()}
                   className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
@@ -1053,6 +1260,7 @@ export default function RecordPlanPage() {
                   <label className="block text-white text-xs uppercase tracking-widest">{t('currentSpaceImages')} <span className="text-white/40 lowercase">{t('optional')}</span></label>
                   <span className="text-[10px] text-white/40">{formData.currentSpaceImages.length}/5</span>
                 </div>
+                <p className="text-white/40  text-xs lowercase">{t('currentSpaceImagesDesc')}</p>
                 <div 
                   onClick={() => currentSpaceInputRef.current?.click()}
                   className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
@@ -1139,7 +1347,7 @@ export default function RecordPlanPage() {
           </div>
         </div>
 
-        <form className={`p-8 md:p-12 rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
+        <form className={`p-2 md:p-12 rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
           <AnimatePresence mode="wait">
             {renderStep()}
           </AnimatePresence>
