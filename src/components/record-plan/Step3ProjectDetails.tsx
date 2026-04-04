@@ -46,7 +46,10 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
               <button
                 key={type.id}
                 type="button"
-                onClick={() => updateFields({ budgetTier: type.id as BudgetTier })}
+                onClick={() => updateFields({ 
+                  budgetTier: formData.budgetTier === type.id ? '' as BudgetTier : type.id as BudgetTier,
+                  budgetExact: ''
+                })}
                 className={`p-4 rounded-xl border transition-all duration-300 text-center text-sm ${
                   formData.budgetTier === type.id 
                     ? 'bg-main-text border-main-text text-header' 
@@ -58,11 +61,15 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
             ))}
           </div>
           <input
-            type="text"
+            type="number"
+            min='1'
+            value={formData.budgetExact}
+            onChange={(e) => updateFields({ 
+              budgetExact: e.target.value,
+              budgetTier: ''
+            })}
+            className="w-full bg-header/50 border border-main-text/20 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
             placeholder={t('exactBudgetPlaceholder') || 'Or enter exact budget...'}
-            value={formData.budgetExact || ''}
-            onChange={(e) => updateFields({ budgetExact: e.target.value })}
-            className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
           />
         </div>
 
@@ -74,7 +81,10 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
               <button
                 key={type.id}
                 type="button"
-                onClick={() => updateFields({ areaTier: type.id as AreaTier })}
+                onClick={() => updateFields({ 
+                  areaTier: formData.areaTier === type.id ? '' as AreaTier : type.id as AreaTier,
+                  areaExact: ''
+                })}
                 className={`p-4 rounded-xl border transition-all duration-300 text-center text-sm ${
                   formData.areaTier === type.id 
                     ? 'bg-main-text border-main-text text-header' 
@@ -86,11 +96,16 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
             ))}
           </div>
           <input
-            type="text"
-            placeholder={t('exactAreaPlaceholder') || 'Or enter exact area in sqm...'}
-            value={formData.areaExact || ''}
-            onChange={(e) => updateFields({ areaExact: e.target.value })}
+            type="number"
+            min='1'
+            value={formData.areaExact}
+            onChange={(e) => updateFields({ 
+              areaExact: e.target.value,
+              areaTier: ''
+            })}
             className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
+            placeholder={t('exactAreaPlaceholder') || 'Or enter exact area in sqm...'}
+
           />
         </div>
 
@@ -102,7 +117,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
               <button
                 key={time.id}
                 type="button"
-                onClick={() => updateFields({ timeline: time.id as TimeLine })}
+                onClick={() => updateFields({ timeline: formData.timeline === time.id ? '' as TimeLine : time.id as TimeLine })}
                 className={`p-4 rounded-xl border transition-all duration-300 text-center text-xs md:text-sm flex items-center justify-center ${
                   formData.timeline === time.id 
                     ? 'bg-main-text border-main-text text-header' 

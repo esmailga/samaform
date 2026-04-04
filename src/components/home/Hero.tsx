@@ -58,7 +58,7 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.8 }}
           className="max-w-4xl w-full mt-12"
         >
-          <h1 className="text-3xl md:text-7xl lg:text-8xl font-serif leading-tight text-main-text drop-shadow-2xl">
+          <h1 className="text-3xl md:text-7xl lg:text-8xl leading-tight text-main-text drop-shadow-2xl">
             {t('heroTitle1')}
           </h1>
           <h2 className="mt-6 text-xl md:text-2xl text-gray-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">

@@ -31,7 +31,7 @@ export default function Portfolio() {
           transition={{ duration: 0.4 }}
           className="mb-16 text-center md:text-center"
         >
-          <h2 className="py-8 text-4xl md:py-12 text-5xl font-serif mb-4 text-main-text">
+          <h2 className="py-8 text-4xl md:py-12 text-5xl mb-4 text-main-text">
             {t('ourProjects')}</h2>
             <p className="text-white font-light mx-auto md:text-2xl mx-auto">
             {t('projectsDesc')}
@@ -62,7 +62,7 @@ export default function Portfolio() {
 
               {/* Text Right */}
               <div className="w-full md:w-5/12 flex flex-col justify-center items-start">
-                <h3 className="text-3xl md:text-4xl font-serif text-main-text mb-6">{category.title}</h3>
+                <h3 className="text-3xl md:text-4xl  text-main-text mb-6">{category.title}</h3>
                 <p className="text-white/80 font-light text-lg mb-8 leading-relaxed">
                   {category.description}
                 </p>

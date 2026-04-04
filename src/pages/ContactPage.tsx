@@ -20,7 +20,7 @@ export default function ContactPage() {
       >
         <div className="space-y-12">
           <div>
-            <h1 className="text-5xl md:text-7xl font-serif text-main-text mb-8">{t('contactUs')}</h1>
+            <h1 className="text-5xl md:text-7xl  text-main-text mb-8">{t('contactUs')}</h1>
             <p className="text-white text-lg font-light max-w-md">
               {t('contactDesc')}
             </p>
@@ -34,10 +34,29 @@ export default function ContactPage() {
             <div>
               <h3 className="text-main-text text-sm uppercase tracking-widest mb-4 border-b border-main-text/20 pb-2 inline-block">{t('inquiries')}</h3>
               <div className="text-white font-light text-lg space-y-2">
-                <p className="hover:text-main-text transition-colors cursor-pointer">{t('studioEmail')}</p>
-                <div className="pt-2 space-y-1">
-                  <p>{t('studioPhone1')}</p>
-                  <p>{t('studioPhone2')}</p>
+                <a 
+                    href={`mailto:${t('studioEmail')}`}
+                    dir="ltr" 
+                    className="inline-block hover:text-main-text transition-colors w-fit"
+                  >
+                    {t('studioEmail')}
+                  </a>
+
+                <div className="pt-2 flex flex-col space-y-1 rtl:items-start">
+                  <a 
+                    href={`tel:${t('studioPhone1')}`} 
+                    dir="ltr" 
+                    className="inline-block hover:text-main-text transition-colors w-fit"
+                  >
+                    {t('studioPhone1')}
+                  </a>
+                  <a 
+                    href={`tel:${t('studioPhone2')}`} 
+                    dir="ltr" 
+                    className="inline-block hover:text-main-text transition-colors w-fit"
+                  >
+                    {t('studioPhone2')}
+                  </a>
                 </div>
               </div>
             </div>
@@ -50,7 +69,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className={`px-10 py-4 rounded-full inline-flex items-center space-x-3 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300 group`}
             >
-              <Navigation size={20} className="group-hover:scale-110 transition-transform" />
+              <Navigation size={16} className="rtl:rotate-270 group-hover:scale-110 transition-transform" />
               <span className="uppercase tracking-widest text-sm font-bold">{t('getDirections')}</span>
             </a>
           </div>
@@ -61,7 +80,7 @@ export default function ContactPage() {
             <div className="w-10 h-10 rounded-full bg-main-text/10 flex items-center justify-center">
               <MapPin className="text-main-text" size={20} />
             </div>
-            <h2 className="text-2xl font-serif text-white">{t('mapTitle')}</h2>
+            <h2 className="text-2xl  text-white">{t('mapTitle')}</h2>
           </div>
           
           <div className={`w-full h-[500px] md:h-[600px] rounded-3xl overflow-hidden border border-main-text/10 shadow-2xl ${GLASS_CLASSES} group`}>

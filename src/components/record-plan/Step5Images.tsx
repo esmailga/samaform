@@ -30,7 +30,7 @@ export default function Step5Images({
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepFive')}</h2>
-        <p className="text-4xl font-serif text-main-text">{t('stepFiveDesc')}</p>
+        <p className="text-4xl  text-main-text">{t('stepFiveDesc')}</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

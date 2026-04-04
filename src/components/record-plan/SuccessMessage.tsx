@@ -13,7 +13,7 @@ export default function SuccessMessage() {
         <div className="w-20 h-20 bg-main-text rounded-full flex items-center justify-center mx-auto mb-6">
           <Check size={40} className="text-header" />
         </div>
-        <h2 className="text-3xl font-serif text-white mb-4">Plan Recorded!</h2>
+        <h2 className="text-3xl  text-white mb-4">Plan Recorded!</h2>
         <p className="text-white/60">Thank you for sharing your vision. Our team will review your plan and get back to you shortly.</p>
       </motion.div>
     </div>

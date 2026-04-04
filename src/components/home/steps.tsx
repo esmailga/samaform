@@ -26,7 +26,7 @@ export default function StepsSection() {
             className={`p-8 md:p-10 rounded-3xl ${GLASS_CLASSES} flex items-center`}
           >
             {/* Animated Number */}
-            <div className="text-5xl md:text-6xl font-serif text-main-text min-w-[80px]">
+            <div className="text-5xl md:text-6xl  text-main-text min-w-[80px]">
               <Counter from={0} to={step.number} prefix="0" />
             </div>
 

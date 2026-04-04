@@ -31,7 +31,7 @@ export default function ProjectsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-5xl md:text-7xl font-serif text-main-text mb-8">{t('ourProjects')}</h1>
+          <h1 className="text-5xl md:text-7xl  text-main-text mb-8">{t('ourProjects')}</h1>
           <p className="text-white text-lg max-w-2xl font-light">
             {t('projectsPageDesc2')}
           </p>
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col space-y-32 mt-24">
         {projectCategories.map((category) => (
           <div key={category.id} id={category.id} className="scroll-mt-32">
-            <h2 className="text-3xl md:text-4xl font-serif text-main-text mb-12 border-b border-main-text/20 pb-4">{category.title}</h2>
+            <h2 className="text-3xl md:text-4xl  text-main-text mb-12 border-b border-main-text/20 pb-4">{category.title}</h2>
             <CategoryCarousel category={category} />
           </div>
         ))}
