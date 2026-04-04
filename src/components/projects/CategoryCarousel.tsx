@@ -47,7 +47,7 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
             <div className="absolute inset-0 bg-header/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute bottom-0 inset-x-0 p-6 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
               <div className={`p-6 rounded-2xl ${GLASS_CLASSES}`}>
-                <h3 className="text-2xl font-serif text-main-text">{category.title} {t('concept')} {projects[currentIndex]}</h3>
+                <h3 className="text-2xl  text-main-text">{category.title} {t('concept')} {projects[currentIndex]}</h3>
               </div>
             </div>
           </motion.div>

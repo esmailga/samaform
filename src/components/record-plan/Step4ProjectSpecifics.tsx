@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
-import { StepProps, RoomCount, DesignType, BalconyAns, ShopType, Atmoshpere, CuisineType, SeatingCapacity, SpaceWanted, EmployeeCount, WorkEnvironment, AmenitiesWanted, SalonServices, StationsCount, Ambiance, ArchitecturalStyle, FeaturesType } from './types';
+import { StepProps, RoomCount, DesignType, BalconyAns, ShopType, Atmoshpere, CuisineType, SeatingCapacity, SpaceWanted, EmployeeCount, WorkEnvironment, AmenitiesWanted, SalonServices, StationsCount, Ambiance, ArchitecturalStyle, FeaturesType, FloorsCount } from './types';
 
 export default function Step4ProjectSpecifics({ formData, updateFields, updateSpecifics }: StepProps) {
   const { t } = useLanguage();
@@ -28,6 +28,12 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
   const balconyAns = [
     { id: 'yes', label: t('yes') },
     { id: 'no', label: t('no') }
+  ];
+
+  const floorsCount = [
+    { id: 'one', label: t('oneFloor') },
+    { id: 'two', label: t('twoFloor') },
+    { id: 'three', label: t('threeFloor') }
   ];
 
   const outdoorType = [
@@ -138,7 +144,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepFour')}</h2>
-        <p className="text-4xl font-serif text-main-text">
+        <p className="text-4xl text-main-text">
           {t('stepFourDesc', { type: t(formData.projectType as any) })}
         </p>
       </div>
@@ -147,12 +153,15 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
           <>
             <div className="md:col-span-2">
               <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('roomsCount')}</label>
-              <div className="flex flex-wrap gap-2 md:gap-4">
+              <div className="flex flex-wrap gap-2 md:gap-4 mb-4">
                 {roomCount.map((num) => (
                   <button
                     key={num.id}
                     type="button"
-                    onClick={() => updateFields({roomCount: num.id as RoomCount})}
+                    onClick={() => updateFields({
+                      roomCount: formData.roomCount === num.id ? '' : num.id as RoomCount,
+                      roomCountExact: ''
+                    })}
                     className={`flex-1 py-3 rounded-xl border transition-all ${
                       formData.roomCount === num.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -163,15 +172,26 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   </button>
                 ))}
               </div>
+              <input 
+                type="number"
+                min="1"
+                value={formData.roomCountExact}
+                onChange={e => updateFields({ 
+                  roomCountExact: e.target.value,
+                  roomCount: ''
+                })}
+                className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors mt-2"
+                placeholder={t('exactRoomsPlaceholder') || 'Or enter exact number of rooms...'}
+              />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('interiorDesign')}</label>
+              <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('designType')}</label>
               <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {designType.map((design) => (
                   <button
                     key={design.id}
                     type="button"
-                    onClick={() => updateFields({designType: design.id as DesignType})}
+                    onClick={() => updateFields({designType: formData.designType === design.id ? '' : design.id as DesignType})}
                     className={`p-4 text-lg text-center rounded-xl border transition-all ${
                       formData.designType === design.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -216,7 +236,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={opt.id}
                     type="button"
-                    onClick={() => updateFields({balconyAns: opt.id as BalconyAns})}
+                    onClick={() => updateFields({balconyAns: formData.balconyAns === opt.id ? '' : opt.id as BalconyAns})}
                     className={`flex-1 py-3 rounded-xl border transition-all ${
                       formData.balconyAns === opt.id
                         ? 'bg-main-text border-main-text text-header' 
@@ -246,25 +266,25 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
           <>
             <div className="md:col-span-2">
               <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('floorsCount')}</label>
-              <div className="flex flex-wrap gap-2 md:gap-4">
-                {['1', '2', '3+'].map(num => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {floorsCount.map((num) => (
                   <button
-                    key={num}
+                    key={num.id}
                     type="button"
-                    onClick={() => updateSpecifics?.('floors', num)}
-                    className={`flex-1 py-3 rounded-xl border transition-all ${
-                      formData.specifics.floors === num 
+                    onClick={() => updateFields({ floorsCount: formData.floorsCount === num.id ? '' : num.id as FloorsCount })}
+                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                      formData.floorsCount === num.id
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
                     }`}
                   >
-                    {num}
+                    <h3 className="font-medium text-md">{num.label}</h3>
                   </button>
                 ))}
               </div>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('outdoorArea')}</label>
+              <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('outdoorArea')}</label>
               <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {outdoorType.map((outdoor) => (
                   <button
@@ -281,7 +301,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     className={`p-4 text-lg text-center rounded-xl border transition-all ${
                       ((formData.outdoorType as unknown as string[]) || []).includes(outdoor.id)
                         ? 'bg-main-text border-main-text text-header' 
-                        : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
+                        : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                     }`}
                   >
                     <h3 className="font-medium text-md">{outdoor.label}</h3>
@@ -296,7 +316,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={style.id}
                     type="button"
-                    onClick={() => updateFields({architecturalStyle: style.id as ArchitecturalStyle})}
+                    onClick={() => updateFields({architecturalStyle: formData.architecturalStyle === style.id ? '' : style.id as ArchitecturalStyle})}
                     className={`p-4 text-lg text-center rounded-xl border transition-all ${
                       formData.architecturalStyle === style.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -325,13 +345,13 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
         {formData.projectType === 'shop' && (
           <>
             <div className="md:col-span-2">
-              <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('businessType')}</label>
+              <label className="block text-white text-sm uppercase tracking-widest mt-6 mb-6 px-1">{t('shopType')}</label>
               <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {shopType.map((shop) => (
                   <button
                     key={shop.id}
                     type="button"
-                    onClick={() => updateFields({shopType: shop.id as ShopType})}
+                    onClick={() => updateFields({shopType: formData.shopType === shop.id ? '' : shop.id as ShopType})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.shopType === shop.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -376,7 +396,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={atom.id}
                     type="button"
-                    onClick={() => updateFields({atmoshpere: atom.id as Atmoshpere})}
+                    onClick={() => updateFields({atmoshpere: formData.atmoshpere === atom.id ? '' : atom.id as Atmoshpere})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.atmoshpere === atom.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -411,7 +431,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={cuisine.id}
                     type="button"
-                    onClick={() => updateFields({cuisineType: cuisine.id as CuisineType})}
+                    onClick={() => updateFields({cuisineType: formData.cuisineType === cuisine.id ? '' : cuisine.id as CuisineType})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.cuisineType === cuisine.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -430,7 +450,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={seating.id}
                     type="button"
-                    onClick={() => updateFields({seatingCapacity: seating.id as SeatingCapacity})}
+                    onClick={() => updateFields({seatingCapacity: formData.seatingCapacity === seating.id ? '' : seating.id as SeatingCapacity})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.seatingCapacity === seating.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -443,7 +463,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
               </div>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('spaceWanted')}</label>
+              <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('spaceWantedTitle')}</label>
               <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {spaceWanted.map((space) => (
                   <button
@@ -491,7 +511,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={employee.id}
                     type="button"
-                    onClick={() => updateFields({employeeCount: employee.id as EmployeeCount})}
+                    onClick={() => updateFields({employeeCount: formData.employeeCount === employee.id ? '' : employee.id as EmployeeCount})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.employeeCount === employee.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -510,7 +530,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={environment.id}
                     type="button"
-                    onClick={() => updateFields({workEnvironment: environment.id as WorkEnvironment})}
+                    onClick={() => updateFields({workEnvironment: formData.workEnvironment === environment.id ? '' : environment.id as WorkEnvironment})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.workEnvironment === environment.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -523,7 +543,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
               </div>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('amenitiesWanted')}</label>
+              <label className="block text-white text-sm uppercase tracking-widest mb-6 mt-6 px-1">{t('amenitiesWantedTitle')}</label>
               <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
                 {amenitiesWanted.map((amenities) => (
                   <button
@@ -597,7 +617,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={station.id}
                     type="button"
-                    onClick={() => updateFields({stationsCount: station.id as StationsCount})}
+                    onClick={() => updateFields({stationsCount: formData.stationsCount === station.id ? '' : station.id as StationsCount})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.stationsCount === station.id 
                         ? 'bg-main-text border-main-text text-header' 
@@ -616,7 +636,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   <button
                     key={ambi.id}
                     type="button"
-                    onClick={() => updateFields({ambiance: ambi.id as Ambiance})}
+                    onClick={() => updateFields({ambiance: formData.ambiance === ambi.id ? '' : ambi.id as Ambiance})}
                     className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
                       formData.ambiance === ambi.id 
                         ? 'bg-main-text border-main-text text-header' 

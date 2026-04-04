@@ -51,7 +51,7 @@ export default function ServicesPage() {
         transition={{ duration: 0.8 }}
         className="relative z-10"
       >
-        <h1 className="text-5xl md:text-7xl font-serif text-main-text mb-8">{t('ourServices')}</h1>
+        <h1 className="text-5xl md:text-7xl  text-main-text mb-8">{t('ourServices')}</h1>
         <p className="text-white text-lg max-w-2xl mb-16 font-light">
           {t('servicesPageDesc')}
         </p>
@@ -81,7 +81,7 @@ export default function ServicesPage() {
 
             {/* Text Right */}
             <div className="w-full md:w-5/12 flex flex-col justify-center items-start">
-              <h3 className="text-3xl md:text-4xl font-serif text-main-text mb-6">{service.title}</h3>
+              <h3 className="text-3xl md:text-4xl  text-main-text mb-6">{service.title}</h3>
               <p className="text-white/80 font-light text-lg mb-8 leading-relaxed">
                 {service.description}
               </p>

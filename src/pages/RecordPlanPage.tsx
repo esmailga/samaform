@@ -11,7 +11,7 @@ import Step1BasicInfo from '../components/record-plan/Step1BasicInfo';
 import Step2ProjectType from '../components/record-plan/Step2ProjectType';
 import Step3ProjectDetails from '../components/record-plan/Step3ProjectDetails';
 import Step4ProjectSpecifics from '../components/record-plan/Step4ProjectSpecifics';
-import Step5Images from '../components/record-plan/Step5Props';
+import Step5Images from '../components/record-plan/Step5Images';
 import SuccessMessage from '../components/record-plan/SuccessMessage';
 
 const INITIAL_DATA: FormData = {
@@ -36,6 +36,7 @@ const INITIAL_DATA: FormData = {
   apartmentDetails: '',
   balconyAns: '',
   villaDetails: '',
+  floorsCount: '',
   shopDetails: '',
   spaceDetails: '',
   officeDetails: '',
@@ -55,6 +56,7 @@ const INITIAL_DATA: FormData = {
   salonServices: '',
   stationsCount: '',
   ambiance: '',
+  roomCountExact: '',
 };
 
 export default function RecordPlanPage() {
@@ -114,27 +116,27 @@ export default function RecordPlanPage() {
       case 1:
         return (
           formData.name.trim().length >= 6 &&
-          validateEmail(formData.email) &&
+          (formData.email === '' || validateEmail(formData.email)) &&
           validatePhone(formData.phone) &&
           formData.city.trim().length >= 3
         );
       case 2:
         return formData.projectType !== '';
       case 3:
-        return formData.budgetTier !== '' &&
-        formData.areaTier !== '' &&
+        return (formData.budgetTier !== '' || formData.budgetExact !== '') &&
+        (formData.areaTier !== '' || formData.areaExact !== '') &&
         formData.timeline !== '';
       case 4:
         if (formData.projectType === 'apartement') {
           return (
-            formData.roomCount !== '' &&
+            (formData.roomCount !== '' || formData.roomCountExact !== '') &&
             formData.designType !== '' &&
             formData.balconyAns !== ''
           );
         }
         if (formData.projectType === 'villa') {
           return (
-            formData.specifics.floors !== '' && 
+            formData.floorsCount !== '' && 
             formData.architecturalStyle !== ''
           );
         }
@@ -236,7 +238,7 @@ export default function RecordPlanPage() {
       <div className="absolute bottom-0 end-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative z-10">
-        <FormProgress currentStep={currentStep} totalSteps={5} />
+        <FormProgress currentStep={currentStep} totalSteps={5} onStepClick={setCurrentStep} />
 
         <form className={`p-2 md:p-12 rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
           <AnimatePresence mode="wait">

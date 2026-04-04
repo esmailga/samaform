@@ -26,14 +26,14 @@ export default function Step2ProjectType({ formData, updateFields }: StepProps) 
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepTwo')}</h2>
-        <p className="text-4xl font-serif text-main-text mb-12">{t('stepTwoDesc')}</p>
+        <p className="text-4xl text-main-text mb-12">{t('stepTwoDesc')}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projectTypes.map((type) => (
           <button
             key={type.id}
             type="button"
-            onClick={() => updateFields({ projectType: type.id as ProjectType })}
+            onClick={() => updateFields({ projectType: formData.projectType === type.id ? '' as ProjectType : type.id as ProjectType })}
             className={`p-6 rounded-2xl border transition-all duration-300 text-start flex flex-col items-start space-y-4 ${
               formData.projectType === type.id 
                 ? 'bg-main-text border-main-text text-header' 
