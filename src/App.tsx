@@ -10,12 +10,16 @@ import RecordPlanPage from './pages/RecordPlanPage';
 import ContactPage from './pages/ContactPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import AdminPage from './pages/AdminPage';
+
+import AssetPreloader from './components/common/AssetPreloader';
 
 export default function App() {
   return (
     <LanguageProvider children={undefined}>
       <Router>
         <ScrollToTop />
+        <AssetPreloader />
         <div className="min-h-screen text-white selection:bg-main-text/30 font-sans">
           <Navbar />
           <main>
@@ -27,6 +31,7 @@ export default function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/admin-portal-secure" element={<AdminPage />} />
             </Routes>
           </main>
           <Footer />
