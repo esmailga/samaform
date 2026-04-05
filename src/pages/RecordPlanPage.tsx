@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { GLASS_CLASSES } from '../constants/styles';
@@ -12,6 +12,7 @@ import Step2ProjectType from '../components/record-plan/Step2ProjectType';
 import Step3ProjectDetails from '../components/record-plan/Step3ProjectDetails';
 import Step4ProjectSpecifics from '../components/record-plan/Step4ProjectSpecifics';
 import Step5Images from '../components/record-plan/Step5Images';
+import DynamicStep from '../components/record-plan/DynamicStep';
 import SuccessMessage from '../components/record-plan/SuccessMessage';
 
 const INITIAL_DATA: FormData = {
@@ -66,6 +67,22 @@ export default function RecordPlanPage() {
   const [formData, setFormData] = useState<FormData>(INITIAL_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formConfig, setFormConfig] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch('/api/form/config');
+        const data = await res.json();
+        if (res.ok && data.config) {
+          setFormConfig(data.config);
+        }
+      } catch (err) {
+        console.error('Failed to fetch form config');
+      }
+    };
+    fetchConfig();
+  }, []);
 
   const inspirationInputRef = useRef<HTMLInputElement>(null);
   const currentSpaceInputRef = useRef<HTMLInputElement>(null);
@@ -112,6 +129,15 @@ export default function RecordPlanPage() {
   };
 
   const isStepValid = () => {
+    if (formConfig && formConfig.steps && formConfig.steps[currentStep - 1]) {
+      const step = formConfig.steps[currentStep - 1];
+      return step.fields.every((field: any) => {
+        if (!field.required) return true;
+        const value = formData[field.id as keyof FormData];
+        return value !== undefined && value !== '';
+      });
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -193,15 +219,46 @@ export default function RecordPlanPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('Form Data Submitted:', formData);
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    setTimeout(() => navigate('/'), 3000);
+    try {
+      const response = await fetch('/api/form/responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setIsSuccess(true);
+        setTimeout(() => navigate('/'), 3000);
+      } else {
+        alert('Failed to submit form. Please try again.');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Connection error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderStep = () => {
+    if (formConfig && formConfig.steps && formConfig.steps[currentStep - 1]) {
+      const step = formConfig.steps[currentStep - 1];
+      // Special case for images step which has custom file upload logic
+      if (step.name === 'images') {
+        return (
+          <Step5Images 
+            formData={formData} 
+            updateFields={updateFields}
+            inspirationInputRef={inspirationInputRef}
+            currentSpaceInputRef={currentSpaceInputRef}
+            handleFileChange={handleFileChange}
+            removeFile={removeFile}
+          />
+        );
+      }
+      return <DynamicStep step={step} formData={formData} updateFields={updateFields} />;
+    }
+
     switch (currentStep) {
       case 1:
         return <Step1BasicInfo formData={formData} updateFields={updateFields} />;
@@ -238,7 +295,7 @@ export default function RecordPlanPage() {
       <div className="absolute bottom-0 end-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative z-10">
-        <FormProgress currentStep={currentStep} totalSteps={5} onStepClick={setCurrentStep} />
+        <FormProgress currentStep={currentStep} totalSteps={formConfig?.steps?.length || 5} onStepClick={setCurrentStep} />
 
         <form className={`p-2 md:p-12 rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
           <AnimatePresence mode="wait">

@@ -1,0 +1,156 @@
+import express from "express";
+import { createServer as createViteServer } from "vite";
+import path from "path";
+import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import cors from "cors";
+import multer from "multer";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import { DEFAULT_FORM_CONFIG } from "./src/constants/defaultFormConfig";
+
+const db = new Database("database.db");
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret-admin-key";
+
+// Initialize Database
+db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS form_responses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    data TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS form_config (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    config TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+// Seed Admin User if not exists
+const adminExists = db.prepare("SELECT * FROM users WHERE username = ?").get("admin");
+if (!adminExists) {
+  const hashedPassword = bcrypt.hashSync("admin123", 10);
+  db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run("admin", hashedPassword);
+}
+
+// Seed Default Form Config if not exists
+const configExists = db.prepare("SELECT * FROM form_config LIMIT 1").get();
+if (!configExists) {
+  const config = JSON.stringify(DEFAULT_FORM_CONFIG);
+  db.prepare("INSERT INTO form_config (config) VALUES (?)").run(config);
+}
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const upload = multer({ dest: "uploads/" });
+
+// Auth Middleware
+const authenticateAdmin = (req: any, res: any, next: any) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+// --- API ROUTES ---
+
+// Admin Login
+app.post("/api/admin/login", (req, res) => {
+  const { username, password } = req.body;
+  const user: any = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+
+  if (!user || !bcrypt.compareSync(password, user.password)) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: "24h" });
+  res.json({ token });
+});
+
+// Save Form Response
+app.post("/api/form/responses", (req, res) => {
+  try {
+    const data = JSON.stringify(req.body);
+    db.prepare("INSERT INTO form_responses (data) VALUES (?)").run(data);
+    res.status(201).json({ message: "Response saved successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save response" });
+  }
+});
+
+// Get All Responses (Admin)
+app.get("/api/admin/responses", authenticateAdmin, (req, res) => {
+  const responses = db.prepare("SELECT * FROM form_responses ORDER BY created_at DESC").all();
+  res.json(responses.map((r: any) => ({ ...r, data: JSON.parse(r.data) })));
+});
+
+// Delete Response (Admin)
+app.delete("/api/admin/responses/:id", authenticateAdmin, (req, res) => {
+  db.prepare("DELETE FROM form_responses WHERE id = ?").run(req.params.id);
+  res.json({ message: "Response deleted" });
+});
+
+// Get Form Config
+app.get("/api/form/config", (req, res) => {
+  const config: any = db.prepare("SELECT * FROM form_config ORDER BY id DESC LIMIT 1").get();
+  if (!config) {
+    return res.json({ config: null });
+  }
+  res.json({ config: JSON.parse(config.config) });
+});
+
+// Update Form Config (Admin)
+app.post("/api/admin/form/config", authenticateAdmin, (req, res) => {
+  try {
+    const config = JSON.stringify(req.body);
+    db.prepare("INSERT INTO form_config (config) VALUES (?)").run(config);
+    res.json({ message: "Config updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update config" });
+  }
+});
+
+// --- VITE MIDDLEWARE ---
+
+async function startServer() {
+  const PORT = 3000;
+
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), "dist");
+    app.use(express.static(distPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+startServer();
