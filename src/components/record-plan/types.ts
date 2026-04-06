@@ -33,7 +33,6 @@ export interface FormData {
   // Section 2: Project Type
   projectType: ProjectType | '';
   // Section 3: Project Details
-  vision: string;
   budget: string;
   timeline: TimeLine | '';
   designType: DesignType | '';
@@ -80,7 +79,6 @@ const INITIAL_DATA: FormData = {
   phone: '',
   city: '',
   projectType: '',
-  vision: '',
   budget: '',
   timeline: '',
   designType: '',

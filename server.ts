@@ -8,8 +8,16 @@ import jwt from "jsonwebtoken";
 import cors from "cors";
 import multer from "multer";
 
+import fs from "fs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
 
 import { DEFAULT_FORM_CONFIG } from "./src/constants/defaultFormConfig";
 
@@ -54,8 +62,19 @@ if (!configExists) {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-const upload = multer({ dest: "uploads/" });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 
 // Auth Middleware
 const authenticateAdmin = (req: any, res: any, next: any) => {
@@ -87,12 +106,36 @@ app.post("/api/admin/login", (req, res) => {
 });
 
 // Save Form Response
-app.post("/api/form/responses", (req, res) => {
+app.post("/api/form/responses", upload.fields([
+  { name: 'inspirationImages', maxCount: 5 },
+  { name: 'currentSpaceImages', maxCount: 5 }
+]), (req, res) => {
   try {
-    const data = JSON.stringify(req.body);
-    db.prepare("INSERT INTO form_responses (data) VALUES (?)").run(data);
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const data = { ...req.body };
+    
+    // Parse JSON strings back to objects if they were stringified on client
+    Object.keys(data).forEach(key => {
+      try {
+        data[key] = JSON.parse(data[key]);
+      } catch (e) {
+        // Not a JSON string, keep as is
+      }
+    });
+
+    // Add file paths to data
+    if (files['inspirationImages']) {
+      data.inspirationImages = files['inspirationImages'].map(f => `/uploads/${f.filename}`);
+    }
+    if (files['currentSpaceImages']) {
+      data.currentSpaceImages = files['currentSpaceImages'].map(f => `/uploads/${f.filename}`);
+    }
+
+    const jsonData = JSON.stringify(data);
+    db.prepare("INSERT INTO form_responses (data) VALUES (?)").run(jsonData);
     res.status(201).json({ message: "Response saved successfully" });
   } catch (err) {
+    console.error("Save error:", err);
     res.status(500).json({ error: "Failed to save response" });
   }
 });

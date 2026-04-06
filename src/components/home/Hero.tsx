@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
 import Logo from '../common/Logo';
-import heroBg from '../../assets/hero.jpg'; // Import fix from previous step
+import heroBg from '../../assets/hero.avif';
+
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -23,7 +24,7 @@ export default function Hero() {
         transition={{ duration: 1.5, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/20 to-black/80" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/50 to-black/80" />
         <img 
           src={heroBg} 
           alt="Hero Background" 

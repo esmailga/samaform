@@ -7,10 +7,10 @@ export default function StepsSection() {
   const { t } = useLanguage();
 
   const steps = [
-    { number: 1, title: t('stepOne') },
-    { number: 2, title: t('stepTwo') },
-    { number: 3, title: t('stepThree') },
-    { number: 4, title: t('stepFour') }
+    { number: 1, title: t('homeStepOne') },
+    { number: 2, title: t('homeStepTwo') },
+    { number: 3, title: t('homeStepThree') },
+    { number: 4, title: t('homeStepFour') }
   ];
 
   return (
@@ -35,7 +35,7 @@ export default function StepsSection() {
 
             {/* Text beside number */}
             <div className="flex flex-col">
-              <h3 className="text-lg md:text-xl uppercase tracking-widest text-white font-medium leading-tight">
+              <h3 className="text-lg md:text-lg uppercase tracking-widest text-white font-medium leading-tight">
                 {step.title}
               </h3>
             </div>

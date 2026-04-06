@@ -5,17 +5,17 @@ import { useRef } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { GLASS_CLASSES, GLASS_HOVER } from "../../constants/styles";
 
-const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg}', { 
+const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg,avif}', { 
   eager: true, 
   import: 'default' 
 });
 
 export const getServicesList = (t: any) => [
-  { id: 'service1', title: t('interiorDesign'), description: t('intDesc'), image: assetImages['../../assets/service1.jpg'] },
-  { id: 'service2', title: t('architecturalDesign'), description: t('arcDesc'), image: assetImages['../../assets/service2.jpg'] },
-  { id: 'service3', title: t('landscapeDesign'), description: t('lanDesc'), image: assetImages['../../assets/service3.jpg'] },
-  { id: 'service4', title: t('commercialDesign'), description: t('comDesDesc'), image: assetImages['../../assets/service4.jpg'] },
-  { id: 'service5', title: t('objectsDesign'), description: t('objDesc'), image: assetImages['../../assets/service5.jpg'] },
+  { id: 'service1', title: t('interiorDesign'), description: t('intDesc'), image: assetImages['../../assets/service1.avif'] },
+  { id: 'service2', title: t('architecturalDesign'), description: t('arcDesc'), image: assetImages['../../assets/service2.avif'] },
+  { id: 'service3', title: t('landscapeDesign'), description: t('lanDesc'), image: assetImages['../../assets/service3.avif'] },
+  { id: 'service4', title: t('commercialDesign'), description: t('comDesDesc'), image: assetImages['../../assets/service4.avif'] },
+  { id: 'service5', title: t('objectsDesign'), description: t('objDesc'), image: assetImages['../../assets/service5.avif'] },
 ];
 
 export default function ServicesSection() {
@@ -37,12 +37,9 @@ export default function ServicesSection() {
 
         {/* Header */}
         <div className="mb-16 text-center md:text-center">
-          <h2 className="py-8 text-4xl md:py-12 text-5xl  mb-4 text-main-text">
+          <h2 className="py-8 text-4xl md:py-12 text-6xl font-bold mb-4 text-main-text">
             {t('services')}
           </h2>
-          <p className="text-white font-light mx-auto md:text-2xl mx-auto">
-            {t('servicesDesc')}
-          </p>
         </div>
 
         {/* STACK CONTAINER */}

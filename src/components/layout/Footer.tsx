@@ -6,7 +6,7 @@ import Logo from '../common/Logo';
 export default function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="py-20 px-6 border-t border-main-text/10 bg-header/80 backdrop-blur-md relative overflow-hidden">
+    <footer className="py-10 px-6 border-t border-main-text/10 bg-header/80 backdrop-blur-md relative overflow-hidden">
       <div className="absolute bottom-0 end-0 w-[500px] h-[500px] bg-main-text/5 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 relative z-10">
@@ -56,6 +56,9 @@ export default function Footer() {
             <Link to="/privacy" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
           </div>
         </div>
+      </div>
+      <div className="mt-10 flex items-center justify-center">
+        <p className="text-sm text-white/50">{t('rightsRes')}</p>
       </div>
     </footer>
   );

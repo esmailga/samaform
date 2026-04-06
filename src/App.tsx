@@ -31,7 +31,7 @@ export default function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/admin-portal-secure" element={<AdminPage />} />
+              <Route path="/adviechadowsecupor" element={<AdminPage />} />
             </Routes>
           </main>
           <Footer />

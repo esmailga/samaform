@@ -3,12 +3,12 @@ import { motion } from 'motion/react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import CategoryCarousel from '../components/projects/CategoryCarousel';
-import { getProjectCategories } from '../components/home/Portfolio';
+import { getProjectCategorie } from '../components/projects/CategoryCarousel';
 
 export default function ProjectsPage() {
   const { t } = useLanguage();
   const location = useLocation();
-  const projectCategories = getProjectCategories(t);
+  const projectCategories = getProjectCategorie(t);
 
   useEffect(() => {
     if (location.hash) {
@@ -38,10 +38,10 @@ export default function ProjectsPage() {
         </motion.div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-6 flex flex-col space-y-32 mt-24">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col items-center space-y-32 mt-24">
         {projectCategories.map((category) => (
           <div key={category.id} id={category.id} className="scroll-mt-32">
-            <h2 className="text-3xl md:text-4xl  text-main-text mb-12 border-b border-main-text/20 pb-4">{category.title}</h2>
+            <h2 className="text-3xl md:text-4xl text-main-text mb-12 border-b border-main-text/20 pb-4">{category.title}</h2>
             <CategoryCarousel category={category} />
           </div>
         ))}

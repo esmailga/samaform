@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 const CRITICAL_ASSETS = [
   'logo2.png',
   'logo3.png',
-  '/src/assets/hero.jpg'
+  '/src/assets/hero.avif'
   // Add other critical assets here if needed
 ];
 
