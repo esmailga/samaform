@@ -3,12 +3,11 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useLocation } from 'react-router-dom';
 
-
-import service1Img from '../assets/service1.jpg';
-import service2Img from '../assets/service2.jpg';
-import service3Img from '../assets/service3.jpg';
-import service4Img from '../assets/service4.jpg';
-import service5Img from '../assets/service5.jpg';
+import service1Img from '../assets/service1.avif';
+import service2Img from '../assets/service2.avif';
+import service3Img from '../assets/service3.avif';
+import service4Img from '../assets/service4.avif';
+import service5Img from '../assets/service5.avif';
 
 export const getServicesList = (t: any) => [
   { id: 'interior-design', title: t('interiorDesign'), description: t('intDesc'), image: service1Img },

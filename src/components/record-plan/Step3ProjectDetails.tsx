@@ -99,10 +99,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
             type="number"
             min='1'
             value={formData.areaExact}
-            onChange={(e) => updateFields({ 
-              areaExact: e.target.value,
-              areaTier: ''
-            })}
+            onChange={(e) => updateFields({ areaExact: e.target.value, areaTier: '' })}
             className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
             placeholder={t('exactAreaPlaceholder') || 'Or enter exact area in sqm...'}
 

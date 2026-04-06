@@ -5,7 +5,7 @@ import { GLASS_CLASSES } from '../constants/styles';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { FormData, ProjectType, BudgetTier, AreaTier, TimeLine, RoomCount, BalconyAns, ShopType, Atmoshpere, CuisineType, SeatingCapacity, SpaceWanted, EmployeeCount, WorkEnvironment, AmenitiesWanted, SalonServices, StationsCount, Ambiance, ArchitecturalStyle } from '../components/record-plan/types';
+import { FormData as ProjectFormData, ProjectType, BudgetTier, AreaTier, TimeLine, RoomCount, BalconyAns, ShopType, Atmoshpere, CuisineType, SeatingCapacity, SpaceWanted, EmployeeCount, WorkEnvironment, AmenitiesWanted, SalonServices, StationsCount, Ambiance, ArchitecturalStyle } from '../components/record-plan/types';
 import FormProgress from '../components/record-plan/FormProgress';
 import Step1BasicInfo from '../components/record-plan/Step1BasicInfo';
 import Step2ProjectType from '../components/record-plan/Step2ProjectType';
@@ -15,13 +15,14 @@ import Step5Images from '../components/record-plan/Step5Images';
 import DynamicStep from '../components/record-plan/DynamicStep';
 import SuccessMessage from '../components/record-plan/SuccessMessage';
 
-const INITIAL_DATA: FormData = {
+import { convertArabicToWestern } from '../utils/numbers';
+
+const INITIAL_DATA: ProjectFormData = {
   name: '',
   email: '',
   phone: '',
   city: '',
   projectType: '',
-  vision: '',
   budget: '',
   timeline: '',
   designType: '',
@@ -64,7 +65,7 @@ export default function RecordPlanPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>(INITIAL_DATA);
+  const [formData, setFormData] = useState<ProjectFormData>(INITIAL_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formConfig, setFormConfig] = useState<any>(null);
@@ -87,23 +88,42 @@ export default function RecordPlanPage() {
   const inspirationInputRef = useRef<HTMLInputElement>(null);
   const currentSpaceInputRef = useRef<HTMLInputElement>(null);
 
-  const updateFields = (fields: Partial<FormData>) => {
-    setFormData(prev => ({ ...prev, ...fields }));
+  const updateFields = (fields: Partial<ProjectFormData>) => {
+    const processedFields = { ...fields };
+    Object.keys(processedFields).forEach(key => {
+      const val = processedFields[key as keyof ProjectFormData];
+      if (typeof val === 'string') {
+        (processedFields as any)[key] = convertArabicToWestern(val);
+      }
+    });
+    setFormData(prev => ({ ...prev, ...processedFields }));
   };
 
   const updateSpecifics = (key: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      specifics: { ...prev.specifics, [key]: value }
+      specifics: { ...prev.specifics, [key]: convertArabicToWestern(value) }
     }));
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, type: 'inspiration' | 'current') => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
+      const newFiles = Array.from(e.target.files) as File[];
+      const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+      
+      const validFiles = newFiles.filter(file => {
+        if (file.size > MAX_SIZE) {
+          alert(`File "${file.name}" is too large. Max size is 1MB.`);
+          return false;
+        }
+        return true;
+      });
+
+      if (validFiles.length === 0) return;
+
       setFormData(prev => {
         const currentFiles = type === 'inspiration' ? prev.inspirationImages : prev.currentSpaceImages;
-        const combined = [...currentFiles, ...newFiles].slice(0, 5);
+        const combined = [...currentFiles, ...validFiles].slice(0, 5);
         return {
           ...prev,
           [type === 'inspiration' ? 'inspirationImages' : 'currentSpaceImages']: combined
@@ -125,7 +145,12 @@ export default function RecordPlanPage() {
   };
 
   const validatePhone = (phone: string) => {
-    return /^[\d\s+()-]{7,}$/.test(phone);
+    const usPhoneRegex = /^(?:\+1\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+    return usPhoneRegex.test(phone);
+  };
+
+  const validateName = (name: string) => {
+    return name.trim().split(/\s+/).length >= 2;
   };
 
   const isStepValid = () => {
@@ -133,7 +158,7 @@ export default function RecordPlanPage() {
       const step = formConfig.steps[currentStep - 1];
       return step.fields.every((field: any) => {
         if (!field.required) return true;
-        const value = formData[field.id as keyof FormData];
+        const value = formData[field.id as keyof ProjectFormData];
         return value !== undefined && value !== '';
       });
     }
@@ -141,7 +166,7 @@ export default function RecordPlanPage() {
     switch (currentStep) {
       case 1:
         return (
-          formData.name.trim().length >= 6 &&
+          validateName(formData.name) &&
           (formData.email === '' || validateEmail(formData.email)) &&
           validatePhone(formData.phone) &&
           formData.city.trim().length >= 3
@@ -220,10 +245,31 @@ export default function RecordPlanPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
+      const submitData = new FormData();
+      
+      // Append all non-file fields
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key !== 'inspirationImages' && key !== 'currentSpaceImages') {
+          const val = formData[key as keyof ProjectFormData];
+          if (typeof val === 'object') {
+            submitData.append(key, JSON.stringify(val));
+          } else {
+            submitData.append(key, String(val));
+          }
+        }
+      });
+
+      // Append files
+      formData.inspirationImages.forEach((file) => {
+        submitData.append('inspirationImages', file);
+      });
+      formData.currentSpaceImages.forEach((file) => {
+        submitData.append('currentSpaceImages', file);
+      });
+
       const response = await fetch('/api/form/responses', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: submitData,
       });
 
       if (response.ok) {
@@ -241,24 +287,10 @@ export default function RecordPlanPage() {
   };
 
   const renderStep = () => {
-    if (formConfig && formConfig.steps && formConfig.steps[currentStep - 1]) {
-      const step = formConfig.steps[currentStep - 1];
-      // Special case for images step which has custom file upload logic
-      if (step.name === 'images') {
-        return (
-          <Step5Images 
-            formData={formData} 
-            updateFields={updateFields}
-            inspirationInputRef={inspirationInputRef}
-            currentSpaceInputRef={currentSpaceInputRef}
-            handleFileChange={handleFileChange}
-            removeFile={removeFile}
-          />
-        );
-      }
-      return <DynamicStep step={step} formData={formData} updateFields={updateFields} />;
-    }
-
+    // If we have a custom form configuration from the admin, we could use it here.
+    // However, to keep the form "exactly the same" as requested, we'll use the hardcoded steps
+    // while still being fullstack (saving to backend).
+    
     switch (currentStep) {
       case 1:
         return <Step1BasicInfo formData={formData} updateFields={updateFields} />;
@@ -280,6 +312,10 @@ export default function RecordPlanPage() {
           />
         );
       default:
+        // Fallback to dynamic step if admin added more steps
+        if (formConfig && formConfig.steps && formConfig.steps[currentStep - 1]) {
+          return <DynamicStep step={formConfig.steps[currentStep - 1]} formData={formData} updateFields={updateFields} />;
+        }
         return null;
     }
   };
@@ -291,8 +327,8 @@ export default function RecordPlanPage() {
   return (
     <div className="pt-40 pb-32 px-6 min-h-screen max-w-5xl mx-auto relative overflow-hidden">
       {/* Background elements */}
-      <div className="absolute top-0 start-1/4 w-[500px] h-[500px] bg-main-text/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 end-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 start-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-main-text/5 rounded-full blur-[80px] md:blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 end-1/4 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-secondary/5 rounded-full blur-[70px] md:blur-[100px] pointer-events-none" />
 
       <div className="relative z-10">
         <FormProgress currentStep={currentStep} totalSteps={formConfig?.steps?.length || 5} onStepClick={setCurrentStep} />

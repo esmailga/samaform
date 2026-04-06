@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { GLASS_CLASSES, GLASS_HOVER } from '../../constants/styles';
 
-const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg}', { 
+const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg,avif}', { 
   eager: true, 
   import: 'default' 
 });
 
 export const getProjectCategories = (t: any) => [
-  { id: 'residential', title: t('residentialProjects'), description: t('resDesc'), image: assetImages[ '../../assets/project1.jpg'] },
-  { id: 'commercial', title: t('commercialProjects'), description: t('comDesc'), image: assetImages[ '../../assets/project2.jpg'] },
-  { id: 'garden-terrace', title: t('gardenTerrace'), description: t('garDesc'), image: assetImages[ '../../assets/project3.jpg'] },
+  { id: 'residential', title: t('residentialProjects'), description: t('resDesc'), image: assetImages[ '../../assets/project1.avif'] },
+  { id: 'commercial', title: t('commercialProjects'), description: t('comDesc'), image: assetImages[ '../../assets/project2.avif'] },
+  { id: 'garden-terrace', title: t('gardenTerrace'), description: t('garDesc'), image: assetImages[ '../../assets/project3.avif'] },
 ];
 
 export default function Portfolio() {
@@ -31,11 +31,9 @@ export default function Portfolio() {
           transition={{ duration: 0.4 }}
           className="mb-16 text-center md:text-center"
         >
-          <h2 className="py-8 text-4xl md:py-12 text-5xl mb-4 text-main-text">
+          <h2 className="py-8 text-4xl md:py-12 text-6xl font-bold mb-4 text-main-text">
             {t('ourProjects')}</h2>
-            <p className="text-white font-light mx-auto md:text-2xl mx-auto">
-            {t('projectsDesc')}
-          </p>
+
         </motion.div>
 
         <div className="flex flex-col space-y-20">
