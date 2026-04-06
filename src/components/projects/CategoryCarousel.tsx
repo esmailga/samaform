@@ -14,8 +14,8 @@ export const getProjectCategorie = (t: any) => [
     title: t('residentialProjectCar'), 
     // Group the three images into an array
     images: [
-      assetImages['../../assets/project1.avif'],
-      assetImages['../../assets/resProjrct.avif'],
+      assetImages['../../assets/resProject.avif'],
+      assetImages['../../assets/resProject2.avif'],
       assetImages['../../assets/resProject3.avif']
     ]
   },
@@ -24,9 +24,9 @@ export const getProjectCategorie = (t: any) => [
     title: t('commercialProjectCar'), 
     // Add your three commercial images here
     images: [
-      assetImages['../../assets/project2.avif'],
-      assetImages['../../assets/project2.avif'],
-      assetImages['../../assets/project2.avif']
+      assetImages['../../assets/comProject.avif'],
+      assetImages['../../assets/comProject2.avif'],
+      assetImages['../../assets/comProject3.avif']
     ]
   },
   { 
@@ -35,8 +35,8 @@ export const getProjectCategorie = (t: any) => [
     // Add your three garden images here
     images: [
       assetImages['../../assets/project3.avif'],
-      assetImages['../../assets/project3.avif'],
-      assetImages['../../assets/project3.avif']
+      assetImages['../../assets/garProject2.avif'],
+      assetImages['../../assets/garProject3.avif'],
     ]
   },
 ];

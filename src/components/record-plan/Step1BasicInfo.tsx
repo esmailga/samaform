@@ -16,7 +16,7 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
 
   const validatePhone = (phone: string) => {
     // US Phone format: (123) 456-7890 or 123-456-7890 or 1234567890 or +1...
-    const usPhoneRegex = /^(?:\+1\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+    const usPhoneRegex = /^(?:\+967\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{3}$/;
     return usPhoneRegex.test(phone);
   };
 

@@ -4,7 +4,7 @@ import { LayoutDashboard, FileText, Settings, LogOut, Download, Trash2, Edit, Pl
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Logo from '../components/common/Logo';
 import { useLanguage } from '../context/LanguageContext';
 import { convertWesternToArabic } from '../utils/numbers';
@@ -24,6 +24,7 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
   const isHome = location.pathname === '/';
 
 
@@ -460,7 +461,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Top Navbar */}
       <nav className={`h-20 flex items-center px-4 md:px-8 border-b border-white/10 ${GLASS_CLASSES} sticky top-0 z-50`}>
         <div className="flex items-center gap-4">
           <button 
@@ -469,11 +469,9 @@ export default function AdminPage() {
           >
             {isMobileMenuOpen ? <X size={24} /> : <LayoutDashboard size={24} />}
           </button>
-          <div className="flex items-center justify-center">
             <Link to="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center">
               <Logo showText={true} noAnim={!isHome} />
             </Link>
-          </div>
         </div>
         
         <button 
