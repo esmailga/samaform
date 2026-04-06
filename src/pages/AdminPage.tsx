@@ -203,7 +203,6 @@ export default function AdminPage() {
         return lang === 'ar' ? convertWesternToArabic(String(result)) : result;
       };
 
-      // Only include non-image fields and non-empty values
       Object.entries(r.data).forEach(([key, value]) => {
         if (!['inspirationImages', 'currentSpaceImages'].includes(key) && value) {
           const label = key.replace(/([A-Z])/g, ' $1').trim();
