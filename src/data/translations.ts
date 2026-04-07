@@ -259,6 +259,30 @@ export const translations = {
     privacyPolicy: 'Privacy Policy',
     architectureAndInterior: 'ARCHITECTURE & INTERIOR DESIGN',
     rightsRes: '© 2026 Sama Form. All rights reserved',
+
+    // Terms of Service
+    termsIntro: 'Welcome to SAMAFORM. By accessing our website and using our services, you agree to be bound by the following terms and conditions. These terms apply to all visitors, users, and others who access or use the Service.',
+    termsSection1Title: '1. Intellectual Property',
+    termsSection1Content: 'All architectural designs, concepts, 3D models, images, and materials presented on this website are the exclusive intellectual property of SAMAFORM. Any unauthorized reproduction or use is strictly prohibited.',
+    termsSection2Title: '2. User Information & Project Data',
+    termsSection2Content: 'By using our "Record Your Plan" feature, you provide us with specific project details. This information is used to analyze your requirements and provide a better, more personalized experience and tailored architectural services.',
+    termsSection3Title: '3. Use of Services',
+    termsSection3Content: 'Our services are provided for informational and collaborative purposes. You agree not to use the service for any illegal or unauthorized purpose.',
+    termsSection4Title: '4. Limitation of Liability',
+    termsSection4Content: 'SAMAFORM shall not be liable for any indirect, incidental, or consequential damages resulting from the use or inability to use our website or services.',
+
+    // Privacy Policy
+    privacyIntro: 'Your privacy is important to us. This Privacy Policy outlines how SAMAFORM collects, uses, and protects your personal and project information.',
+    privacySection1Title: '1. Information We Collect',
+    privacySection1Content: 'We collect personal information such as your name, email, and phone number, as well as project-specific data (budget, area, images, and vision) through our "Record Your Plan" and contact forms.',
+    privacySection2Title: '2. How We Use Your Information',
+    privacySection2Content: 'The information collected is used primarily to provide a better experience, offer accurate project proposals, and communicate effectively regarding your architectural inquiries.',
+    privacySection3Title: '3. Data Security',
+    privacySection3Content: 'We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your data.',
+    privacySection4Title: '4. Third-Party Disclosure',
+    privacySection4Content: 'We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties. This does not include trusted third parties who assist us in operating our website or servicing you.',
+    privacySection5Title: '5. Your Rights',
+    privacySection5Content: 'You have the right to access, correct, or request the deletion of your personal data at any time by contacting us directly.',
   },
   ar: {
     // Navigation
@@ -466,7 +490,7 @@ export const translations = {
     salonDetailsPlaceholder: 'أخبرنا المزيد عن صالون أحلامك',
     
     // Step 4 Specific Features
-    spaceWantedTitle: 'What spaces do you need?',
+    spaceWantedTitle: 'ما هي المناطق التي تحتاجها؟',
     outdoorSeating: 'جلسات خارجية',
     barCounter: 'بار / كاونتر',
     privateRooms: 'غرف خاصة',
@@ -515,6 +539,30 @@ export const translations = {
     termsOfService: 'شروط الخدمة',
     privacyPolicy: 'سياسة الخصوصية',
     architectureAndInterior: 'التصميم المعماري والداخلي',
-    rightsRes: '© ٢٠٢٦ Sama Form. جميع الحقوق محفوظة',
+    rightsRes: '© ٢٠٢٦ سامافورم جميع الحقوق محفوظة',
+
+    // Terms of Service
+    termsIntro: 'مرحباً بكم في سما فورم. من خلال الوصول إلى موقعنا واستخدام خدماتنا، فإنكم توافقون على الالتزام بالشروط والأحكام التالية. تنطبق هذه الشروط على جميع الزوار والمستخدمين وغيرهم ممن يصلون إلى الخدمة أو يستخدمونها.',
+    termsSection1Title: 'الملكية الفكرية',
+    termsSection1Content: 'جميع التصاميم المعمارية والمفاهيم والنماذج ثلاثية الأبعاد والصور والمواد المعروضة على هذا الموقع هي ملكية فكرية حصرية لشركة سما فورم. يحظر تماماً أي إعادة إنتاج أو استخدام غير مصرح به.',
+    termsSection2Title: 'معلومات المستخدم وبيانات المشروع',
+    termsSection2Content: 'باستخدام ميزة "ابدأ مشروعك"، فإنك تزودنا بتفاصيل محددة عن المشروع. تُستخدم هذه المعلومات لتحليل متطلباتك وتقديم تجربة أفضل وأكثر تخصيصاً وخدمات معمارية مصممة خصيصاً لك.',
+    termsSection3Title: 'استخدام الخدمات',
+    termsSection3Content: 'يتم تقديم خدماتنا لأغراض إعلامية وتعاونية. أنت توافق على عدم استخدام الخدمة لأي غرض غير قانوني أو غير مصرح به.',
+    termsSection4Title: 'حدود المسؤولية',
+    termsSection4Content: 'لن تكون سما فورم مسؤولة عن أي أضرار غير مباشرة أو عرضية أو تبعية ناتجة عن استخدام أو عدم القدرة على استخدام موقعنا أو خدماتنا.',
+
+    // Privacy Policy
+    privacyIntro: 'خصوصيتك مهمة بالنسبة لنا. توضح سياسة الخصوصية هذه كيف تقوم سما فورم بجمع واستخدام وحماية معلوماتك الشخصية ومعلومات المشروع.',
+    privacySection1Title: 'المعلومات التي نجمعها',
+    privacySection1Content: 'نجمع معلومات شخصية مثل اسمك وبريدك الإلكتروني ورقم هاتفك، بالإضافة إلى البيانات الخاصة بالمشروع (الميزانية، المساحة، الصور، والرؤية) من خلال نموذج "ابدأ مشروعك" ونماذج الاتصال.',
+    privacySection2Title: 'كيف نستخدم معلوماتك',
+    privacySection2Content: 'تُستخدم المعلومات التي يتم جمعها بشكل أساسي لتوفير تجربة أفضل، وتقديم مقترحات دقيقة للمشروع، والتواصل بشكل فعال فيما يتعلق باستفساراتك المعمارية.',
+    privacySection3Title: 'أمن البيانات',
+    privacySection3Content: 'نحن نطبق مجموعة متنوعة من التدابير الأمنية للحفاظ على سلامة معلوماتك الشخصية عند إدخال بياناتك أو إرسالها أو الوصول إليها.',
+    privacySection4Title: 'الإفصاح لأطراف ثالثة',
+    privacySection4Content: 'نحن لا نبيع أو نتاجر أو ننقل معلوماتك الشخصية إلى أطراف خارجية. لا يشمل ذلك الأطراف الثالثة الموثوقة التي تساعدنا في تشغيل موقعنا أو خدمتك.',
+    privacySection5Title: 'حقوقك',
+    privacySection5Content: 'لديك الحق في الوصول إلى بياناتك الشخصية أو تصحيحها أو طلب حذفها في أي وقت عن طريق الاتصال بنا مباشرة.',
   }
 };
