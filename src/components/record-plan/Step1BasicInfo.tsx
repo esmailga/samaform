@@ -1,24 +1,11 @@
 import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { validateEmail, validatePhone, validateName } from '../../utils/validation';
 import { StepProps } from './types';
 
 export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
   const { t } = useLanguage();
-
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const validateName = (name: string) => {
-    return name.trim().split(/\s+/).length >= 2;
-  };
-
-  const validatePhone = (phone: string) => {
-    // US Phone format: (123) 456-7890 or 123-456-7890 or 1234567890 or +1...
-    const usPhoneRegex = /^(?:\+967\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{3}$/;
-    return usPhoneRegex.test(phone);
-  };
 
   return (
     <motion.div 

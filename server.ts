@@ -19,9 +19,8 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-import { DEFAULT_FORM_CONFIG } from "./src/constants/defaultFormConfig";
-
 const db = new Database("database.db");
+db.pragma('foreign_keys = ON');
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-admin-key";
 
 // Initialize Database
@@ -32,31 +31,59 @@ db.exec(`
     password TEXT
   );
 
-  CREATE TABLE IF NOT EXISTS form_responses (
+  CREATE TABLE IF NOT EXISTS responses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
-  CREATE TABLE IF NOT EXISTS form_config (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    config TEXT,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  CREATE TABLE IF NOT EXISTS response_step1 (
+    response_id INTEGER PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    phone TEXT,
+    city TEXT,
+    FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS response_step2 (
+    response_id INTEGER PRIMARY KEY,
+    project_type TEXT,
+    FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS response_step3 (
+    response_id INTEGER PRIMARY KEY,
+    budget_tier TEXT,
+    budget_exact TEXT,
+    area_tier TEXT,
+    area_exact TEXT,
+    timeline TEXT,
+    project_details TEXT,
+    FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS response_step4 (
+    response_id INTEGER PRIMARY KEY,
+    specifics TEXT,
+    FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS response_step5 (
+    response_id INTEGER PRIMARY KEY,
+    inspiration_images TEXT,
+    current_space_images TEXT,
+    FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE
   );
 `);
 
-// Seed Admin User if not exists
-const adminExists = db.prepare("SELECT * FROM users WHERE username = ?").get("admin");
-if (!adminExists) {
-  const hashedPassword = bcrypt.hashSync("admin123", 10);
-  db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run("admin", hashedPassword);
-}
+// Seed Admin User if not exists (only if table is empty)
+const ADMIN_USER = process.env.ADMIN_USERNAME || "admin";
+const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin123";
 
-// Seed Default Form Config if not exists
-const configExists = db.prepare("SELECT * FROM form_config LIMIT 1").get();
-if (!configExists) {
-  const config = JSON.stringify(DEFAULT_FORM_CONFIG);
-  db.prepare("INSERT INTO form_config (config) VALUES (?)").run(config);
+const userCount = db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+if (userCount.count === 0) {
+  const hashedPassword = bcrypt.hashSync(ADMIN_PASS, 10);
+  db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run(ADMIN_USER, hashedPassword);
 }
 
 const app = express();
@@ -131,8 +158,37 @@ app.post("/api/form/responses", upload.fields([
       data.currentSpaceImages = files['currentSpaceImages'].map(f => `/uploads/${f.filename}`);
     }
 
-    const jsonData = JSON.stringify(data);
-    db.prepare("INSERT INTO form_responses (data) VALUES (?)").run(jsonData);
+    // 1. Insert into master responses table
+    const result = db.prepare("INSERT INTO responses (created_at) VALUES (CURRENT_TIMESTAMP)").run();
+    const responseId = result.lastInsertRowid;
+
+    // 2. Insert Step 1
+    db.prepare("INSERT INTO response_step1 (response_id, name, email, phone, city) VALUES (?, ?, ?, ?, ?)")
+      .run(responseId, data.name || '', data.email || '', data.phone || '', data.city || '');
+
+    // 3. Insert Step 2
+    db.prepare("INSERT INTO response_step2 (response_id, project_type) VALUES (?, ?)")
+      .run(responseId, data.projectType || '');
+
+    // 4. Insert Step 3
+    db.prepare("INSERT INTO response_step3 (response_id, budget_tier, budget_exact, area_tier, area_exact, timeline, project_details) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .run(responseId, data.budgetTier || '', data.budgetExact || '', data.areaTier || '', data.areaExact || '', data.timeline || '', data.projectDetails || '');
+
+    // 5. Insert Step 4 (Specifics)
+    const specifics: any = {};
+    const knownKeys = ['name', 'email', 'phone', 'city', 'projectType', 'budgetTier', 'budgetExact', 'areaTier', 'areaExact', 'timeline', 'projectDetails', 'inspirationImages', 'currentSpaceImages'];
+    Object.keys(data).forEach(key => {
+      if (!knownKeys.includes(key)) {
+        specifics[key] = data[key];
+      }
+    });
+    db.prepare("INSERT INTO response_step4 (response_id, specifics) VALUES (?, ?)")
+      .run(responseId, JSON.stringify(specifics));
+
+    // 6. Insert Step 5 (Images)
+    db.prepare("INSERT INTO response_step5 (response_id, inspiration_images, current_space_images) VALUES (?, ?, ?)")
+      .run(responseId, JSON.stringify(data.inspirationImages || []), JSON.stringify(data.currentSpaceImages || []));
+
     res.status(201).json({ message: "Response saved successfully" });
   } catch (err) {
     console.error("Save error:", err);
@@ -142,33 +198,73 @@ app.post("/api/form/responses", upload.fields([
 
 // Get All Responses (Admin)
 app.get("/api/admin/responses", authenticateAdmin, (req, res) => {
-  const responses = db.prepare("SELECT * FROM form_responses ORDER BY created_at DESC").all();
-  res.json(responses.map((r: any) => ({ ...r, data: JSON.parse(r.data) })));
+  const responses = db.prepare(`
+    SELECT 
+      r.id, r.created_at,
+      s1.name, s1.email, s1.phone, s1.city,
+      s2.project_type as projectType,
+      s3.budget_tier as budgetTier, s3.budget_exact as budgetExact, 
+      s3.area_tier as areaTier, s3.area_exact as areaExact,
+      s3.timeline, s3.project_details as projectDetails,
+      s4.specifics,
+      s5.inspiration_images as inspirationImages,
+      s5.current_space_images as currentSpaceImages
+    FROM responses r
+    LEFT JOIN response_step1 s1 ON r.id = s1.response_id
+    LEFT JOIN response_step2 s2 ON r.id = s2.response_id
+    LEFT JOIN response_step3 s3 ON r.id = s3.response_id
+    LEFT JOIN response_step4 s4 ON r.id = s4.response_id
+    LEFT JOIN response_step5 s5 ON r.id = s5.response_id
+    ORDER BY r.created_at DESC
+  `).all();
+
+  const formattedResponses = responses.map((r: any) => {
+    const specifics = JSON.parse(r.specifics || '{}');
+    const inspirationImages = JSON.parse(r.inspirationImages || '[]');
+    const currentSpaceImages = JSON.parse(r.currentSpaceImages || '[]');
+    
+    // Reconstruct the data object as the frontend expects it
+    const data = {
+      ...r,
+      ...specifics,
+      inspirationImages,
+      currentSpaceImages
+    };
+    
+    // Remove individual columns that are now part of data
+    delete data.specifics;
+    
+    return {
+      id: r.id,
+      created_at: r.created_at,
+      data
+    };
+  });
+
+  res.json(formattedResponses);
 });
 
 // Delete Response (Admin)
 app.delete("/api/admin/responses/:id", authenticateAdmin, (req, res) => {
-  db.prepare("DELETE FROM form_responses WHERE id = ?").run(req.params.id);
+  db.prepare("DELETE FROM responses WHERE id = ?").run(req.params.id);
   res.json({ message: "Response deleted" });
 });
 
-// Get Form Config
-app.get("/api/form/config", (req, res) => {
-  const config: any = db.prepare("SELECT * FROM form_config ORDER BY id DESC LIMIT 1").get();
-  if (!config) {
-    return res.json({ config: null });
+// Update Admin Credentials (Admin)
+app.post("/api/admin/update-credentials", authenticateAdmin, (req, res) => {
+  const { newUsername, newPassword } = req.body;
+  if (!newUsername || !newPassword) {
+    return res.status(400).json({ error: "Username and password are required" });
   }
-  res.json({ config: JSON.parse(config.config) });
-});
 
-// Update Form Config (Admin)
-app.post("/api/admin/form/config", authenticateAdmin, (req, res) => {
   try {
-    const config = JSON.stringify(req.body);
-    db.prepare("INSERT INTO form_config (config) VALUES (?)").run(config);
-    res.json({ message: "Config updated successfully" });
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    // Assuming there's only one admin user or we update the current one
+    db.prepare("UPDATE users SET username = ?, password = ? WHERE id = ?").run(newUsername, hashedPassword, (req as any).user.id);
+    res.json({ message: "Credentials updated successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to update config" });
+    console.error("Update credentials error:", err);
+    res.status(500).json({ error: "Failed to update credentials" });
   }
 });
 

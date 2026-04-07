@@ -15,6 +15,7 @@ import Step5Images from '../components/record-plan/Step5Images';
 import DynamicStep from '../components/record-plan/DynamicStep';
 import SuccessMessage from '../components/record-plan/SuccessMessage';
 
+import { validateEmail, validatePhone, validateName } from '../utils/validation';
 import { convertArabicToWestern } from '../utils/numbers';
 
 const INITIAL_DATA: ProjectFormData = {
@@ -140,25 +141,19 @@ export default function RecordPlanPage() {
     }));
   };
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    const usPhoneRegex = /^(?:\+1\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-    return usPhoneRegex.test(phone);
-  };
-
-  const validateName = (name: string) => {
-    return name.trim().split(/\s+/).length >= 2;
-  };
-
   const isStepValid = () => {
     if (formConfig && formConfig.steps && formConfig.steps[currentStep - 1]) {
       const step = formConfig.steps[currentStep - 1];
       return step.fields.every((field: any) => {
         if (!field.required) return true;
         const value = formData[field.id as keyof ProjectFormData];
+        
+        // Use custom validation for specific fields if they are in the config
+        if (field.id === 'name') return validateName(String(value || ''));
+        if (field.id === 'email') return value === '' || validateEmail(String(value || ''));
+        if (field.id === 'phone') return validatePhone(String(value || ''));
+        if (field.id === 'city') return String(value || '').trim().length >= 3;
+        
         return value !== undefined && value !== '';
       });
     }
@@ -174,9 +169,8 @@ export default function RecordPlanPage() {
       case 2:
         return formData.projectType !== '';
       case 3:
-        return (formData.budgetTier !== '' || formData.budgetExact !== '') &&
-        (formData.areaTier !== '' || formData.areaExact !== '') &&
-        formData.timeline !== '';
+        // Match default config: only timeline is required
+        return formData.timeline !== '';
       case 4:
         if (formData.projectType === 'apartement') {
           return (
