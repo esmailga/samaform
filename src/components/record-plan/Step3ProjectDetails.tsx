@@ -34,7 +34,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepThree')}</h2>
-        <p className="text-4xl font-serif text-main-text">{t('stepThreeDesc')}</p>
+        <p className="text-4xl text-main-text">{t('stepThreeDesc')}</p>
       </div>
 
       <div className="space-y-8">

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { GLASS_CLASSES, GLASS_HOVER } from '../../constants/styles';
 
+
 const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg,avif}', { 
   eager: true, 
   import: 'default' 
@@ -60,7 +61,7 @@ export default function Portfolio() {
 
               {/* Text Right */}
               <div className="w-full md:w-5/12 flex flex-col justify-center items-start">
-                <h3 className="text-3xl md:text-4xl  text-main-text mb-6">{category.title}</h3>
+                <h3 className="text-3xl md:text-4xl text-main-text mb-6">{category.title}</h3>
                 <p className="text-white/80 font-light text-lg mb-8 leading-relaxed">
                   {category.description}
                 </p>

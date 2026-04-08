@@ -17,11 +17,11 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepOne')}</h2>
-        <p className="text-4xl font-serif text-main-text">{t('stepOneDesc')}</p>
+        <p className="text-4xl font-sans-serif text-main-text">{t('stepOneDesc')}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="relative">
-          <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('name')}</label>
+          <label className="block text-white text-xs uppercase tracking-widest mb-2 px-1">{t('name')}</label>
           <input 
             type="text" 
             value={formData.name}
@@ -37,7 +37,7 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
           {formData.name.trim().length > 0 && !validateName(formData.name) && <span className="text-red-500 text-[10px] mt-1 px-1 uppercase">Please enter at least two words</span>}
         </div>
         <div className="relative">
-          <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('email')} <span className="text-white/40 lowercase">({t('optional')})</span></label>
+          <label className="block text-white text-xs uppercase tracking-widest mb-2 px-1">{t('email')} <span className="text-white/40 lowercase">({t('optional')})</span></label>
           <input 
             type="email" 
             value={formData.email}
@@ -52,7 +52,7 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
           )}
         </div>
         <div className="relative">
-          <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('phone')}</label>
+          <label className="block text-white text-xs uppercase tracking-widest mb-2 px-1">{t('phone')}</label>
           <input 
             type="tel" 
             value={formData.phone}
@@ -68,7 +68,7 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
           {formData.phone && !validatePhone(formData.phone) && <span className="text-red-500 text-[10px] mt-1 px-1 uppercase">{t('invalidPhone')}</span>}
         </div>
         <div className="relative">
-          <label className="block text-white text-xs uppercase tracking-widest mb-2">{t('city')}</label>
+          <label className="block text-white text-xs uppercase tracking-widest mb-2 px-1">{t('city')}</label>
           <input 
             type="text" 
             value={formData.city}

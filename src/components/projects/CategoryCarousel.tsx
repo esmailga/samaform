@@ -10,9 +10,8 @@ const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg
 
 export const getProjectCategorie = (t: any) => [
   { 
-    id: 'resPro', 
-    title: t('residentialProjectCar'), 
-    // Group the three images into an array
+    id: 'residential', 
+    title: t('residentialProjects'), 
     images: [
       assetImages['../../assets/resProject.avif'],
       assetImages['../../assets/resProject2.avif'],
@@ -20,9 +19,8 @@ export const getProjectCategorie = (t: any) => [
     ]
   },
   { 
-    id: 'comPro', 
-    title: t('commercialProjectCar'), 
-    // Add your three commercial images here
+    id: 'commercial', 
+    title: t('commercialProjects'), 
     images: [
       assetImages['../../assets/comProject.avif'],
       assetImages['../../assets/comProject2.avif'],
@@ -30,9 +28,8 @@ export const getProjectCategorie = (t: any) => [
     ]
   },
   { 
-    id: 'garPro', 
-    title: t('gardenTerraceCar'), 
-    // Add your three garden images here
+    id: 'garden-terrace', 
+    title: t('gardenTerrace'), 
     images: [
       assetImages['../../assets/project3.avif'],
       assetImages['../../assets/garProject2.avif'],
@@ -58,9 +55,9 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
   }, [isInView, isHovered, category.images.length]);
 
   return (
-    <div className="w-[900px]" ref={ref}>
+    <div className="w-[300px] md:w-[900px]" ref={ref}>
       <div 
-        className="relative h-[900px] md:h-[900px] rounded-3xl overflow-hidden border border-main-text/10 group bg-secondary/20"
+        className="relative h-[400px] md:h-[900px] rounded-3xl overflow-hidden border border-main-text/10 group bg-secondary/20"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
