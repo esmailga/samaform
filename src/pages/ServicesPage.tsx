@@ -60,12 +60,12 @@ export default function ServicesPage() {
         {services.map((service, index) => (
           <motion.div
             key={service.id}
-            id={service.id} // 3. FIX THE TARGET: We must attach the ID to the HTML element here!
+            id={service.id}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
-            className="flex flex-col md:flex-row items-center gap-12 md:gap-20 scroll-mt-32" // Added scroll-mt-32 to offset the fixed navbar
+            className="flex flex-col md:flex-row items-center gap-12 md:gap-20 scroll-mt-90"
           >
             {/* Image Left */}
             <div className="w-full md:w-7/12 h-[400px] md:h-[600px] rounded-3xl overflow-hidden relative group border border-main-text/10 shadow-2xl">

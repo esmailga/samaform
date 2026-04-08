@@ -11,11 +11,11 @@ const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg
 });
 
 export const getServicesList = (t: any) => [
-  { id: 'service1', title: t('interiorDesign'), description: t('intDesc'), image: assetImages['../../assets/service1.avif'] },
-  { id: 'service2', title: t('architecturalDesign'), description: t('arcDesc'), image: assetImages['../../assets/service2.avif'] },
-  { id: 'service3', title: t('landscapeDesign'), description: t('lanDesc'), image: assetImages['../../assets/service3.avif'] },
-  { id: 'service4', title: t('commercialDesign'), description: t('comDesDesc'), image: assetImages['../../assets/service4.avif'] },
-  { id: 'service5', title: t('objectsDesign'), description: t('objDesc'), image: assetImages['../../assets/service5.avif'] },
+  { id: 'interior-design', title: t('interiorDesign'), description: t('intDesc'), image: assetImages['../../assets/service1.avif'] },
+  { id: 'architectural-design', title: t('architecturalDesign'), description: t('arcDesc'), image: assetImages['../../assets/service2.avif'] },
+  { id: 'landscape-design', title: t('landscapeDesign'), description: t('lanDesc'), image: assetImages['../../assets/service3.avif'] },
+  { id: 'commercial-design', title: t('commercialDesign'), description: t('comDesDesc'), image: assetImages['../../assets/service4.avif'] },
+  { id: 'objects-design', title: t('objectsDesign'), description: t('objDesc'), image: assetImages['../../assets/service5.avif'] },
 ];
 
 export default function ServicesSection() {
@@ -87,7 +87,7 @@ export default function ServicesSection() {
                     </p>
 
                     <Link 
-                      to={`/services`} 
+                      to={`/services#${service.id}`} 
                       className={`px-8 py-4 rounded-full inline-flex items-center space-x-2 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300`}
                     >
                       <span className="uppercase tracking-widest text-xs font-medium">

@@ -16,7 +16,7 @@ export default function DynamicStep({ step, formData, updateFields }: DynamicSte
       className="space-y-8"
     >
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-serif text-main-text mb-4">{step.title}</h2>
+        <h2 className="text-4xl text-main-text mb-4">{step.title}</h2>
         <p className="text-white/60">{step.description}</p>
       </div>
 
