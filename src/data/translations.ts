@@ -238,7 +238,7 @@ export const translations = {
     inspirationImagesDesc: 'Upload images that inspire your design vision (Pinterest, magazines, etc)',
     currentSpaceImages: 'Current Space Photos',
     currentSpaceImagesDesc: 'Upload photos of your current space that needs to be redesigned',
-    uploadLimit: 'Up to 5 images',
+    uploadLimit: 'Up to 10 images',
 
     // Contact Page
     contactDesc: 'We welcome inquiries from potential clients, collaborators, and media',
@@ -518,10 +518,10 @@ export const translations = {
 
     // Record Plan - Step 5
     inspirationImages: 'صور الإلهام',
-    inspirationImagesDesc: 'ح ّمل صور تلهم رؤيتك التصميمية (بينتيريست، مجلات، إلخ)',
+    inspirationImagesDesc: 'حمل صور تلهم رؤيتك التصميمية (بينتيريست، مجلات، إلخ)',
     currentSpaceImages: 'صور المساحة الحالية',
-    currentSpaceImagesDesc: 'ح ّمل صور للمساحة الحالية التي تحتاج إلى إعادة تصميم',
-    uploadLimit: 'حتى 5 صور',
+    currentSpaceImagesDesc: 'حمل صور للمساحة الحالية التي تحتاج إلى إعادة تصميم',
+    uploadLimit: 'حتى ١٠ صور',
 
     // Contact Page
     contactDesc: 'نرحب باستفسارات العملاء المحتملين والمتعاونين ووسائل الإعلام',
