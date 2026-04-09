@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
 import { StepProps, BudgetTier, AreaTier, TimeLine } from './types';
+import { convertArabicToWestern } from '../../utils/numbers';
 
 export default function Step3ProjectDetails({ formData, updateFields }: StepProps) {
   const { t } = useLanguage();
@@ -34,7 +35,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepThree')}</h2>
-        <p className="text-4xl text-main-text">{t('stepThreeDesc')}</p>
+        <p className="text-4xl font-serif text-main-text">{t('stepThreeDesc')}</p>
       </div>
 
       <div className="space-y-8">
@@ -61,13 +62,18 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
             ))}
           </div>
           <input
-            type="number"
-            min='1'
+            type="text"
             value={formData.budgetExact}
-            onChange={(e) => updateFields({ 
-              budgetExact: e.target.value,
-              budgetTier: ''
-            })}
+            onChange={(e) => {
+              const val = convertArabicToWestern(e.target.value).replace(/\D/g, '');
+              const num = parseInt(val);
+              if (val === '' || (!isNaN(num) && num <= 999999)) {
+                updateFields({ 
+                  budgetExact: val,
+                  budgetTier: ''
+                });
+              }
+            }}
             className="w-full bg-header/50 border border-main-text/20 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
             placeholder={t('exactBudgetPlaceholder') || 'Or enter exact budget...'}
           />
@@ -96,10 +102,15 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
             ))}
           </div>
           <input
-            type="number"
-            min='1'
+            type="text"
             value={formData.areaExact}
-            onChange={(e) => updateFields({ areaExact: e.target.value, areaTier: '' })}
+            onChange={(e) => {
+              const val = convertArabicToWestern(e.target.value).replace(/\D/g, '');
+              const num = parseInt(val);
+              if (val === '' || (!isNaN(num) && num <= 9999)) {
+                updateFields({ areaExact: val, areaTier: '' });
+              }
+            }}
             className="w-full bg-header/50 border border-main-text/5 text-white rounded-xl p-4 focus:outline-none focus:border-main-text transition-colors mt-2"
             placeholder={t('exactAreaPlaceholder') || 'Or enter exact area in sqm...'}
 

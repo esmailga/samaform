@@ -18,7 +18,8 @@ export const translations = {
     previousPage: 'Previous',
     submit: 'Submit Plan',
     optional: 'Optional',
-
+    planRecorded: 'Plan Recorded',
+    planRecordedDesc: 'Thank you for sharing your vision. Our team will review your plan and get back to you shortly.',
     getDirections: 'Get Directions',
     concept: 'Project',
     backHome: 'Back to Home',
@@ -303,6 +304,8 @@ export const translations = {
     getDirections: 'الحصول على الاتجاهات',
     concept: 'مشروع',
     backHome: 'العودة للرئيسية',
+    planRecorded: 'تم تسجيل خطتك',
+    planRecordedDesc: 'شكراً لمشاركتنا رؤيتك. سيقوم فريقنا بمراجعة خطتك والتواصل معك قريباً.',
 
     // Validation
     invalidEmail: 'يرجى إدخال بريد إلكتروني صحيح',
