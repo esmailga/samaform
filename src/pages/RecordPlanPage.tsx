@@ -72,18 +72,7 @@ export default function RecordPlanPage() {
   const [formConfig, setFormConfig] = useState<any>(null);
 
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch('/api/form/config');
-        const data = await res.json();
-        if (res.ok && data.config) {
-          setFormConfig(data.config);
-        }
-      } catch (err) {
-        console.error('Failed to fetch form config');
-      }
-    };
-    fetchConfig();
+    // Form config fetch removed as admin is not currently editing the form
   }, []);
 
   const inspirationInputRef = useRef<HTMLInputElement>(null);
@@ -124,7 +113,7 @@ export default function RecordPlanPage() {
 
       setFormData(prev => {
         const currentFiles = type === 'inspiration' ? prev.inspirationImages : prev.currentSpaceImages;
-        const combined = [...currentFiles, ...validFiles].slice(0, 5);
+        const combined = [...currentFiles, ...validFiles].slice(0, 10);
         return {
           ...prev,
           [type === 'inspiration' ? 'inspirationImages' : 'currentSpaceImages']: combined
@@ -253,12 +242,12 @@ export default function RecordPlanPage() {
         }
       });
 
-      // Append files
+      // Append files with [] for PHP array support
       formData.inspirationImages.forEach((file) => {
-        submitData.append('inspirationImages', file);
+        submitData.append('inspirationImages[]', file);
       });
       formData.currentSpaceImages.forEach((file) => {
-        submitData.append('currentSpaceImages', file);
+        submitData.append('currentSpaceImages[]', file);
       });
 
       const response = await fetch('/api/form/responses', {

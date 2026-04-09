@@ -166,7 +166,6 @@ export default function AdminPage() {
         img.crossOrigin = 'Anonymous';
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          // Resize image for PDF to save space (max 800px)
           const maxDim = 800;
           let width = img.width;
           let height = img.height;
@@ -187,25 +186,51 @@ export default function AdminPage() {
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', 0.99));
+          resolve(canvas.toDataURL('image/jpeg', 0.6));
         };
         img.onerror = reject;
         img.src = url;
       });
     };
 
+    // Helper to render text (handles Arabic/RTL via canvas)
+    const renderText = (text: string, x: number, y: number, size: number, color: string = '#000000', align: 'left' | 'right' = 'left') => {
+      const isArabic = /[\u0600-\u06FF]/.test(text);
+      if (isArabic) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 4;
+        ctx.font = `${size * scale}px "Inter", "Arial", sans-serif`;
+        const metrics = ctx.measureText(text);
+        
+        canvas.width = metrics.width;
+        canvas.height = size * 1.5 * scale;
+        
+        ctx.font = `${size * scale}px "Inter", "Arial", sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 0, canvas.height / 2);
+        
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = (metrics.width / scale) * 0.352778; // px to mm
+        const imgHeight = (size * 1.5) * 0.352778;
+        
+        const finalX = align === 'right' ? x - imgWidth : x;
+        doc.addImage(imgData, 'PNG', finalX, y - (size * 0.5 * 0.352778), imgWidth, imgHeight);
+      } else {
+        doc.setFontSize(size);
+        doc.setTextColor(color);
+        doc.text(text, x, y, { align });
+      }
+    };
+
 
     if (response) {
+      // Header
+      renderText(`Date: ${new Date(response.created_at).toLocaleString()}`, pageWidth - 15, 20, 10, '#646464', 'right');
+      renderText("Your Plan", 15, 20, 22, '#000000');
       
-      doc.setFontSize(10);
-      doc.setTextColor(100);
-      doc.text(`Date: ${new Date(response.created_at).toLocaleString()}`, pageWidth - 15, 50, { align: 'right' });
-      
-      doc.setFontSize(22);
-      doc.setTextColor(0);
-      doc.text("Your Plan", 15, 50);
-      
-      let yPos = 65;
+      let yPos = 35;
       const sections = getStructuredData(response.data);
       
       sections.forEach(section => {
@@ -214,19 +239,15 @@ export default function AdminPage() {
             doc.addPage();
             yPos = 20;
           }
-          doc.setFontSize(14);
-          doc.setTextColor(180, 150, 100); // Main text color
-          doc.text(section.title, 15, yPos);
+          renderText(section.title, 15, yPos, 14, '#B49664');
           yPos += 8;
           
-          doc.setFontSize(10);
-          doc.setTextColor(50);
           section.fields.forEach(field => {
             if (yPos > 270) {
               doc.addPage();
               yPos = 20;
             }
-            doc.text(`${field.label}: ${field.value}`, 20, yPos);
+            renderText(`${field.label}: ${field.value}`, 20, yPos, 10, '#323232');
             yPos += 6;
           });
           yPos += 5;
@@ -242,9 +263,7 @@ export default function AdminPage() {
           yPos = 20;
         }
         
-        doc.setFontSize(14);
-        doc.setTextColor(180, 150, 100);
-        doc.text(title, 15, yPos);
+        renderText(title, 15, yPos, 14, '#B49664');
         yPos += 10;
         
         const imgSize = 40;
