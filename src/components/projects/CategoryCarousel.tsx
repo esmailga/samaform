@@ -2,9 +2,42 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
 import { GLASS_CLASSES } from '../../constants/styles';
-import { getProjectCategories } from '../home/Portfolio';
 
-export default function CategoryCarousel({ category }: { category: ReturnType<typeof getProjectCategories>[0] }) {
+const assetImages: any = (import.meta as any).glob('../../assets/*.{png,jpg,jpeg,svg,avif}', { 
+  eager: true, 
+  import: 'default' 
+});
+
+export const getProjectCategorie = (t: any) => [
+  { 
+    id: 'residential', 
+    title: t('residentialProjects'), 
+    images: [
+      assetImages['../../assets/resProject.avif'],
+      assetImages['../../assets/resProject2.avif'],
+      assetImages['../../assets/resProject3.avif']
+    ]
+  },
+  { 
+    id: 'commercial', 
+    title: t('commercialProjects'), 
+    images: [
+      assetImages['../../assets/comProject.avif'],
+      assetImages['../../assets/comProject2.avif'],
+      assetImages['../../assets/comProject3.avif']
+    ]
+  },
+  { 
+    id: 'garden-terrace', 
+    title: t('gardenTerrace'), 
+    images: [
+      assetImages['../../assets/project3.avif'],
+      assetImages['../../assets/garProject2.avif'],
+      assetImages['../../assets/garProject3.avif'],
+    ]
+  },
+];
+export default function CategoryCarousel({ category }: { category: ReturnType<typeof getProjectCategorie>[0] }) {
   const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -18,7 +51,7 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
     if (!isInView || isHovered || isAutoPaused) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % projects.length);
+      setCurrentIndex((prev: number) => (prev + 1) % projects.length);
     }, 8000);
     
     return () => clearInterval(timer);
@@ -37,10 +70,11 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
     }
   };
 
+
   return (
-    <div className="w-full" ref={ref}>
+    <div className="w-[370px] md:w-[900px]" ref={ref}>
       <div 
-        className="relative h-[600px] md:h-[800px] rounded-3xl overflow-hidden border border-main-text/10 group bg-secondary/20 cursor-grab active:cursor-grabbing"
+        className="relative h-[400px] md:h-[800px] rounded-3xl overflow-hidden border border-main-text/10 group bg-secondary/20"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -63,7 +97,7 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
             className="absolute inset-0 touch-none"
           >
             <img 
-              src={`${category.image}?random=${projects[currentIndex]}`} 
+              src={category.images[currentIndex]} 
               alt={`${category.title} ${projects[currentIndex]}`}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 mix-blend-luminosity group-hover:mix-blend-normal group-hover:opacity-100"
               referrerPolicy="no-referrer"
@@ -72,7 +106,7 @@ export default function CategoryCarousel({ category }: { category: ReturnType<ty
             <div className={`absolute inset-0 bg-header/40 transition-opacity duration-500 ${showDetails || isHovered ? 'opacity-100' : 'opacity-0'}`} />
             <div className={`absolute bottom-0 inset-x-0 p-6 transition-all duration-500 ${showDetails || isHovered ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               <div className={`p-6 rounded-2xl ${GLASS_CLASSES}`}>
-                <h3 className="text-2xl font-serif text-main-text">{category.title} {t('concept')} {projects[currentIndex]}</h3>
+              <h3 className="text-2xl text-main-text"> {t('concept')} {projects[currentIndex]}</h3>
               </div>
             </div>
           </motion.div>

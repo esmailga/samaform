@@ -28,6 +28,13 @@ export default function AdminPage() {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
+  useEffect(() => {
+    const originalDir = document.documentElement.dir;
+    document.documentElement.dir = 'ltr';
+    return () => {
+      document.documentElement.dir = originalDir;
+    };
+  }, []);
 
   useEffect(() => {
     if (token) {

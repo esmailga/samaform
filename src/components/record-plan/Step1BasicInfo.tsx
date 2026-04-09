@@ -57,7 +57,7 @@ export default function Step1BasicInfo({ formData, updateFields }: StepProps) {
             type="tel" 
             value={formData.phone}
             onChange={e => updateFields({ phone: e.target.value })}
-            className={`w-full bg-header/50 border ${formData.phone && !validatePhone(formData.phone) ? 'border-red-500' : 'border-main-text/20'} rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors`}
+            className={`w-full bg-header/50 border ${formData.phone && !validatePhone(formData.phone) ? 'border-red-500' : 'border-main-text/20'} rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors rtl:text-right placeholder:rtl:text-right`}
             placeholder={t('phonePlaceholder')} 
           />
           {validatePhone(formData.phone) && (
