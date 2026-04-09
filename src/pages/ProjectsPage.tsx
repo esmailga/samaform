@@ -16,7 +16,7 @@ export default function ProjectsPage() {
       if (element) {
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' });
-        }, 300);
+        }, 400);
       }
     } else {
       window.scrollTo(0, 0);
@@ -40,9 +40,9 @@ export default function ProjectsPage() {
       
       <div className="max-w-7xl mx-auto px-6 flex flex-col items-center space-y-32 mt-24">
         {projectCategories.map((category) => (
-          <div key={category.id} id={category.id}>
+          <div key={category.id} id={category.id} className="scroll-mt-32">
             <h2 className="text-3xl md:text-4xl text-main-text mb-12 border-b border-main-text/20 pb-4">{category.title}</h2>
-            <CategoryCarousel category={category} />
+            <CategoryCarousel category={category}/>
           </div>
         ))}
       </div>
