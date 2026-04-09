@@ -38,7 +38,7 @@ export default function Step5Images({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="block text-white text-sm uppercase tracking-widest">{t('inspirationImages')}</label>
-            <span className="text-[10px] text-white/40">{formData.inspirationImages.length}/5</span>
+            <span className="text-[10px] text-white/40">{formData.inspirationImages.length}/10</span>
           </div>
           <p className="text-white/40  text-sm lowercase">{t('inspirationImagesDesc')}</p>
           <div 
@@ -75,7 +75,7 @@ export default function Step5Images({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="block text-white text-sm uppercase tracking-widest">{t('currentSpaceImages')}</label>
-            <span className="text-[10px] text-white/40">{formData.currentSpaceImages.length}/5</span>
+            <span className="text-[10px] text-white/40">{formData.currentSpaceImages.length}/10</span>
           </div>
           <p className="text-white/40  text-sm lowercase">{t('currentSpaceImagesDesc')}</p>
           <div 
