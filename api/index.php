@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -91,6 +93,14 @@ $token = str_replace('Bearer ', '', $auth_header);
 $admin = verifyToken($token, $secret);
 
 // --- ROUTES ---
+// Health Check / Root Route
+if ($path === '' || $path === '/') {
+    echo json_encode([
+        'status' => 'success', 
+        'message' => 'API is running and database is connected.'
+    ]);
+    exit;
+}
 
 // Admin Login
 if ($path === '/admin/login' && $method === 'POST') {

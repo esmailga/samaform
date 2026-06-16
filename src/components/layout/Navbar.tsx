@@ -37,7 +37,7 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const smoothSpring = {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 280,
     damping: 45,
     mass: 1,
@@ -106,19 +106,19 @@ export default function Navbar() {
                       >
                         <div className="flex flex-col py-2">
                           {/* UPDATED: Changed 'id' values to specific anchor tags instead of '/services' */}
-                          {[
-                            { name: 'interiorDesign', id: 'interior-design' },
-                            { name: 'architecturalDesign', id: 'architectural-design' },
-                            { name: 'landscapeDesign', id: 'landscape-design' },
-                            { name: 'commercialDesign', id: 'commercial-design' },
-                            { name: 'objectsDesign', id: 'objects-design' }
-                          ].map((item) => (
+                          {([
+                            { key: 'interiorDesign', id: 'interior-design' },
+                            { key: 'architecturalDesign', id: 'architectural-design' },
+                            { key: 'landscapeDesign', id: 'landscape-design' },
+                            { key: 'commercialDesign', id: 'commercial-design' },
+                            { key: 'objectsDesign', id: 'objects-design' }
+                          ] as const).map((item) => (
                             <Link 
                               key={item.id} 
                               to={`/services#${item.id}`} 
                               className="px-4 py-2 hover:bg-secondary/50 transition-colors text-sm text-white hover:text-main-text"
                             >
-                              {t(item.name)}
+                              {t(item.key)}
                             </Link>
                           ))}
                         </div>
@@ -255,13 +255,13 @@ export default function Navbar() {
                       className="flex flex-col space-y-3 ps-4 mt-2 border-s border-main-text/20"
                     >
                       {/* UPDATED: Changed 'path' to 'id' to dynamically link to hashes */}
-                      {[
+                      {([
                         { key: 'interiorDesign', id: 'interior-design' },
                         { key: 'architecturalDesign', id: 'architectural-design' },
                         { key: 'landscapeDesign', id: 'landscape-design' },
                         { key: 'commercialDesign', id: 'commercial-design' },
                         { key: 'objectsDesign', id: 'objects-design' }
-                      ].map((item) => (
+                      ] as const).map((item) => (
                         <Link 
                           key={item.id} 
                           to={`/services#${item.id}`}

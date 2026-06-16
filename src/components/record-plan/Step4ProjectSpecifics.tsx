@@ -181,7 +181,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   roomCount: ''
                 })}
                 className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors mt-2"
-                placeholder={t('exactRoomsPlaceholder') || 'Or enter exact number of rooms...'}
+                placeholder={t('exactRoomsPlaceholder' as any) || 'Or enter exact number of rooms...'}
               />
             </div>
             <div className="md:col-span-2">
