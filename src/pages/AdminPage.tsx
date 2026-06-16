@@ -206,6 +206,7 @@ export default function AdminPage() {
       if (isArabic) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         const scale = 4;
         ctx.font = `${size * scale}px "Inter", "Arial", sans-serif`;
         const metrics = ctx.measureText(text);
