@@ -13,10 +13,10 @@ export default function DynamicStep({ step, formData, updateFields }: DynamicSte
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-8"
+      className="space-y-6 md:space-y-8"
     >
-      <div className="text-center mb-12">
-        <h2 className="text-4xl text-main-text mb-4">{step.title}</h2>
+      <div className="text-center mb-6 md:mb-12">
+        <h2 className="text-2xl md:text-4xl text-main-text mb-4">{step.title}</h2>
         <p className="text-white/60">{step.description}</p>
       </div>
 

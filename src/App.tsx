@@ -40,7 +40,7 @@ function AppContent() {
 
 export default function App() {
   return (
-    <LanguageProvider children={undefined}>
+    <LanguageProvider>
       <Router>
         <ScrollToTop />
         <AssetPreloader />

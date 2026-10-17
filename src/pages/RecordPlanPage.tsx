@@ -308,7 +308,7 @@ export default function RecordPlanPage() {
   }
 
   return (
-    <div className="pt-40 pb-32 px-6 min-h-screen max-w-5xl mx-auto relative overflow-hidden">
+    <div className="pt-24 md:pt-40 pb-20 md:pb-32 px-4 md:px-6 min-h-screen max-w-5xl mx-auto relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute top-0 start-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-main-text/5 rounded-full blur-[80px] md:blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 end-1/4 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-secondary/5 rounded-full blur-[70px] md:blur-[100px] pointer-events-none" />
@@ -316,27 +316,27 @@ export default function RecordPlanPage() {
       <div className="relative z-10">
         <FormProgress currentStep={currentStep} totalSteps={formConfig?.steps?.length || 5} onStepClick={setCurrentStep} />
 
-        <form className={`p-2 md:p-12 rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
+        <form className={`p-4 sm:p-6 md:p-12 rounded-2xl md:rounded-3xl ${GLASS_CLASSES} relative`} onSubmit={e => e.preventDefault()}>
           <AnimatePresence mode="wait">
             {renderStep()}
           </AnimatePresence>
 
           {/* Navigation Buttons */}
-          <div className="mt-12 flex items-center justify-between pt-8 border-t border-main-text/10">
+          <div className="mt-8 md:mt-12 flex items-center justify-between gap-3 pt-6 md:pt-8 border-t border-main-text/10">
             <button
               type="button"
               onClick={handleBack}
-              className={`px-8 py-4 rounded-full inline-flex items-center space-x-3 rtl:space-x-reverse ${GLASS_CLASSES} hover:bg-white/10 text-white transition-all duration-300`}
+              className={`px-5 py-3 md:px-8 md:py-4 rounded-full inline-flex items-center gap-2 md:gap-3 ${GLASS_CLASSES} hover:bg-white/10 text-white transition-all duration-300`}
             >
-              <ArrowLeft size={18} className="rtl:rotate-180" />
-              <span className="uppercase tracking-widest text-[10px] font-bold">{currentStep === 1 ? t('home') : t('previousPage')}</span>
+              <ArrowLeft size={16} className="rtl:rotate-180" />
+              <span className="uppercase tracking-widest text-[11px] md:text-xs font-bold">{currentStep === 1 ? t('home') : t('previousPage')}</span>
             </button>
 
             <button
               type="button"
               disabled={!isStepValid() || isSubmitting}
               onClick={handleNext}
-              className={`px-10 py-4 rounded-full inline-flex items-center space-x-3 rtl:space-x-reverse transition-all duration-500 ${
+              className={`px-6 py-3 md:px-10 md:py-4 rounded-full inline-flex items-center gap-2 md:gap-3 transition-all duration-500 ${
                 isStepValid() 
                   ? 'bg-main-text text-header hover:scale-105 shadow-lg shadow-main-text/20' 
                   : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
@@ -346,10 +346,10 @@ export default function RecordPlanPage() {
                 <div className="w-5 h-5 border-2 border-header/30 border-t-header rounded-full animate-spin" />
               ) : (
                 <>
-                  <span className="uppercase tracking-widest text-[10px] font-bold">
+                  <span className="uppercase tracking-widest text-[11px] md:text-xs font-bold">
                     {currentStep === 5 ? t('submit') : t('nextPage')}
                   </span>
-                  {currentStep < 5 && <ArrowRight size={18} className="rtl:rotate-180" />}
+                  {currentStep < 5 && <ArrowRight size={16} className="rtl:rotate-180" />}
                 </>
               )}
             </button>

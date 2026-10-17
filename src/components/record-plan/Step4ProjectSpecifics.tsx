@@ -143,8 +143,8 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
       className="space-y-6"
     >
       <div className="text-center mb-8">
-        <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepFour')}</h2>
-        <p className="text-4xl text-main-text">
+        <h2 className="text-white text-sm md:text-lg uppercase tracking-widest mb-2">{t('stepFour')}</h2>
+        <p className="text-2xl md:text-4xl text-main-text">
           {t('stepFourDesc', { type: t(formData.projectType as any) })}
         </p>
       </div>
@@ -181,7 +181,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                   roomCount: ''
                 })}
                 className="w-full bg-header/50 border border-main-text/20 rounded-xl p-4 text-white focus:outline-none focus:border-main-text transition-colors mt-2"
-                placeholder={t('exactRoomsPlaceholder') || 'Or enter exact number of rooms...'}
+                placeholder={t('exactRoomsPlaceholder')}
               />
             </div>
             <div className="md:col-span-2">
@@ -192,7 +192,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={design.id}
                     type="button"
                     onClick={() => updateFields({designType: formData.designType === design.id ? '' : design.id as DesignType})}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       formData.designType === design.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -218,7 +218,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentPriorities, priority.id];
                       updateFields({ priorityType: newPriorities as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.priorityType as unknown as string[]) || []).includes(priority.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -272,7 +272,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={num.id}
                     type="button"
                     onClick={() => updateFields({ floorsCount: formData.floorsCount === num.id ? '' : num.id as FloorsCount })}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       formData.floorsCount === num.id
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
@@ -298,7 +298,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentOutdoor, outdoor.id];
                       updateFields({ outdoorType: newOutdoor as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.outdoorType as unknown as string[]) || []).includes(outdoor.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -317,7 +317,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={style.id}
                     type="button"
                     onClick={() => updateFields({architecturalStyle: formData.architecturalStyle === style.id ? '' : style.id as ArchitecturalStyle})}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       formData.architecturalStyle === style.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/10 text-white hover:border-main-text/30'
@@ -352,7 +352,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={shop.id}
                     type="button"
                     onClick={() => updateFields({shopType: formData.shopType === shop.id ? '' : shop.id as ShopType})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.shopType === shop.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -378,7 +378,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentFeatures, features.id];
                       updateFields({ featuresType: newFeatures as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.featuresType as unknown as string[]) || []).includes(features.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -397,7 +397,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={atom.id}
                     type="button"
                     onClick={() => updateFields({atmoshpere: formData.atmoshpere === atom.id ? '' : atom.id as Atmoshpere})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.atmoshpere === atom.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -432,7 +432,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={cuisine.id}
                     type="button"
                     onClick={() => updateFields({cuisineType: formData.cuisineType === cuisine.id ? '' : cuisine.id as CuisineType})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.cuisineType === cuisine.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -451,7 +451,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={seating.id}
                     type="button"
                     onClick={() => updateFields({seatingCapacity: formData.seatingCapacity === seating.id ? '' : seating.id as SeatingCapacity})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.seatingCapacity === seating.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -477,7 +477,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentSpace, space.id];
                       updateFields({ spaceWanted: newSpace as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.spaceWanted as unknown as string[]) || []).includes(space.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -512,7 +512,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={employee.id}
                     type="button"
                     onClick={() => updateFields({employeeCount: formData.employeeCount === employee.id ? '' : employee.id as EmployeeCount})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.employeeCount === employee.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -531,7 +531,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={environment.id}
                     type="button"
                     onClick={() => updateFields({workEnvironment: formData.workEnvironment === environment.id ? '' : environment.id as WorkEnvironment})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.workEnvironment === environment.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -557,7 +557,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentAmenities, amenities.id];
                       updateFields({ amenitiesWanted: newAmenities as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.amenitiesWanted as unknown as string[]) || []).includes(amenities.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -599,7 +599,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                         : [...currentSalon, salon.id];
                       updateFields({ salonServices: newSalon as any });
                     }}
-                    className={`p-4 text-lg text-center rounded-xl border transition-all ${
+                    className={`p-3 md:p-4 text-sm md:text-lg text-center rounded-xl border transition-all ${
                       ((formData.salonServices as unknown as string[]) || []).includes(salon.id)
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -618,7 +618,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={station.id}
                     type="button"
                     onClick={() => updateFields({stationsCount: formData.stationsCount === station.id ? '' : station.id as StationsCount})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.stationsCount === station.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
@@ -637,7 +637,7 @@ export default function Step4ProjectSpecifics({ formData, updateFields, updateSp
                     key={ambi.id}
                     type="button"
                     onClick={() => updateFields({ambiance: formData.ambiance === ambi.id ? '' : ambi.id as Ambiance})}
-                    className={`flex-1 text-lg py-3 rounded-xl border transition-all ${
+                    className={`flex-1 text-sm md:text-lg py-2.5 md:py-3 rounded-xl border transition-all ${
                       formData.ambiance === ambi.id 
                         ? 'bg-main-text border-main-text text-header' 
                         : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'

@@ -31,14 +31,14 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
+      className="space-y-6 md:space-y-8"
     >
       <div className="text-center mb-8">
-        <h2 className="text-white text-lg uppercase tracking-widest mb-2">{t('stepThree')}</h2>
-        <p className="text-4xl text-main-text">{t('stepThreeDesc')}</p>
+        <h2 className="text-white text-sm md:text-lg uppercase tracking-widest mb-2">{t('stepThree')}</h2>
+        <p className="text-2xl md:text-4xl text-main-text">{t('stepThreeDesc')}</p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Budget Section */}
         <div className="md:col-span-2">
           <label className="block text-white text-md uppercase tracking-widest mb-6 mt-6 px-1">{t('budget') || 'Budget'}</label>
@@ -57,7 +57,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
                     : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                 }`}
               >
-                <h3 className="font-medium text-lg">{type.tier}</h3>
+                <h3 className="font-medium text-base md:text-lg">{type.tier}</h3>
               </button>
             ))}
           </div>
@@ -132,7 +132,7 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
                     : 'bg-header/30 border-main-text/20 text-white hover:border-main-text/60'
                 }`}
               >
-                {t(time.id) || time.label}
+                {time.label}
               </button>
             ))}
           </div>

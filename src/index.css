@@ -18,3 +18,8 @@ body {
   color: #ffffff;
   overflow-x: hidden;
 }
+
+/* Letter-spacing breaks the joins between Arabic letters, so drop it in Arabic content */
+[class*="tracking-"]:lang(ar) {
+  letter-spacing: normal;
+}
