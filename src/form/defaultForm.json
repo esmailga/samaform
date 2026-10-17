@@ -1,0 +1,1383 @@
+{
+  "steps": [
+    {
+      "id": "basic",
+      "title": {
+        "ar": "المعلومات الأساسية",
+        "en": "Basic Information"
+      },
+      "heading": {
+        "ar": "أخبرنا عن نفسك",
+        "en": "Tell us about yourself"
+      },
+      "fields": [
+        {
+          "id": "name",
+          "type": "text",
+          "label": {
+            "ar": "الاسم الكامل",
+            "en": "Full Name"
+          },
+          "placeholder": {
+            "ar": "أدخل اسمك الكامل",
+            "en": "Enter your full name"
+          },
+          "required": true,
+          "validation": "fullName"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "label": {
+            "ar": "البريد الإلكتروني",
+            "en": "Email"
+          },
+          "placeholder": {
+            "ar": "أدخل بريدك الإلكتروني",
+            "en": "Enter your email"
+          },
+          "required": false
+        },
+        {
+          "id": "phone",
+          "type": "phone",
+          "label": {
+            "ar": "رقم الهاتف",
+            "en": "Phone Number"
+          },
+          "placeholder": {
+            "ar": "أدخل رقم هاتفك",
+            "en": "Enter your phone number"
+          },
+          "required": true
+        },
+        {
+          "id": "city",
+          "type": "text",
+          "label": {
+            "ar": "المدينة",
+            "en": "City"
+          },
+          "placeholder": {
+            "ar": "أدخل مدينتك",
+            "en": "Enter your city"
+          },
+          "required": true,
+          "validation": "minLength3"
+        }
+      ]
+    },
+    {
+      "id": "projectType",
+      "title": {
+        "ar": "نوع المشروع",
+        "en": "Project Type"
+      },
+      "heading": {
+        "ar": "اختار نوع المساحة التي تريد تصميمها",
+        "en": "What kind of space are you planning?"
+      },
+      "fields": [
+        {
+          "id": "projectType",
+          "type": "cards",
+          "label": {
+            "ar": "نوع المشروع",
+            "en": "Project Type"
+          },
+          "required": true,
+          "options": [
+            {
+              "id": "apartement",
+              "icon": "Home",
+              "label": {
+                "ar": "شقق سكنية",
+                "en": "Residential apartments"
+              },
+              "description": {
+                "ar": "مساحات معيشة حديثة",
+                "en": "Modern living spaces"
+              }
+            },
+            {
+              "id": "villa",
+              "icon": "Building",
+              "label": {
+                "ar": "فلل، منازل خاصة",
+                "en": "Luxury residences"
+              },
+              "description": {
+                "ar": "المساكن الفاخرة",
+                "en": "Exclusive private residences"
+              }
+            },
+            {
+              "id": "shop",
+              "icon": "ShoppingBag",
+              "label": {
+                "ar": "مساحات تجارية",
+                "en": "Retail spaces"
+              },
+              "description": {
+                "ar": "محلات تجارية",
+                "en": "Commercial retail outlets"
+              }
+            },
+            {
+              "id": "restaurant",
+              "icon": "Utensils",
+              "label": {
+                "ar": "مطعم / كافيه",
+                "en": "Restaurant / Café"
+              },
+              "description": {
+                "ar": "مساحات طعام ومقاهي",
+                "en": "Cafés and dining spaces"
+              }
+            },
+            {
+              "id": "office",
+              "icon": "Briefcase",
+              "label": {
+                "ar": "مكاتب / شركة",
+                "en": "Offices"
+              },
+              "description": {
+                "ar": "بيئات عمل احترافية",
+                "en": "Professional work environments"
+              }
+            },
+            {
+              "id": "beautySalon",
+              "icon": "Sparkles",
+              "label": {
+                "ar": "صالون تجميل",
+                "en": "Beauty-Wellness Salon"
+              },
+              "description": {
+                "ar": "مراكز العناية والتجميل",
+                "en": "Wellness and beauty centers"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "title": {
+        "ar": "تفاصيل المشروع",
+        "en": "Project Details"
+      },
+      "heading": {
+        "ar": "أخبرنا المزيد عن رؤيتك",
+        "en": "Tell us more about your vision"
+      },
+      "fields": [
+        {
+          "id": "budgetTier",
+          "type": "choice",
+          "label": {
+            "ar": "الميزانية",
+            "en": "Budget"
+          },
+          "required": false,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "economy",
+              "label": {
+                "ar": "اقتصادي",
+                "en": "Economy"
+              }
+            },
+            {
+              "id": "standard",
+              "label": {
+                "ar": "قياسي",
+                "en": "Standard"
+              }
+            },
+            {
+              "id": "premium",
+              "label": {
+                "ar": "متميز",
+                "en": "Premium"
+              }
+            },
+            {
+              "id": "luxury",
+              "label": {
+                "ar": "فاخر",
+                "en": "Luxury"
+              }
+            }
+          ],
+          "exact": {
+            "id": "budgetExact",
+            "placeholder": {
+              "ar": "أو أدخل الميزانية بالضبط بالدولار الأمريكي",
+              "en": "Or enter exact budget in USD"
+            },
+            "max": 999999,
+            "prefix": "$"
+          }
+        },
+        {
+          "id": "areaTier",
+          "type": "choice",
+          "label": {
+            "ar": "مساحة المشروع (متر مربع)",
+            "en": "Project Area (sqm)"
+          },
+          "required": false,
+          "multiple": false,
+          "layout": "grid4",
+          "options": [
+            {
+              "id": "small",
+              "label": {
+                "ar": "صغير (< ١٠٠ م٢)",
+                "en": "Small (< 100 sqm)"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "ar": "متوسط (١٠٠ - ٣٠٠ م٢)",
+                "en": "Medium (100 - 300 sqm)"
+              }
+            },
+            {
+              "id": "large",
+              "label": {
+                "ar": "كبير (٣٠٠ - ٥٠٠ م٢)",
+                "en": "Large (300 - 500 sqm)"
+              }
+            },
+            {
+              "id": "veryLarge",
+              "label": {
+                "ar": "كبير جداً (> ٥٠٠ م٢)",
+                "en": "Very Large (> 500 sqm)"
+              }
+            }
+          ],
+          "exact": {
+            "id": "areaExact",
+            "placeholder": {
+              "ar": "أو أدخل المساحة بالضبط",
+              "en": "Or enter exact area in sqm"
+            },
+            "max": 9999,
+            "suffix": " sqm"
+          }
+        },
+        {
+          "id": "timeline",
+          "type": "choice",
+          "label": {
+            "ar": "الجدول الزمني",
+            "en": "Desired Timeline"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid4",
+          "options": [
+            {
+              "id": "urgent",
+              "label": {
+                "ar": "عاجل (أقل من شهر)",
+                "en": "Urgent (< 1 month)"
+              }
+            },
+            {
+              "id": "normal",
+              "label": {
+                "ar": "عادي (١- ٣ أشهر)",
+                "en": "Normal (1 - 3 months)"
+              }
+            },
+            {
+              "id": "relaxed",
+              "label": {
+                "ar": "مريح (٣ - ٦ أشهر)",
+                "en": "Relaxed (3 - 6 months)"
+              }
+            },
+            {
+              "id": "flexible",
+              "label": {
+                "ar": "مرن",
+                "en": "Flexible"
+              }
+            }
+          ]
+        },
+        {
+          "id": "projectDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "تفاصيل المشروع",
+            "en": "Project Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن رؤيتك، المتطلبات الخاصة، أو أي قيود",
+            "en": "Tell us more about your vision, specific requirements, or any constraints"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "specifics",
+      "title": {
+        "ar": "تفاصيل محددة",
+        "en": "Project Specifics"
+      },
+      "heading": {
+        "ar": "تفاصيل محددة لـ {projectType}",
+        "en": "Specific details for your {projectType}"
+      },
+      "fields": [
+        {
+          "id": "roomCount",
+          "type": "choice",
+          "label": {
+            "ar": "عدد الغرف",
+            "en": "How many rooms need to be designed?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "row",
+          "options": [
+            {
+              "id": "1",
+              "label": {
+                "ar": "١ - ٢",
+                "en": "1 - 2"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "ar": "٣ - ٤",
+                "en": "3 - 4"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "ar": "٥+",
+                "en": "5+"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "apartement"
+            ]
+          },
+          "exact": {
+            "id": "roomCountExact",
+            "placeholder": {
+              "ar": "أو أدخل العدد الدقيق للغرف...",
+              "en": "Or enter exact number of rooms..."
+            },
+            "max": 99
+          }
+        },
+        {
+          "id": "designType",
+          "type": "choice",
+          "label": {
+            "ar": "ما هو أسلوب التصميم المفضل لديك؟",
+            "en": "What interior style you prefer?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "modern",
+              "label": {
+                "ar": "عصري بسيط",
+                "en": "Modern Minimalist"
+              }
+            },
+            {
+              "id": "arabic",
+              "label": {
+                "ar": "عربي تقليدي",
+                "en": "Arabic Traditional"
+              }
+            },
+            {
+              "id": "classic",
+              "label": {
+                "ar": "كلاسيكي أنيق",
+                "en": "Classic Elegant"
+              }
+            },
+            {
+              "id": "contemporary",
+              "label": {
+                "ar": "معاصر",
+                "en": "Contemporary"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "apartement"
+            ]
+          }
+        },
+        {
+          "id": "priorityType",
+          "type": "choice",
+          "label": {
+            "ar": "ما هي أولوياتك؟",
+            "en": "What are your priorities?"
+          },
+          "required": false,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "smartHome",
+              "label": {
+                "ar": "ميزات المنزل الذكي",
+                "en": "Smart Home"
+              }
+            },
+            {
+              "id": "ecoFriendly",
+              "label": {
+                "ar": "مواد صديقة للبيئة",
+                "en": "Eco Friendly"
+              }
+            },
+            {
+              "id": "storageSolution",
+              "label": {
+                "ar": "حلول تخزين",
+                "en": "Storage Solution"
+              }
+            },
+            {
+              "id": "naturalLight",
+              "label": {
+                "ar": "الإضاءة طبيعية",
+                "en": "Natural Light"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "apartement"
+            ]
+          }
+        },
+        {
+          "id": "balconyAns",
+          "type": "choice",
+          "label": {
+            "ar": "يوجد شرفة",
+            "en": "Has Balcony"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "row",
+          "options": [
+            {
+              "id": "yes",
+              "label": {
+                "ar": "نعم",
+                "en": "Yes"
+              }
+            },
+            {
+              "id": "no",
+              "label": {
+                "ar": "لا",
+                "en": "No"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "apartement"
+            ]
+          }
+        },
+        {
+          "id": "apartmentDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "Apartment Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن شقة أحلامك",
+            "en": "Tell us more about your dream apartment"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "apartement"
+            ]
+          }
+        },
+        {
+          "id": "floorsCount",
+          "type": "choice",
+          "label": {
+            "ar": "كم عدد طوابق الفيلا؟",
+            "en": "Number of Floors"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid3",
+          "options": [
+            {
+              "id": "one",
+              "label": {
+                "ar": "طابق واحد",
+                "en": "1"
+              }
+            },
+            {
+              "id": "two",
+              "label": {
+                "ar": "طابقين",
+                "en": "2"
+              }
+            },
+            {
+              "id": "three",
+              "label": {
+                "ar": "٣+ طوابق",
+                "en": "3+"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "villa"
+            ]
+          }
+        },
+        {
+          "id": "outdoorType",
+          "type": "choice",
+          "label": {
+            "ar": "منطقة خارجية",
+            "en": "Which outdoor areas need design?"
+          },
+          "required": false,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "landscaping",
+              "label": {
+                "ar": "تنسيق حدائق",
+                "en": "Landscaping"
+              }
+            },
+            {
+              "id": "poolArea",
+              "label": {
+                "ar": "منطقة المسبح",
+                "en": "Pool Area"
+              }
+            },
+            {
+              "id": "terrace",
+              "label": {
+                "ar": "شرفة",
+                "en": "Terrace"
+              }
+            },
+            {
+              "id": "parking",
+              "label": {
+                "ar": "مواقف سيارات",
+                "en": "Parking"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "villa"
+            ]
+          }
+        },
+        {
+          "id": "architecturalStyle",
+          "type": "choice",
+          "label": {
+            "ar": "ما هو الأسلوب المعماري المفضل لديك؟",
+            "en": "What architectural style do you prefer?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "modeCont",
+              "label": {
+                "ar": "عصري / معاصر",
+                "en": "Modern / Contemporary"
+              }
+            },
+            {
+              "id": "mediterranean",
+              "label": {
+                "ar": "متوسطي",
+                "en": "Mediterranean"
+              }
+            },
+            {
+              "id": "islamic",
+              "label": {
+                "ar": "إسلامي / عربي",
+                "en": "Islamic / Arabian"
+              }
+            },
+            {
+              "id": "palatial",
+              "label": {
+                "ar": "قصر فاخر",
+                "en": "Luxury Palatial"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "villa"
+            ]
+          }
+        },
+        {
+          "id": "villaDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "House Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن منزل أحلامك",
+            "en": "Tell us more about your dream home"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "villa"
+            ]
+          }
+        },
+        {
+          "id": "shopType",
+          "type": "choice",
+          "label": {
+            "ar": "ما نوع النشاط التجاري؟",
+            "en": "What type of retail busines?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "fashion",
+              "label": {
+                "ar": "ملابس / أزياء",
+                "en": "Clothing / Fashion"
+              }
+            },
+            {
+              "id": "electronics",
+              "label": {
+                "ar": "إلكترونيات",
+                "en": "Electronics"
+              }
+            },
+            {
+              "id": "grocery",
+              "label": {
+                "ar": "بقالة / سوبر ماركت",
+                "en": "Grocery / Supermarket"
+              }
+            },
+            {
+              "id": "otherShop",
+              "label": {
+                "ar": "تجارة أخرى",
+                "en": "Other Retail"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "shop"
+            ]
+          }
+        },
+        {
+          "id": "featuresType",
+          "type": "choice",
+          "label": {
+            "ar": "ما هي الميزات التي تحتاجها؟",
+            "en": "What features do you need?"
+          },
+          "required": false,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "displayWindows",
+              "label": {
+                "ar": "واجهات عرض",
+                "en": "Display Windows"
+              }
+            },
+            {
+              "id": "storageRoom",
+              "label": {
+                "ar": "غرفة تخزين",
+                "en": "Storage Room"
+              }
+            },
+            {
+              "id": "fittingRoom",
+              "label": {
+                "ar": "غرفة قياس",
+                "en": "Fitting Room"
+              }
+            },
+            {
+              "id": "cashierCounter",
+              "label": {
+                "ar": "كاونتر كاشير",
+                "en": "Cashier Counter"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "shop"
+            ]
+          }
+        },
+        {
+          "id": "atmoshpere",
+          "type": "choice",
+          "label": {
+            "ar": "ما هو جو العلامة التجارية المطلوب",
+            "en": "What brand atmosphere do you want?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "premiumL",
+              "label": {
+                "ar": "فاخر / راقي",
+                "en": "Premium / Luxury"
+              }
+            },
+            {
+              "id": "trendy",
+              "label": {
+                "ar": "عصري / حديث",
+                "en": "Modern / Trendy"
+              }
+            },
+            {
+              "id": "welcoming",
+              "label": {
+                "ar": "ودي / مرحب",
+                "en": "Friendly / Welcoming"
+              }
+            },
+            {
+              "id": "minimal",
+              "label": {
+                "ar": "نظيف / بسيط",
+                "en": "Clean / Minimal"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "shop"
+            ]
+          }
+        },
+        {
+          "id": "shopDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "Shop Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن محل أحلامك",
+            "en": "Tell us more about your dream shop"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "shop"
+            ]
+          }
+        },
+        {
+          "id": "cuisineType",
+          "type": "choice",
+          "label": {
+            "ar": "ما نوع المطبخ الذي ستقدمه؟",
+            "en": "What type of cuisine will you serve?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "middleEastern",
+              "label": {
+                "ar": "عربي / شرق أوسطي",
+                "en": "Arabic / Middle Eastern"
+              }
+            },
+            {
+              "id": "international",
+              "label": {
+                "ar": "عالمي",
+                "en": "International"
+              }
+            },
+            {
+              "id": "fastFood",
+              "label": {
+                "ar": "وجبات سريعة",
+                "en": "Fast Food / Casual"
+              }
+            },
+            {
+              "id": "fineDining",
+              "label": {
+                "ar": "مطاعم راقية",
+                "en": "Fine Dining"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "restaurant"
+            ]
+          }
+        },
+        {
+          "id": "seatingCapacity",
+          "type": "choice",
+          "label": {
+            "ar": "سعة الجلوس المتوقعة؟",
+            "en": "Expected seating capacity"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "thirtySeat",
+              "label": {
+                "ar": "حتى ٣٠ مقعد",
+                "en": "Up to 30 seats"
+              }
+            },
+            {
+              "id": "thirtySixSeat",
+              "label": {
+                "ar": "٣٠ - ٦٠ مقعد",
+                "en": "30 - 60 seats"
+              }
+            },
+            {
+              "id": "sixtyHunSeat",
+              "label": {
+                "ar": "٦٠ - ١٠٠ مقعد",
+                "en": "60 - 100 seats"
+              }
+            },
+            {
+              "id": "hundredSeat",
+              "label": {
+                "ar": "أكثر من ١٠٠ مقعد",
+                "en": "100+ seats"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "restaurant"
+            ]
+          }
+        },
+        {
+          "id": "spaceWanted",
+          "type": "choice",
+          "label": {
+            "ar": "ما هي المناطق التي تحتاجها؟",
+            "en": "What spaces do you need?"
+          },
+          "required": false,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "outdoorSeating",
+              "label": {
+                "ar": "جلوس خارجي",
+                "en": "Outdoor Seating"
+              }
+            },
+            {
+              "id": "privateRooms",
+              "label": {
+                "ar": "غرف خاصة",
+                "en": "Private Rooms"
+              }
+            },
+            {
+              "id": "barCounter",
+              "label": {
+                "ar": "بار / كاونتر",
+                "en": "Bar / Counter"
+              }
+            },
+            {
+              "id": "openKitchen",
+              "label": {
+                "ar": "مطبخ مفتوح",
+                "en": "Open Kitchen"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "restaurant"
+            ]
+          }
+        },
+        {
+          "id": "spaceDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "Space Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن مساحة أحلامك",
+            "en": "Tell us more about your dream space"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "restaurant"
+            ]
+          }
+        },
+        {
+          "id": "employeeCount",
+          "type": "choice",
+          "label": {
+            "ar": "كم عدد الموظفين الذين سيستخدمون هذا المكان؟",
+            "en": "How many employees will use this space?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "tenEmployee",
+              "label": {
+                "ar": "١ - ١٠ موظفين",
+                "en": "1 - 10 employees"
+              }
+            },
+            {
+              "id": "thirtyEmployee",
+              "label": {
+                "ar": "١٠ - ٣٠ موظف",
+                "en": "10 - 30 employees"
+              }
+            },
+            {
+              "id": "fiftyEmployee",
+              "label": {
+                "ar": "٣٠ - ٥٠ موظف",
+                "en": "30 - 50 employees"
+              }
+            },
+            {
+              "id": "fiftyMoreEmployee",
+              "label": {
+                "ar": "أكثر من ٥٠ موظف",
+                "en": "50+ employees"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "office"
+            ]
+          }
+        },
+        {
+          "id": "workEnvironment",
+          "type": "choice",
+          "label": {
+            "ar": "ما بيئة العمل التي تحتاجها؟ ",
+            "en": "What work environment do you prefer?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "openPlan",
+              "label": {
+                "ar": "مخطط مفتوح",
+                "en": "Open Plan"
+              }
+            },
+            {
+              "id": "privateOffices",
+              "label": {
+                "ar": "مكاتب خاصة",
+                "en": "Private Offices"
+              }
+            },
+            {
+              "id": "hybridMixed",
+              "label": {
+                "ar": "مختلط",
+                "en": "Hybrid / Mixed"
+              }
+            },
+            {
+              "id": "coWorkingStyle",
+              "label": {
+                "ar": "أسلوب العمل المشترك",
+                "en": "Co-working Style"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "office"
+            ]
+          }
+        },
+        {
+          "id": "amenitiesWanted",
+          "type": "choice",
+          "label": {
+            "ar": "الميزات المطلوبة",
+            "en": "What amenities do you need ?"
+          },
+          "required": false,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "meetingRooms",
+              "label": {
+                "ar": "غرف اجتماعات",
+                "en": "Meeting Rooms"
+              }
+            },
+            {
+              "id": "kitchenPantry",
+              "label": {
+                "ar": "مطبخ / بوفيه",
+                "en": "Kitchen / Pantry"
+              }
+            },
+            {
+              "id": "receptionArea",
+              "label": {
+                "ar": "منطقة استقبال",
+                "en": "Reception Area"
+              }
+            },
+            {
+              "id": "loungeArea",
+              "label": {
+                "ar": "منطقة استراحة",
+                "en": "Lounge Area"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "office"
+            ]
+          }
+        },
+        {
+          "id": "officeDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "Office Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن مكتب أحلامك",
+            "en": "Tell us more about your dream office"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "office"
+            ]
+          }
+        },
+        {
+          "id": "salonServices",
+          "type": "choice",
+          "label": {
+            "ar": "ما هي الخدمات التي ستقدمها؟",
+            "en": "What services will you offer?"
+          },
+          "required": true,
+          "multiple": true,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "hairStyling",
+              "label": {
+                "ar": "تصفيف شعر",
+                "en": "Hair Styling"
+              }
+            },
+            {
+              "id": "nailCare",
+              "label": {
+                "ar": "عناية الأظافر",
+                "en": "Nail Care"
+              }
+            },
+            {
+              "id": "skinCare",
+              "label": {
+                "ar": "عناية البشرة",
+                "en": "Skin Care / Facial"
+              }
+            },
+            {
+              "id": "spaMassage",
+              "label": {
+                "ar": "سبا / مساج",
+                "en": "Spa / Massage"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "beautySalon"
+            ]
+          }
+        },
+        {
+          "id": "stationsCount",
+          "type": "choice",
+          "label": {
+            "ar": "كم عدد محطات الخدمة التي تحتاجها؟",
+            "en": "How many service stations do you need?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "threeStations",
+              "label": {
+                "ar": "١ - ٣ محطات",
+                "en": "1 - 3 stations"
+              }
+            },
+            {
+              "id": "sixStations",
+              "label": {
+                "ar": "٤ - ٦ محطات",
+                "en": "4 - 6 stations"
+              }
+            },
+            {
+              "id": "sevenStations",
+              "label": {
+                "ar": "٧ - ١٠ محطات",
+                "en": "7 - 10 stations"
+              }
+            },
+            {
+              "id": "tenStations",
+              "label": {
+                "ar": "أكثر من ١٠ محطات",
+                "en": "10+ stations"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "beautySalon"
+            ]
+          }
+        },
+        {
+          "id": "ambiance",
+          "type": "choice",
+          "label": {
+            "ar": "ما الأجواء التي تريد صنعها؟",
+            "en": "What ambiance do you want to create?"
+          },
+          "required": true,
+          "multiple": false,
+          "layout": "grid2",
+          "options": [
+            {
+              "id": "luxuryHigh",
+              "label": {
+                "ar": "فاخر / راقٍ",
+                "en": "Luxury / High-End"
+              }
+            },
+            {
+              "id": "modernTrendy",
+              "label": {
+                "ar": "عصري / حديث",
+                "en": "Modern / Trendy"
+              }
+            },
+            {
+              "id": "zenRelaxing",
+              "label": {
+                "ar": "هادئ / مريح",
+                "en": "Zen / Relaxing"
+              }
+            },
+            {
+              "id": "chicBoutique",
+              "label": {
+                "ar": "أنيق / بوتيك",
+                "en": "Chic / Boutique"
+              }
+            }
+          ],
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "beautySalon"
+            ]
+          }
+        },
+        {
+          "id": "salonDetails",
+          "type": "textarea",
+          "label": {
+            "ar": "هل لديك متطلبات أو تفضيلات محددة؟",
+            "en": "Salon Details"
+          },
+          "placeholder": {
+            "ar": "أخبرنا المزيد عن صالون أحلامك",
+            "en": "Tell us more about your dream salon"
+          },
+          "required": false,
+          "showIf": {
+            "field": "projectType",
+            "values": [
+              "beautySalon"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "images",
+      "title": {
+        "ar": "الإلهام والمساحة",
+        "en": "Inspiration & Space"
+      },
+      "heading": {
+        "ar": "قم بتحميل الصور لمساعدتنا في فهم رؤيتك",
+        "en": "Upload images to help us understand your vision"
+      },
+      "fields": [
+        {
+          "id": "inspirationImages",
+          "type": "images",
+          "label": {
+            "ar": "صور الإلهام",
+            "en": "Inspiration Images"
+          },
+          "help": {
+            "ar": "حمل صور تلهم رؤيتك التصميمية (بينتيريست، مجلات، إلخ)",
+            "en": "Upload images that inspire your design vision (Pinterest, magazines, etc)"
+          },
+          "placeholder": {
+            "ar": "حتى {max} صور",
+            "en": "Up to {max} images"
+          },
+          "required": false,
+          "maxFiles": 10
+        },
+        {
+          "id": "currentSpaceImages",
+          "type": "images",
+          "label": {
+            "ar": "صور المساحة الحالية",
+            "en": "Current Space Photos"
+          },
+          "help": {
+            "ar": "حمل صور للمساحة الحالية التي تحتاج إلى إعادة تصميم",
+            "en": "Upload photos of your current space that needs to be redesigned"
+          },
+          "placeholder": {
+            "ar": "حتى {max} صور",
+            "en": "Up to {max} images"
+          },
+          "required": false,
+          "maxFiles": 10
+        }
+      ]
+    }
+  ]
+}

@@ -1,136 +1,116 @@
 import type { jsPDF as JsPDF } from 'jspdf';
 import { translations } from '../../data/translations';
 import { convertArabicToWestern } from '../../utils/numbers';
+import type { FormField, FormSchema } from '../../form/schema';
 
 // ---------------------------------------------------------------------------
-// Response fields: one schema shared by the details modal, the Excel export and the PDF
+// Responses described with the editable form (src/form/schema.ts). Labels come from the current form, so
+// edits in Admin > Form show up here; questions since removed are labelled from the form version the
+// response was submitted with.
 // ---------------------------------------------------------------------------
 
-export type ResponseRecord = { id: number; created_at: string; data: Record<string, any> };
-export type ResponseField = { label: string; value: string; long?: boolean };
+export type ResponseRecord = { id: number; created_at: string; form_version?: number; data: Record<string, any> };
+export type ResponseField = { id: string; label: string; value: string; long?: boolean };
 export type ResponseSection = { title: string; fields: ResponseField[] };
-
-type FieldDef = { key: string; label: string; long?: boolean; format?: (data: Record<string, any>) => string };
+export type ImageGroup = { id: string; title: string; urls: string[] };
+/** The current form plus every saved version (0 = the form built into the site) */
+export type FormLibrary = { current: FormSchema; versions: Record<number, FormSchema> };
 
 const en = translations.en as Record<string, string>;
 
-// Most stored option ids are also translation keys; these are the exceptions
-const OPTION_KEYS: Record<string, Record<string, string>> = {
-  roomCount: { '1': 'roomc', '2': 'roomcc', '3': 'roomccc' },
-  floorsCount: { one: 'oneFloor', two: 'twoFloor', three: 'threeFloor' },
-  areaTier: { small: 'areaSmall', medium: 'areaMedium', large: 'areaLarge', veryLarge: 'areaVeryLarge' },
-};
-
-// The site's project type labels are marketing copy ("Luxury residences"), so the admin uses plain names
-const PROJECT_TYPES: Record<string, string> = {
-  apartement: 'Apartment', villa: 'Villa', shop: 'Shop', restaurant: 'Restaurant / Café', office: 'Office', beautySalon: 'Beauty salon',
-};
-
-const humanize = (id: string) => id.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
-const isEmpty = (v: unknown) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0);
-
-function optionLabel(field: string, value: unknown) {
-  const id = String(value);
-  return en[OPTION_KEYS[field]?.[id] ?? id] ?? humanize(id);
-}
-
-function formatValue(field: string, value: unknown): string {
-  if (isEmpty(value)) return '';
-  if (Array.isArray(value)) return value.map((v) => optionLabel(field, v)).join(', ');
-  if (typeof value === 'object') return JSON.stringify(value);
-  return optionLabel(field, value);
-}
+const humanize = (id: string) => id.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+const isEmpty = (v: unknown) =>
+  v === undefined || v === null || v === '' || v === '[]' ||
+  (Array.isArray(v) && v.length === 0) ||
+  (typeof v === 'object' && !Array.isArray(v) && Object.keys(v as object).length === 0);
+const toList = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : isEmpty(v) ? [] : [String(v)]);
 
 const number = (value: unknown) => {
   const n = Number(convertArabicToWestern(String(value)).replace(/,/g, ''));
   return Number.isFinite(n) ? n.toLocaleString('en-US') : String(value);
 };
 
-const option = (key: string, label: string): FieldDef => ({ key, label, format: (d) => formatValue(key, d[key]) });
-const plain = (key: string, label: string, long = false): FieldDef => ({ key, label, long, format: (d) => (isEmpty(d[key]) ? '' : String(d[key])) });
+const fieldsOf = (schema: FormSchema) => schema.steps.flatMap((s) => s.fields);
 
-const SECTIONS: { title: string; fields: FieldDef[] }[] = [
-  {
-    title: 'Client information',
-    fields: [plain('name', 'Full name'), plain('phone', 'Phone'), plain('email', 'Email'), plain('city', 'City')],
-  },
-  {
-    title: 'Project overview',
-    fields: [
-      { key: 'projectType', label: 'Project type', format: (d) => (isEmpty(d.projectType) ? '' : PROJECT_TYPES[d.projectType] ?? humanize(String(d.projectType))) },
-      { key: 'budgetTier', label: 'Budget', format: (d) => (!isEmpty(d.budgetTier) ? formatValue('budgetTier', d.budgetTier) : isEmpty(d.budgetExact) ? '' : `$${number(d.budgetExact)}`) },
-      { key: 'areaTier', label: 'Area', format: (d) => (!isEmpty(d.areaTier) ? formatValue('areaTier', d.areaTier) : isEmpty(d.areaExact) ? '' : `${number(d.areaExact)} sqm`) },
-      option('timeline', 'Timeline'),
-    ],
-  },
-  {
-    title: 'Design preferences',
-    fields: [
-      option('designType', 'Design style'),
-      option('architecturalStyle', 'Architectural style'),
-      option('priorityType', 'Priorities'),
-      option('outdoorType', 'Outdoor areas'),
-      option('balconyAns', 'Balcony'),
-      option('floorsCount', 'Floors'),
-      { key: 'roomCount', label: 'Rooms', format: (d) => (!isEmpty(d.roomCount) ? formatValue('roomCount', d.roomCount) : isEmpty(d.roomCountExact) ? '' : number(d.roomCountExact)) },
-    ],
-  },
-  {
-    title: 'Space requirements',
-    fields: [
-      option('shopType', 'Shop type'),
-      option('atmoshpere', 'Atmosphere'),
-      option('featuresType', 'Shop features'),
-      option('cuisineType', 'Cuisine'),
-      option('seatingCapacity', 'Seating capacity'),
-      option('spaceWanted', 'Spaces wanted'),
-      option('employeeCount', 'Employees'),
-      option('workEnvironment', 'Work environment'),
-      option('amenitiesWanted', 'Amenities'),
-      option('salonServices', 'Salon services'),
-      option('stationsCount', 'Stations'),
-      option('ambiance', 'Ambiance'),
-    ],
-  },
-  {
-    title: 'Client notes',
-    fields: [
-      plain('projectDetails', 'Project vision', true),
-      plain('apartmentDetails', 'Apartment details', true),
-      plain('villaDetails', 'Villa details', true),
-      plain('shopDetails', 'Shop details', true),
-      plain('spaceDetails', 'Restaurant details', true),
-      plain('officeDetails', 'Office details', true),
-      plain('salonDetails', 'Salon details', true),
-    ],
-  },
-];
-
-// Keys that are shown elsewhere (or merged into another field) and must not appear under "Other details"
-const HANDLED_KEYS = new Set([
-  'id', 'created_at', 'inspirationImages', 'currentSpaceImages', 'budgetExact', 'areaExact', 'roomCountExact',
-  ...SECTIONS.flatMap((s) => s.fields.map((f) => f.key)),
-]);
-
-export function getResponseSections(data: Record<string, any>): ResponseSection[] {
-  const sections: ResponseSection[] = SECTIONS.map((section) => ({
-    title: section.title,
-    fields: section.fields
-      .map((f) => ({ label: f.label, value: (f.format ?? ((d) => String(d[f.key] ?? '')))(data), long: f.long }))
-      .filter((f) => f.value !== ''),
-  }));
-  // Questions added to the form later still show up instead of being silently dropped
-  const other = Object.entries(data)
-    .filter(([key, value]) => !HANDLED_KEYS.has(key) && !isEmpty(value))
-    .map(([key, value]) => ({ label: humanize(key), value: formatValue(key, value) }));
-  sections.push({ title: 'Other details', fields: other });
-  return sections.filter((s) => s.fields.length > 0);
+/** Every definition of a field, newest first: current form, the response's own version, then older versions */
+function definitions(lib: FormLibrary, version: number, id: string): FormField[] {
+  const schemas = [lib.current, lib.versions[version], ...Object.keys(lib.versions).map(Number).sort((a, b) => b - a).map((v) => lib.versions[v])];
+  return schemas.flatMap((schema) => (schema ? fieldsOf(schema).filter((f) => f.id === id) : []));
 }
 
-// Formatted value of one field by its key, e.g. for the responses table
-export function responseValue(data: Record<string, any>, key: string) {
-  const field = SECTIONS.flatMap((s) => s.fields).find((f) => f.key === key);
-  return field?.format ? field.format(data) : formatValue(key, data[key]);
+function optionLabel(defs: FormField[], optionId: string) {
+  for (const def of defs) {
+    const option = def.options?.find((o) => o.id === optionId);
+    if (option) return option.label.en;
+  }
+  return humanize(optionId);
+}
+
+/** Readable English answer to one question ('' when unanswered) */
+function formatAnswer(defs: FormField[], data: Record<string, any>): string {
+  const field = defs[0];
+  const value = data[field.id];
+  if (field.type === 'images') return '';
+  if (field.type === 'choice' || field.type === 'cards') {
+    const chosen = toList(value).map((id) => optionLabel(defs, id)).join(', ');
+    if (chosen) return chosen;
+    const exact = field.exact && data[field.exact.id];
+    return field.exact && !isEmpty(exact) ? `${field.exact.prefix ?? ''}${number(exact)}${field.exact.suffix ?? ''}` : '';
+  }
+  return isEmpty(value) ? '' : Array.isArray(value) ? value.join(', ') : String(value);
+}
+
+const imagesIn = (value: unknown): string[] => (Array.isArray(value) ? value : []).filter((x: unknown): x is string => typeof x === 'string');
+
+export function describeResponse(response: ResponseRecord, lib: FormLibrary): { sections: ResponseSection[]; images: ImageGroup[] } {
+  const data = response.data;
+  const version = response.form_version ?? 0;
+  const handled = new Set(['id', 'created_at']);
+  const images: ImageGroup[] = [];
+  const answer = (field: FormField): ResponseField | null => {
+    handled.add(field.id);
+    if (field.exact) handled.add(field.exact.id);
+    if (field.type === 'images') {
+      const urls = imagesIn(data[field.id]);
+      if (urls.length) images.push({ id: field.id, title: field.label.en, urls });
+      return null;
+    }
+    const value = formatAnswer(definitions(lib, version, field.id), data);
+    return value ? { id: field.id, label: field.label.en, value, long: field.type === 'textarea' } : null;
+  };
+
+  const sections: ResponseSection[] = lib.current.steps.map((step) => ({
+    title: step.title.en,
+    fields: step.fields.map(answer).filter((f): f is ResponseField => !!f),
+  }));
+
+  // Answers to questions that have since been removed from the form
+  const removed: ResponseField[] = [];
+  for (const key of Object.keys(data)) {
+    if (handled.has(key)) continue;
+    const old = definitions(lib, version, key)[0];
+    if (old) {
+      const f = answer(old);
+      if (f) removed.push(f);
+    }
+  }
+  sections.push({ title: 'Questions no longer in the form', fields: removed });
+
+  // Anything else that was stored but no form version knows about
+  sections.push({
+    title: 'Other details',
+    fields: Object.entries(data)
+      .filter(([key, value]) => !handled.has(key) && !isEmpty(value) && !['specifics', 'budget'].includes(key))
+      .map(([key, value]) => ({ id: key, label: humanize(key), value: Array.isArray(value) ? value.join(', ') : typeof value === 'object' ? JSON.stringify(value) : String(value) })),
+  });
+
+  return { sections: sections.filter((s) => s.fields.length > 0), images };
+}
+
+/** Formatted answer to one question by its id, e.g. for the responses table */
+export function responseValue(response: ResponseRecord, lib: FormLibrary, key: string) {
+  const defs = definitions(lib, response.form_version ?? 0, key);
+  return defs.length ? formatAnswer(defs, response.data) : String(response.data[key] ?? '');
 }
 
 // SQLite's CURRENT_TIMESTAMP is UTC ("2026-04-08 23:59:09"), so parse it as UTC rather than local time
@@ -138,9 +118,6 @@ export const parseSubmitted = (createdAt: string) => new Date(`${createdAt.repla
 export const referenceNumber = (id: number) => `SF-${String(id).padStart(4, '0')}`;
 const formatDate = (d: Date) =>
   d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-const imagesOf = (data: Record<string, any>, key: 'inspirationImages' | 'currentSpaceImages'): string[] =>
-  (Array.isArray(data[key]) ? data[key] : []).filter((x: unknown): x is string => typeof x === 'string');
 
 // ---------------------------------------------------------------------------
 // Company details printed on exports
@@ -159,46 +136,50 @@ const COMPANY = {
 // Excel
 // ---------------------------------------------------------------------------
 
-export async function exportResponsesToExcel(responses: ResponseRecord[]) {
+export async function exportResponsesToExcel(responses: ResponseRecord[], lib: FormLibrary) {
   const XLSX = await import('xlsx');
   const origin = window.location.origin;
+  const records = responses.map((r) => ({ r, ...describeResponse(r, lib) }));
 
-  // Columns follow the form's order; questions nobody answered are left out
-  const records = responses.map((r) => ({ r, sections: getResponseSections(r.data) }));
-  const answered = new Set(records.flatMap(({ sections }) => sections.flatMap((s) => s.fields.map((f) => f.label))));
-  const otherLabels = records.flatMap(({ sections }) => sections.find((s) => s.title === 'Other details')?.fields.map((f) => f.label) ?? []);
-  const labels = [...new Set([...SECTIONS.flatMap((s) => s.fields.map((f) => f.label)), ...otherLabels])].filter((l) => answered.has(l));
-  const maxInspiration = Math.max(0, ...responses.map((r) => imagesOf(r.data, 'inspirationImages').length));
-  const maxCurrent = Math.max(0, ...responses.map((r) => imagesOf(r.data, 'currentSpaceImages').length));
-  const header = [
-    'Reference', 'Submitted', ...labels,
-    ...Array.from({ length: maxInspiration }, (_, i) => `Inspiration image ${i + 1}`),
-    ...Array.from({ length: maxCurrent }, (_, i) => `Current space image ${i + 1}`),
-  ];
+  // Columns follow the form's question order, then removed/other questions; questions nobody answered are left out
+  const columns = new Map<string, string>();
+  const formFields = fieldsOf(lib.current);
+  for (const f of formFields) if (f.type !== 'images') columns.set(f.id, f.label.en);
+  for (const { sections } of records) for (const s of sections) for (const f of s.fields) if (!columns.has(f.id)) columns.set(f.id, f.label);
+  const answered = new Set(records.flatMap(({ sections }) => sections.flatMap((s) => s.fields.map((f) => f.id))));
+  const fieldIds = [...columns.keys()].filter((id) => answered.has(id));
 
-  const rows = records.map(({ r, sections }) => {
-    const values = new Map(sections.flatMap((s) => s.fields.map((f) => [f.label, f.value] as const)));
+  // One link column per uploaded image, grouped by image question
+  const imageQuestions = new Map<string, { title: string; max: number }>();
+  for (const f of formFields) if (f.type === 'images') imageQuestions.set(f.id, { title: f.label.en, max: 0 });
+  for (const { images } of records) {
+    for (const g of images) {
+      const q = imageQuestions.get(g.id) ?? { title: g.title, max: 0 };
+      q.max = Math.max(q.max, g.urls.length);
+      imageQuestions.set(g.id, q);
+    }
+  }
+  const imageColumns = [...imageQuestions].flatMap(([id, q]) => Array.from({ length: q.max }, (_, i) => ({ id, index: i, title: `${q.title} ${i + 1}` })));
+
+  const header = ['Reference', 'Submitted', ...fieldIds.map((id) => columns.get(id)!), ...imageColumns.map((c) => c.title)];
+  const rows = records.map(({ r, sections, images }) => {
+    const values = new Map(sections.flatMap((s) => s.fields.map((f) => [f.id, f.value] as const)));
     return [
       referenceNumber(r.id),
       parseSubmitted(r.created_at),
-      ...labels.map((l) => values.get(l) ?? ''),
-      ...Array.from({ length: maxInspiration }, (_, i) => (imagesOf(r.data, 'inspirationImages')[i] ? 'View image' : '')),
-      ...Array.from({ length: maxCurrent }, (_, i) => (imagesOf(r.data, 'currentSpaceImages')[i] ? 'View image' : '')),
+      ...fieldIds.map((id) => values.get(id) ?? ''),
+      ...imageColumns.map((c) => (images.find((g) => g.id === c.id)?.urls[c.index] ? 'View image' : '')),
     ];
   });
 
   const ws = XLSX.utils.aoa_to_sheet([header, ...rows], { cellDates: true, dateNF: 'yyyy-mm-dd hh:mm' });
 
   // Image cells link to the full-size upload
-  const firstImageCol = 2 + labels.length;
-  records.forEach(({ r }, rowIndex) => {
-    const links = [
-      ...Array.from({ length: maxInspiration }, (_, i) => imagesOf(r.data, 'inspirationImages')[i]),
-      ...Array.from({ length: maxCurrent }, (_, i) => imagesOf(r.data, 'currentSpaceImages')[i]),
-    ];
-    links.forEach((path, i) => {
-      if (!path) return;
-      const cell = ws[XLSX.utils.encode_cell({ r: rowIndex + 1, c: firstImageCol + i })];
+  const firstImageCol = 2 + fieldIds.length;
+  records.forEach(({ images }, rowIndex) => {
+    imageColumns.forEach((c, i) => {
+      const path = images.find((g) => g.id === c.id)?.urls[c.index];
+      const cell = path && ws[XLSX.utils.encode_cell({ r: rowIndex + 1, c: firstImageCol + i })];
       if (cell) cell.l = { Target: new URL(path, origin).href, Tooltip: 'Open image' };
     });
   });
@@ -264,7 +245,7 @@ const startsRtl = (s: string) => {
   return !!first && /[؀-ۿ]/.test(first[0]);
 };
 
-export async function exportResponseToPDF(response: ResponseRecord) {
+export async function exportResponseToPDF(response: ResponseRecord, lib: FormLibrary) {
   const { jsPDF } = await import('jspdf');
   const [regular, bold, icon, wordmark] = await Promise.all([
     fetchBase64('/fonts/Cairo-Regular.ttf'),
@@ -385,7 +366,8 @@ export async function exportResponseToPDF(response: ResponseRecord) {
   const GAP = 10, COL = (CW - GAP) / 2;
   const LABEL = 7, VALUE = 10, LEAD = 5;
 
-  for (const section of getResponseSections(response.data)) {
+  const { sections, images } = describeResponse(response, lib);
+  for (const section of sections) {
     const short = section.fields.filter((f) => !f.long);
     const long = section.fields.filter((f) => f.long);
     // Keep the heading on the same page as at least its first row or the start of its first note
@@ -438,10 +420,7 @@ export async function exportResponseToPDF(response: ResponseRecord) {
   }
 
   // --- Images: three per row, scaled to fit without cropping or stretching
-  const imageGroups = [
-    { title: 'Inspiration images', urls: imagesOf(response.data, 'inspirationImages') },
-    { title: 'Current space images', urls: imagesOf(response.data, 'currentSpaceImages') },
-  ].filter((g) => g.urls.length > 0);
+  const imageGroups = images;
 
   for (const group of imageGroups) {
     const loaded = await Promise.all(group.urls.map((u) => loadImage(u).catch(() => null)));

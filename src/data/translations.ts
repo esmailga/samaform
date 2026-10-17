@@ -26,6 +26,8 @@ export const translations = {
 
     // Validation
     invalidEmail: 'Please enter a valid email',
+    nameTwoWords: 'Please enter at least two words',
+    fileTooLarge: 'The image "{name}" is too large. The maximum size is 1MB.',
     invalidPhone: 'Please enter a valid phone number',
     requiredField: 'This field is required',
 
@@ -293,6 +295,8 @@ export const translations = {
 
     // Validation
     invalidEmail: 'يرجى إدخال بريد إلكتروني صحيح',
+    nameTwoWords: 'يرجى إدخال كلمتين على الأقل',
+    fileTooLarge: 'الصورة «{name}» كبيرة جداً. الحد الأقصى للحجم ١ ميغابايت.',
     invalidPhone: 'يرجى إدخال رقم هاتف صحيح',
     requiredField: 'هذا الحقل مطلوب',
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, FileText, LogOut, Download, Trash2, X, RefreshCw, Eye, UserCog, Images } from 'lucide-react';
+import { LayoutDashboard, FileText, LogOut, Download, Trash2, X, RefreshCw, Eye, UserCog, Images, ListChecks } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '../components/common/Logo';
 import ProjectsManager from '../components/admin/ProjectsManager';
-import { exportResponsesToExcel, exportResponseToPDF, getResponseSections, parseSubmitted, responseValue, referenceNumber, type ResponseRecord } from '../components/admin/responseExport';
+import FormEditor from '../components/admin/FormEditor';
+import { DEFAULT_FORM, fetchFormLibrary } from '../form/useFormSchema';
+import { describeResponse, exportResponsesToExcel, exportResponseToPDF, parseSubmitted, responseValue, referenceNumber, type FormLibrary, type ResponseRecord } from '../components/admin/responseExport';
 
 const GLASS_CLASSES = "bg-header/40 backdrop-blur-xl border border-white/10";
 
@@ -19,7 +21,9 @@ export default function AdminPage() {
   const [responsesError, setResponsesError] = useState('');
   const [selectedResponse, setSelectedResponse] = useState<ResponseRecord | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'projects' | 'responses'>('responses');
+  const [activeTab, setActiveTab] = useState<'projects' | 'form' | 'responses'>('responses');
+  // The current form and every saved version, used to label answers (see responseExport.ts)
+  const [formLib, setFormLib] = useState<FormLibrary | null>(null);
   const [isChangeCredsModalOpen, setIsChangeCredsModalOpen] = useState(false);
   const [newAdminUsername, setNewAdminUsername] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
@@ -72,6 +76,8 @@ export default function AdminPage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setResponses(await res.json());
       setResponsesError('');
+      // Labels for answers come from the editable form; fall back to the built-in form if versions can't load
+      setFormLib(await fetchFormLibrary(token).catch(() => ({ current: DEFAULT_FORM, versions: { 0: DEFAULT_FORM } })));
     } catch (err) {
       setResponsesError('Could not load responses. Check that the API server is running (npm run api), then press Refresh.');
     }
@@ -116,11 +122,13 @@ export default function AdminPage() {
     }
   };
 
+  const lib: FormLibrary = formLib ?? { current: DEFAULT_FORM, versions: { 0: DEFAULT_FORM } };
+
   const handleExcelExport = async () => {
     if (responses.length === 0) return alert('There are no responses to export yet.');
     setExporting('excel');
     try {
-      await exportResponsesToExcel(responses);
+      await exportResponsesToExcel(responses, lib);
     } catch (err) {
       console.error(err);
       alert('Could not create the Excel file. Please try again.');
@@ -132,7 +140,7 @@ export default function AdminPage() {
   const handlePdfExport = async (response: ResponseRecord) => {
     setExporting('pdf');
     try {
-      await exportResponseToPDF(response);
+      await exportResponseToPDF(response, lib);
     } catch (err) {
       console.error(err);
       alert('Could not create the PDF. Please try again.');
@@ -219,6 +227,7 @@ export default function AdminPage() {
         `}>
           {([
             { id: 'projects', label: 'Projects', icon: Images },
+            { id: 'form', label: 'Form', icon: ListChecks },
             { id: 'responses', label: 'Responses', icon: FileText },
           ] as const).map(({ id, label, icon: Icon }) => (
             <button
@@ -244,6 +253,8 @@ export default function AdminPage() {
         <div className="flex-1 min-w-0 p-4 md:p-8 bg-header/30">
           {activeTab === 'projects' ? (
             <ProjectsManager token={token} onUnauthorized={handleLogout} />
+          ) : activeTab === 'form' ? (
+            <FormEditor token={token} onUnauthorized={handleLogout} onPublished={fetchResponses} />
           ) : (
           <motion.div 
             key="responses"
@@ -293,9 +304,9 @@ export default function AdminPage() {
                     >
                       <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{parseSubmitted(r.created_at).toLocaleDateString('en-GB')}</td>
                       <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium text-white/90">{r.data.name}</td>
-                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'projectType')}</td>
-                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'budgetTier')}</td>
-                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'areaTier')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r, lib, 'projectType')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r, lib, 'budgetTier')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r, lib, 'areaTier')}</td>
                       <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-right">
                         <div className="flex justify-end items-center gap-2">
                           <button 
@@ -410,26 +421,28 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {getResponseSections(selectedResponse.data).map((section, sIdx) => (
-                        section.fields.length > 0 && (
-                          <section key={sIdx} className="space-y-4">
-                            <h4 className="text-xs uppercase tracking-widest text-main-text mb-4 border-b border-main-text/20 pb-2">{section.title}</h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {section.fields.map((field: any, fIdx) => (
-                                <DetailItem key={fIdx} label={field.label} value={field.value} fullWidth={field.long} />
-                              ))}
-                            </div>
-                          </section>
-                        )
-                      ))}
-                    </div>
-
-                    {/* Images Section */}
-                    <div className="mt-12 space-y-8">
-                      <ImageSection title="Inspiration Images" images={selectedResponse.data.inspirationImages} />
-                      <ImageSection title="Current Space Images" images={selectedResponse.data.currentSpaceImages} />
-                    </div>
+                    {(() => {
+                      const { sections, images } = describeResponse(selectedResponse, lib);
+                      return (
+                        <>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {sections.map((section) => (
+                              <section key={section.title} className="space-y-4">
+                                <h4 className="text-xs uppercase tracking-widest text-main-text mb-4 border-b border-main-text/20 pb-2">{section.title}</h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  {section.fields.map((field) => (
+                                    <DetailItem key={field.id} label={field.label} value={field.value} fullWidth={field.long} />
+                                  ))}
+                                </div>
+                              </section>
+                            ))}
+                          </div>
+                          <div className="mt-12 space-y-8">
+                            {images.map((group) => <ImageSection key={group.id} title={group.title} images={group.urls} />)}
+                          </div>
+                        </>
+                      );
+                    })()}
                   </motion.div>
                 </motion.div>
               )}
