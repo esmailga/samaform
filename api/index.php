@@ -59,6 +59,21 @@ $db->exec("
     );
 ");
 
+// Record Your Plan form definitions. Every save adds a version; old versions are kept so responses submitted
+// with an earlier form still show the questions they answered.
+$db->exec("
+    CREATE TABLE IF NOT EXISTS form_versions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        schema TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+");
+$response_columns = $db->query("PRAGMA table_info(responses)")->fetchAll(PDO::FETCH_COLUMN, 1);
+if (!in_array('form_version', $response_columns, true)) {
+    // 0 = the form built into the site before it became editable
+    $db->exec("ALTER TABLE responses ADD COLUMN form_version INTEGER NOT NULL DEFAULT 0");
+}
+
 // Projects table. Created once with the images that used to be built into the site as starter projects,
 // so deleting every project later doesn't bring them back.
 $has_projects = $db->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'projects'")->fetchColumn();
@@ -218,12 +233,13 @@ elseif ($path === '/form/responses' && $method === 'POST') {
         if (json_last_error() === JSON_ERROR_NONE) $data[$key] = $decoded;
     }
 
+    // Every image question in the form (including ones added in the admin) is uploaded under its field id
     $uploaded = ['inspirationImages' => [], 'currentSpaceImages' => []];
-    foreach (array_keys($uploaded) as $field) {
-        if (!isset($files[$field])) continue;
-        $file_data = $files[$field];
-        // Normalise single and multiple uploads into one list of files
-        $count = is_array($file_data['name']) ? count($file_data['name']) : 1;
+    foreach ($files as $field => $file_data) {
+        if (!preg_match('/^[A-Za-z0-9_]{1,64}$/', $field)) continue;
+        if (!isset($uploaded[$field])) $uploaded[$field] = [];
+        // Normalise single and multiple uploads into one list of files (at most 20 per question)
+        $count = min(20, is_array($file_data['name']) ? count($file_data['name']) : 1);
         for ($i = 0; $i < $count; $i++) {
             $file = is_array($file_data['name'])
                 ? ['error' => $file_data['error'][$i], 'tmp_name' => $file_data['tmp_name'][$i]]
@@ -234,10 +250,12 @@ elseif ($path === '/form/responses' && $method === 'POST') {
     }
     $inspiration = $uploaded['inspirationImages'];
     $current = $uploaded['currentSpaceImages'];
+    $form_version = max(0, (int)($data['formVersion'] ?? 0));
+    unset($data['formVersion']);
 
     try {
         $db->beginTransaction();
-        $db->exec("INSERT INTO responses (created_at) VALUES (CURRENT_TIMESTAMP)");
+        $db->prepare("INSERT INTO responses (created_at, form_version) VALUES (CURRENT_TIMESTAMP, ?)")->execute([$form_version]);
         $rid = $db->lastInsertId();
 
         $db->prepare("INSERT INTO response_step1 (response_id, name, email, phone, city) VALUES (?, ?, ?, ?, ?)")
@@ -252,6 +270,10 @@ elseif ($path === '/form/responses' && $method === 'POST') {
         $known = ['name', 'email', 'phone', 'city', 'projectType', 'budgetTier', 'budgetExact', 'areaTier', 'areaExact', 'timeline', 'projectDetails', 'inspirationImages', 'currentSpaceImages'];
         $specifics = [];
         foreach ($data as $k => $v) if (!in_array($k, $known)) $specifics[$k] = $v;
+        // Images from questions added in the admin are kept with the other answers
+        foreach ($uploaded as $field => $paths) {
+            if (!in_array($field, ['inspirationImages', 'currentSpaceImages'], true)) $specifics[$field] = $paths;
+        }
         
         $db->prepare("INSERT INTO response_step4 (response_id, specifics) VALUES (?, ?)")->execute([$rid, json_encode($specifics)]);
         $db->prepare("INSERT INTO response_step5 (response_id, inspiration_images, current_space_images) VALUES (?, ?, ?)")->execute([$rid, json_encode($inspiration), json_encode($current)]);
@@ -269,7 +291,7 @@ elseif ($path === '/form/responses' && $method === 'POST') {
 elseif ($path === '/admin/responses' && $method === 'GET') {
     if (!$admin) { http_response_code(401); exit; }
     $stmt = $db->query("
-        SELECT r.id, r.created_at, s1.name, s1.email, s1.phone, s1.city, s2.project_type as projectType,
+        SELECT r.id, r.created_at, r.form_version, s1.name, s1.email, s1.phone, s1.city, s2.project_type as projectType,
                s3.budget_tier as budgetTier, s3.budget_exact as budgetExact, s3.area_tier as areaTier, s3.area_exact as areaExact,
                s3.timeline, s3.project_details as projectDetails, s4.specifics,
                s5.inspiration_images as inspirationImages, s5.current_space_images as currentSpaceImages
@@ -288,9 +310,12 @@ elseif ($path === '/admin/responses' && $method === 'GET') {
         $insp = json_decode($r['inspirationImages'], true) ?: [];
         $curr = json_decode($r['currentSpaceImages'], true) ?: [];
         unset($r['specifics']);
+        $version = (int)$r['form_version'];
+        unset($r['form_version']);
         $formatted[] = [
             'id' => $r['id'],
             'created_at' => $r['created_at'],
+            'form_version' => $version,
             'data' => array_merge($r, $spec, ['inspirationImages' => $insp, 'currentSpaceImages' => $curr])
         ];
     }
@@ -359,6 +384,35 @@ elseif (preg_match('#^/admin/projects/(\d+)$#', $path, $matches) && $method === 
     $db->prepare("DELETE FROM projects WHERE id = ?")->execute([$matches[1]]);
     if ($image) deleteUploadedImage($image);
     echo json_encode(['message' => 'Project deleted']);
+}
+
+// Current Record Your Plan form (public). version 0 with schema null means "use the built-in form".
+elseif ($path === '/form' && $method === 'GET') {
+    $row = $db->query("SELECT id, schema FROM form_versions ORDER BY id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    header('Content-Type: application/json');
+    echo json_encode($row ? ['version' => (int)$row['id'], 'schema' => json_decode($row['schema'], true)] : ['version' => 0, 'schema' => null]);
+}
+
+// Every saved form version, so the admin can label answers given to older versions of the form
+elseif ($path === '/admin/form/versions' && $method === 'GET') {
+    if (!$admin) { http_response_code(401); exit; }
+    $rows = $db->query("SELECT id, schema, created_at FROM form_versions ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode(array_map(fn($r) => ['version' => (int)$r['id'], 'schema' => json_decode($r['schema'], true), 'created_at' => $r['created_at']], $rows));
+}
+
+// Publish a new version of the form
+elseif ($path === '/admin/form' && $method === 'POST') {
+    if (!$admin) { http_response_code(401); exit; }
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true);
+    $schema = $body['schema'] ?? null;
+    if (strlen($raw) > 1000000 || !is_array($schema) || !isset($schema['steps']) || !is_array($schema['steps']) || count($schema['steps']) === 0) {
+        http_response_code(422);
+        echo json_encode(['error' => 'The form is not valid']);
+        exit;
+    }
+    $db->prepare("INSERT INTO form_versions (schema) VALUES (?)")->execute([json_encode($schema, JSON_UNESCAPED_UNICODE)]);
+    echo json_encode(['version' => (int)$db->lastInsertId()]);
 }
 
 // Update Credentials
