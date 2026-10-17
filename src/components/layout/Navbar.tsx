@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Menu, X, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
-import Logo from '../common/Logo';
+import { useScrolledPast, LOGO_HANDOFF_SCROLL } from '../../hooks/useScrolledPast';
+import Logo, { LOGO_TRANSITION } from '../common/Logo';
 
 export default function Navbar() {
   const { lang, setLang, t } = useLanguage();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [showNavbarLogo, setShowNavbarLogo] = useState(false);
+  const isScrolled = useScrolledPast(LOGO_HANDOFF_SCROLL);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [projectsDropdownOpen, setProjectsDropdownOpen] = useState(false);
@@ -19,29 +19,15 @@ export default function Navbar() {
   const isHome = location.pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 80);
-      setShowNavbarLogo(scrollY > 97);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
     setMobileServicesOpen(false);
     setMobileProjectsOpen(false);
   }, [location.pathname]);
 
-  const smoothSpring = {
-    type: "spring",
-    stiffness: 280,
-    damping: 45,
-    mass: 1,
-  };
+  // On the home page the hero owns the logo until the user scrolls past it.
+  // Opening the mobile menu at the top shows a plain (non-morphing) copy instead.
+  const logoMorphs = isHome && isScrolled;
+  const showLogo = !isHome || isScrolled || mobileMenuOpen;
 
   return (
     <motion.nav
@@ -52,36 +38,30 @@ export default function Navbar() {
         backgroundColor: isScrolled || mobileMenuOpen ? 'rgba(38, 58, 64, 0.95)' : 'transparent',
         borderBottom: isScrolled || mobileMenuOpen ? '1px solid rgba(10, 34, 41, 0.2)' : '1px solid transparent'
       }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 inset-x-0 z-50 flex flex-col"
     >
-      <div className="h-24 flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <motion.div 
-            layout="position"
-            transition={smoothSpring}
-            className={`flex items-center w-full ${showNavbarLogo || !isHome || mobileMenuOpen ? 'justify-between' : 'justify-start md:justify-center'}`}
-          >
-                
-            <AnimatePresence>
-            {(showNavbarLogo || !isHome || mobileMenuOpen) && (
-                <motion.div
-                  layout
-                  key="navbar-logo"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={smoothSpring}
-                  className="overflow-hidden whitespace-nowrap shrink-0"
-                >
-                  <Link to="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center">
-                    <Logo showText={true} noAnim={!isHome} />
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
+      <div className="h-16 md:h-20 flex items-center">
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-6 flex items-center">
+          {showLogo && (
+            <motion.div
+              initial={logoMorphs || !isHome ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="shrink-0"
+            >
+              <Link to="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center">
+                <Logo showText={true} noAnim={!logoMorphs} />
+              </Link>
+            </motion.div>
+          )}
 
-            <motion.div layout transition={smoothSpring} className="flex items-center">
+          {/* Links sit centred while the hero shows the logo, then glide to the end */}
+          <motion.div
+            layout="position"
+            transition={LOGO_TRANSITION}
+            className={`flex items-center ms-auto ${showLogo ? '' : 'md:me-auto'}`}
+          >
               <div className="hidden md:flex items-center gap-3 lg:gap-10 text-xs lg:text-sm font-medium tracking-wide text-white whitespace-nowrap">
                 
                 {/* Desktop Services Dropdown */}
@@ -106,13 +86,13 @@ export default function Navbar() {
                       >
                         <div className="flex flex-col py-2">
                           {/* UPDATED: Changed 'id' values to specific anchor tags instead of '/services' */}
-                          {[
+                          {([
                             { name: 'interiorDesign', id: 'interior-design' },
                             { name: 'architecturalDesign', id: 'architectural-design' },
                             { name: 'landscapeDesign', id: 'landscape-design' },
                             { name: 'commercialDesign', id: 'commercial-design' },
                             { name: 'objectsDesign', id: 'objects-design' }
-                          ].map((item) => (
+                          ] as const).map((item) => (
                             <Link 
                               key={item.id} 
                               to={`/services#${item.id}`} 
@@ -213,14 +193,13 @@ export default function Navbar() {
 
               {/* Mobile Toggle */}
               <button 
-                className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="md:hidden text-white p-2 -me-2 hover:bg-white/10 rounded-lg transition-colors"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle Menu"
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
+                {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
               </button>
-            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -235,12 +214,12 @@ export default function Navbar() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="md:hidden bg-header/95 border-t border-main-text/10 overflow-hidden"
           >
-            <div className="px-6 py-8 flex flex-col space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <div className="px-6 py-6 flex flex-col space-y-4 max-h-[calc(100dvh-4rem)] overflow-y-auto">
               {/* Mobile Services */}
               <div className="flex flex-col">
                 <button 
                   onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                  className="flex items-center justify-between text-xl text-white hover:text-main-text transition-colors py-2"
+                  className="flex items-center justify-between text-lg text-white hover:text-main-text transition-colors py-2"
                   aria-expanded={mobileServicesOpen}
                 >
                   <span>{t('services')}</span>
@@ -255,13 +234,13 @@ export default function Navbar() {
                       className="flex flex-col space-y-3 ps-4 mt-2 border-s border-main-text/20"
                     >
                       {/* UPDATED: Changed 'path' to 'id' to dynamically link to hashes */}
-                      {[
+                      {([
                         { key: 'interiorDesign', id: 'interior-design' },
                         { key: 'architecturalDesign', id: 'architectural-design' },
                         { key: 'landscapeDesign', id: 'landscape-design' },
                         { key: 'commercialDesign', id: 'commercial-design' },
                         { key: 'objectsDesign', id: 'objects-design' }
-                      ].map((item) => (
+                      ] as const).map((item) => (
                         <Link 
                           key={item.id} 
                           to={`/services#${item.id}`}
@@ -280,7 +259,7 @@ export default function Navbar() {
               <div className="flex flex-col">
                 <button 
                   onClick={() => setMobileProjectsOpen(!mobileProjectsOpen)}
-                  className="flex items-center justify-between text-xl text-white hover:text-main-text transition-colors py-2"
+                  className="flex items-center justify-between text-lg text-white hover:text-main-text transition-colors py-2"
                   aria-expanded={mobileProjectsOpen}
                 >
                   <span>{t('ourProjects')}</span>
@@ -313,8 +292,8 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
-              <Link to="/record-plan" onClick={() => setMobileMenuOpen(false)} className="text-xl text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-xl text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
+              <Link to="/record-plan" onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
+              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
               
               <div className="pt-6 border-t border-main-text/20 flex items-center justify-between">
                 <div dir="ltr" className="flex justify-between w-full px-4">

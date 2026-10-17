@@ -1,40 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, FileText, LogOut, Download, Trash2, X, RefreshCw, Eye, UserCog } from 'lucide-react';
-import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import { LayoutDashboard, FileText, LogOut, Download, Trash2, X, RefreshCw, Eye, UserCog, Images } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '../components/common/Logo';
-import { useLanguage } from '../context/LanguageContext';
-import { convertWesternToArabic } from '../utils/numbers';
+import ProjectsManager from '../components/admin/ProjectsManager';
+import { exportResponsesToExcel, exportResponseToPDF, getResponseSections, parseSubmitted, responseValue, referenceNumber, type ResponseRecord } from '../components/admin/responseExport';
 
 const GLASS_CLASSES = "bg-header/40 backdrop-blur-xl border border-white/10";
 
 export default function AdminPage() {
-  const { t, lang } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
-  const [responses, setResponses] = useState<any[]>([]);
+  const [responses, setResponses] = useState<ResponseRecord[]>([]);
+  const [exporting, setExporting] = useState<'excel' | 'pdf' | null>(null);
   const [error, setError] = useState('');
-  const [selectedResponse, setSelectedResponse] = useState<any>(null);
+  const [responsesError, setResponsesError] = useState('');
+  const [selectedResponse, setSelectedResponse] = useState<ResponseRecord | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'projects' | 'responses'>('responses');
   const [isChangeCredsModalOpen, setIsChangeCredsModalOpen] = useState(false);
   const [newAdminUsername, setNewAdminUsername] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [isUpdatingCreds, setIsUpdatingCreds] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
-
-  useEffect(() => {
-    const originalDir = document.documentElement.dir;
-    document.documentElement.dir = 'ltr';
-    return () => {
-      document.documentElement.dir = originalDir;
-    };
-  }, []);
 
   useEffect(() => {
     if (token) {
@@ -76,10 +67,13 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/responses', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (res.ok) setResponses(data);
+      // An expired login (tokens last 24 hours) returns 401: send the admin back to the login screen
+      if (res.status === 401) return handleLogout();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setResponses(await res.json());
+      setResponsesError('');
     } catch (err) {
-      console.error('Failed to fetch responses');
+      setResponsesError('Could not load responses. Check that the API server is running (npm run api), then press Refresh.');
     }
   };
 
@@ -122,275 +116,34 @@ export default function AdminPage() {
     }
   };
 
-  const exportToExcel = () => {
-    const flatData = responses.map(r => {
-      const data: any = {
-        ID: r.id,
-        Date: new Date(r.created_at).toLocaleString(),
-      };
-      
-      const translateValue = (val: any) => {
-        if (!val) return '';
-        let result = '';
-        if (Array.isArray(val)) {
-          result = val.map(v => t(v as any) || v).join(' , ');
-        } else {
-          result = t(val as any) || val;
-        }
-        return lang === 'ar' ? convertWesternToArabic(String(result)) : result;
-      };
-
-      Object.entries(r.data).forEach(([key, value]) => {
-        if (!['inspirationImages', 'currentSpaceImages'].includes(key) && value) {
-          const label = key.replace(/([A-Z])/g, ' $1').trim();
-          if (typeof value === 'object') {
-            Object.entries(value as any).forEach(([subKey, subValue]) => {
-              if (subValue) {
-                const subLabel = subKey.replace(/([A-Z])/g, ' $1').trim();
-                data[`${label}_${subLabel}`] = translateValue(subValue);
-              }
-            });
-          } else {
-            data[label] = translateValue(value);
-          }
-        }
-      });
-      return data;
-    });
-    const ws = XLSX.utils.json_to_sheet(flatData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Responses");
-    XLSX.writeFile(wb, "form_responses.xlsx");
-  };
-
-  const exportToPDF = async (response?: any) => {
-    const doc = new jsPDF() as any;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    
-    const getBase64Image = (url: string): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxDim = 800;
-          let width = img.width;
-          let height = img.height;
-          
-          if (width > height) {
-            if (width > maxDim) {
-              height *= maxDim / width;
-              width = maxDim;
-            }
-          } else {
-            if (height > maxDim) {
-              width *= maxDim / height;
-              height = maxDim;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', 0.6));
-        };
-        img.onerror = reject;
-        img.src = url;
-      });
-    };
-
-    // Helper to render text (handles Arabic/RTL via canvas)
-    const renderText = (text: string, x: number, y: number, size: number, color: string = '#000000', align: 'left' | 'right' = 'left') => {
-      const isArabic = /[\u0600-\u06FF]/.test(text);
-      if (isArabic) {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const scale = 4;
-        ctx.font = `${size * scale}px "Inter", "Arial", sans-serif`;
-        const metrics = ctx.measureText(text);
-        
-        canvas.width = metrics.width;
-        canvas.height = size * 1.5 * scale;
-        
-        ctx.font = `${size * scale}px "Inter", "Arial", sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, 0, canvas.height / 2);
-        
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = (metrics.width / scale) * 0.352778; // px to mm
-        const imgHeight = (size * 1.5) * 0.352778;
-        
-        const finalX = align === 'right' ? x - imgWidth : x;
-        doc.addImage(imgData, 'PNG', finalX, y - (size * 0.5 * 0.352778), imgWidth, imgHeight);
-      } else {
-        doc.setFontSize(size);
-        doc.setTextColor(color);
-        doc.text(text, x, y, { align });
-      }
-    };
-
-
-    if (response) {
-      // Header
-      renderText(`Date: ${new Date(response.created_at).toLocaleString()}`, pageWidth - 15, 20, 10, '#646464', 'right');
-      renderText("Your Plan", 15, 20, 22, '#000000');
-      
-      let yPos = 35;
-      const sections = getStructuredData(response.data);
-      
-      sections.forEach(section => {
-        if (section.fields.length > 0) {
-          if (yPos > 250) {
-            doc.addPage();
-            yPos = 20;
-          }
-          renderText(section.title, 15, yPos, 14, '#B49664');
-          yPos += 8;
-          
-          section.fields.forEach(field => {
-            if (yPos > 270) {
-              doc.addPage();
-              yPos = 20;
-            }
-            renderText(`${field.label}: ${field.value}`, 20, yPos, 10, '#323232');
-            yPos += 6;
-          });
-          yPos += 5;
-        }
-      });
-
-      // Add Images
-      const addImageSection = async (title: string, images: any[]) => {
-        if (!images || images.length === 0) return;
-        
-        if (yPos > 230) {
-          doc.addPage();
-          yPos = 20;
-        }
-        
-        renderText(title, 15, yPos, 14, '#B49664');
-        yPos += 10;
-        
-        const imgSize = 40;
-        const margin = 10;
-        let xPos = 15;
-        
-        for (const imgUrl of images) {
-          try {
-            const base64 = await getBase64Image(imgUrl);
-            if (xPos + imgSize > pageWidth - 15) {
-              xPos = 15;
-              yPos += imgSize + margin;
-            }
-            if (yPos + imgSize > 280) {
-              doc.addPage();
-              yPos = 20;
-              xPos = 15;
-            }
-            doc.addImage(base64, 'JPEG', xPos, yPos, imgSize, imgSize);
-            xPos += imgSize + margin;
-          } catch (e) {
-            console.error(`Failed to add image ${imgUrl} to PDF`, e);
-          }
-        }
-        yPos += imgSize + margin;
-      };
-
-      await addImageSection("Inspiration Images", response.data.inspirationImages);
-      await addImageSection("Current Space Images", response.data.currentSpaceImages);
-      
-      doc.save(`plan_${response.data.name}_${response.id}.pdf`);
+  const handleExcelExport = async () => {
+    if (responses.length === 0) return alert('There are no responses to export yet.');
+    setExporting('excel');
+    try {
+      await exportResponsesToExcel(responses);
+    } catch (err) {
+      console.error(err);
+      alert('Could not create the Excel file. Please try again.');
+    } finally {
+      setExporting(null);
     }
   };
 
-  function getStructuredData(data: any) {
-    const translateValue = (val: any) => {
-      if (!val) return '';
-      let result = '';
-      if (Array.isArray(val)) {
-        result = val.map(v => t(v as any) || v).join(', ');
-      } else {
-        result = t(val as any) || val;
-      }
-      return lang === 'ar' ? convertWesternToArabic(String(result)) : result;
-    };
-
-    const sections = [
-      {
-        title: "Client Information",
-        fields: [
-          { label: "Name", value: data.name },
-          { label: "Email", value: data.email },
-          { label: "Phone", value: data.phone },
-          { label: "City", value: data.city },
-        ]
-      },
-      {
-        title: "Project Overview",
-        fields: [
-          { label: "Type", value: translateValue(data.projectType) },
-          { label: "Budget ($)", value: translateValue(data.budgetTier) || data.budgetExact },
-          { label: "Area (SQM)", value: translateValue(data.areaTier) || data.areaExact },
-          { label: "Timeline", value: translateValue(data.timeline) },
-          { label: "Design Style", value: translateValue(data.designType) },
-          { label: "Architectural Style", value: translateValue(data.architecturalStyle) },
-        ]
-      },
-      {
-        title: "Priorities & Outdoor",
-        fields: [
-          { label: "Priorities", value: translateValue(data.priorityType) },
-          { label: "Outdoor Area", value: translateValue(data.outdoorType) },
-          { label: "Balcony", value: translateValue(data.balconyAns) },
-        ]
-      },
-      {
-        title: "Project Specifics",
-        fields: [
-          { label: "Project Details", value: data.projectDetails, fullWidth: true },
-          { label: "Apartment Details", value: data.apartmentDetails, fullWidth: true },
-          { label: "Villa Details", value: data.villaDetails, fullWidth: true },
-          { label: "Floors Count", value: translateValue(data.floorsCount) },
-          { label: "Room Count", value: translateValue(data.roomCount) || data.roomCountExact },
-          { label: "Shop Type", value: translateValue(data.shopType) },
-          { label: "Atmosphere", value: translateValue(data.atmoshpere) },
-          { label: "Features", value: translateValue(data.featuresType) },
-          { label: "Shop Details", value: data.shopDetails, fullWidth: true },
-          { label: "Cuisine Type", value: translateValue(data.cuisineType) },
-          { label: "Seating Capacity", value: translateValue(data.seatingCapacity) },
-          { label: "Space Wanted", value: translateValue(data.spaceWanted) },
-          { label: "Space Details", value: data.spaceDetails, fullWidth: true },
-          { label: "Employee Count", value: translateValue(data.employeeCount) },
-          { label: "Work Environment", value: translateValue(data.workEnvironment) },
-          { label: "Amenities Wanted", value: translateValue(data.amenitiesWanted) },
-          { label: "Office Details", value: data.officeDetails, fullWidth: true },
-          { label: "Salon Services", value: translateValue(data.salonServices) },
-          { label: "Stations Count", value: translateValue(data.stationsCount) },
-          { label: "Ambiance", value: translateValue(data.ambiance) },
-          { label: "Salon Details", value: data.salonDetails, fullWidth: true },
-        ]
-      },
-      {
-        title: "Additional Specifics",
-        fields: Object.entries(data.specifics || {}).map(([key, value]) => ({
-          label: key.replace(/([A-Z])/g, ' $1').trim(),
-          value: translateValue(value)
-        }))
-      }
-    ];
-
-    // Filter out empty values
-    return sections.map(section => ({
-      ...section,
-      fields: section.fields.filter(f => f.value && f.value !== '')
-    }));
-  }
+  const handlePdfExport = async (response: ResponseRecord) => {
+    setExporting('pdf');
+    try {
+      await exportResponseToPDF(response);
+    } catch (err) {
+      console.error(err);
+      alert('Could not create the PDF. Please try again.');
+    } finally {
+      setExporting(null);
+    }
+  };
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-header flex items-center justify-center p-4">
+      <div dir="ltr" lang="en" className="min-h-screen bg-header flex items-center justify-center p-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -432,8 +185,9 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className={`h-20 flex items-center px-4 md:px-8 border-b border-white/10 ${GLASS_CLASSES} sticky top-0 z-50`}>
+    // The admin is an English, left-to-right tool whatever language the public site is in
+    <div dir="ltr" lang="en" className="min-h-screen flex flex-col">
+      <nav className={`h-20 flex items-center justify-between gap-4 px-4 md:px-8 border-b border-white/10 ${GLASS_CLASSES} sticky top-0 z-50`}>
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -448,25 +202,34 @@ export default function AdminPage() {
         
         <button 
           onClick={handleLogout}
-          className="absolute right-4 md:right-8 flex items-center gap-2 px-3 md:px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-xl transition-all text-xs md:text-sm font-medium"
+          className="flex items-center gap-2 px-3 md:px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-xl transition-all text-xs md:text-sm font-medium"
         >
           <LogOut size={18} />
           <span className="hidden sm:inline">Logout</span>
         </button>
       </nav>
 
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="flex flex-1 relative">
         {/* Sidebar / Navigation */}
         <div className={`
-          fixed inset-0 z-40 md:relative md:z-0
+          fixed top-20 bottom-0 left-0 z-40 md:sticky md:z-0 md:self-start md:h-[calc(100dvh-5rem)] md:shrink-0
           w-64 bg-header border-r border-white/10 p-6 flex flex-col gap-3
           transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'translate-x-0 mt-17' : '-translate-x-full md:translate-x-0'}
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
-          <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-main-text text-header">
-            <FileText size={20} />
-            <span className="font-medium">Responses</span>
-          </div>
+          {([
+            { id: 'projects', label: 'Projects', icon: Images },
+            { id: 'responses', label: 'Responses', icon: FileText },
+          ] as const).map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => { setActiveTab(id); setIsMobileMenuOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === id ? 'bg-main-text text-header' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
+            >
+              <Icon size={20} />
+              <span className="font-medium">{label}</span>
+            </button>
+          ))}
         </div>
 
         {/* Mobile Overlay */}
@@ -478,7 +241,10 @@ export default function AdminPage() {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-header/30">
+        <div className="flex-1 min-w-0 p-4 md:p-8 bg-header/30">
+          {activeTab === 'projects' ? (
+            <ProjectsManager token={token} onUnauthorized={handleLogout} />
+          ) : (
           <motion.div 
             key="responses"
             initial={{ opacity: 0, y: 10 }}
@@ -498,23 +264,24 @@ export default function AdminPage() {
                   <RefreshCw size={18} />
                   Refresh
                 </button>
-                <button onClick={exportToExcel} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg hover:bg-green-600/30 transition-all text-sm">
+                <button onClick={handleExcelExport} disabled={exporting === 'excel'} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg hover:bg-green-600/30 transition-all text-sm disabled:opacity-60">
                   <Download size={18} />
-                  Excel
+                  {exporting === 'excel' ? 'Exporting...' : 'Excel'}
                 </button>
               </div>
             </div>
 
+            {responsesError && <p className="mb-4 text-sm text-red-400">{responsesError}</p>}
             <div className={`rounded-2xl overflow-x-auto ${GLASS_CLASSES}`}>
               <table className="w-full text-left min-w-[600px]">
                 <thead className="bg-white/5">
                   <tr>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80">Date</th>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80">Name</th>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80">Project</th>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80">Budget</th>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80">Area</th>
-                    <th className="px-6 py-4 text-xs uppercase tracking-widest text-white/80 text-right">Actions</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80">Date</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80">Name</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80">Project</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80">Budget</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80">Area</th>
+                    <th className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs uppercase tracking-widest text-white/80 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -524,12 +291,12 @@ export default function AdminPage() {
                       className="hover:bg-main-text/20 transition-colors cursor-pointer group"
                       onClick={() => setSelectedResponse(r)}
                     >
-                      <td className="px-6 py-4 text-sm text-white/80">{new Date(r.created_at).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-sm font-medium text-white/90">{r.data.name}</td>
-                      <td className="px-6 py-4 text-sm text-white/80 capitalize">{r.data.projectType}</td>
-                      <td className="px-6 py-4 text-sm text-white/80">{r.data.budgetTier || r.data.budgetExact}</td>
-                      <td className="px-6 py-4 text-sm text-white/80">{r.data.areaTier || r.data.areaExact}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{parseSubmitted(r.created_at).toLocaleDateString('en-GB')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm font-medium text-white/90">{r.data.name}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'projectType')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'budgetTier')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm text-white/80">{responseValue(r.data, 'areaTier')}</td>
+                      <td className="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-right">
                         <div className="flex justify-end items-center gap-2">
                           <button 
                             onClick={(e) => {
@@ -622,16 +389,17 @@ export default function AdminPage() {
                     <div className="flex justify-between items-start mb-8">
                       <div>
                         <h3 className="text-2xl md:text-3xl text-main-text mb-2">Response Details</h3>
-                        <p className="text-white/40 text-sm">Submitted on {new Date(selectedResponse.created_at).toLocaleString()}</p>
+                        <p className="text-white/40 text-sm">{referenceNumber(selectedResponse.id)} · Submitted on {parseSubmitted(selectedResponse.created_at).toLocaleString('en-GB')}</p>
                       </div>
                       <div className="flex gap-4">
                         <button 
-                          onClick={() => exportToPDF(selectedResponse)}
-                          className="p-6 flex justify-between gap-3 bg-red-600/20 text-red-400 rounded-full hover:bg-red-600/30 transition-colors"
+                          onClick={() => handlePdfExport(selectedResponse)}
+                          disabled={exporting === 'pdf'}
+                          className="px-5 py-3 flex items-center gap-2 bg-red-600/20 text-red-400 rounded-full hover:bg-red-600/30 transition-colors text-sm disabled:opacity-60"
                           title="Save as PDF"
                         >
-                          <Download size={20} />
-                          PDF
+                          <Download size={18} />
+                          {exporting === 'pdf' ? 'Preparing...' : 'PDF'}
                         </button>
                         <button 
                           onClick={() => setSelectedResponse(null)}
@@ -643,13 +411,13 @@ export default function AdminPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {getStructuredData(selectedResponse.data).map((section, sIdx) => (
+                      {getResponseSections(selectedResponse.data).map((section, sIdx) => (
                         section.fields.length > 0 && (
                           <section key={sIdx} className="space-y-4">
                             <h4 className="text-xs uppercase tracking-widest text-main-text mb-4 border-b border-main-text/20 pb-2">{section.title}</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               {section.fields.map((field: any, fIdx) => (
-                                <DetailItem key={fIdx} label={field.label} value={String(field.value)} fullWidth={field.fullWidth} />
+                                <DetailItem key={fIdx} label={field.label} value={field.value} fullWidth={field.long} />
                               ))}
                             </div>
                           </section>
@@ -667,6 +435,7 @@ export default function AdminPage() {
               )}
             </AnimatePresence>
           </motion.div>
+          )}
         </div>
     </div>
   </div>
@@ -678,7 +447,7 @@ function DetailItem({ label, value, fullWidth }: { label: string, value: string,
   return (
     <div className={`flex flex-col ${fullWidth ? 'sm:col-span-2' : ''}`}>
       <span className="text-[10px] uppercase tracking-widest text-white/30">{label}</span>
-      <span className="text-sm text-white/80 font-medium whitespace-pre-wrap">{value}</span>
+      <span dir="auto" className="text-sm text-white/80 font-medium whitespace-pre-wrap text-start">{value}</span>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export default function Step2ProjectType({ formData, updateFields }: StepProps) 
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepTwo')}</h2>
-        <p className="text-4xl text-main-text mb-12">{t('stepTwoDesc')}</p>
+        <p className="text-2xl md:text-4xl text-main-text mb-6 md:mb-12">{t('stepTwoDesc')}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projectTypes.map((type) => (
@@ -42,7 +42,7 @@ export default function Step2ProjectType({ formData, updateFields }: StepProps) 
           >
             <type.icon size={32} strokeWidth={1.5} />
             <div>
-              <h3 className="font-medium text-lg">{type.title}</h3>
+              <h3 className="font-medium text-base md:text-lg">{type.title}</h3>
               <p className={`text-xs opacity-70 ${formData.projectType === type.id ? 'text-header' : 'text-white'}`}>{type.subtitle}</p>
             </div>
           </button>

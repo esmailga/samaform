@@ -57,6 +57,94 @@ $db->exec("
     );
 ");
 
+// Projects table. Created once with the images that used to be built into the site as starter projects,
+// so deleting every project later doesn't bring them back.
+$has_projects = $db->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'projects'")->fetchColumn();
+if (!$has_projects) {
+    $db->exec("BEGIN IMMEDIATE");
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT NOT NULL,
+            name_en TEXT NOT NULL,
+            name_ar TEXT NOT NULL,
+            image TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
+    if ($db->query("SELECT COUNT(*) FROM projects")->fetchColumn() == 0) {
+        $seed = $db->prepare("INSERT INTO projects (category, name_en, name_ar, image) VALUES (?, ?, ?, ?)");
+        $starter = [
+            ['residential', 'Residential Project', 'مشروع سكني', ['resProject', 'resProject2', 'resProject3']],
+            ['commercial', 'Commercial Project', 'مشروع تجاري', ['comProject', 'comProject2', 'comProject3']],
+            ['garden-terrace', 'Garden & Terrace', 'حديقة وتراس', ['garProject1', 'garProject2', 'garProject3']],
+        ];
+        $ar_digits = ['١', '٢', '٣'];
+        foreach ($starter as [$category, $en, $ar, $files]) {
+            foreach ($files as $i => $file) {
+                $seed->execute([$category, "$en " . ($i + 1), "$ar " . $ar_digits[$i], "/project-images/$file.avif"]);
+            }
+        }
+    }
+    $db->exec("COMMIT");
+}
+
+const PROJECT_CATEGORIES = ['residential', 'commercial', 'garden-terrace'];
+const IMAGE_TYPES = [
+    'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/avif' => 'avif',
+    'image/gif' => 'gif', 'image/heic' => 'heic', 'image/heif' => 'heif',
+];
+
+// Saves one uploaded image into /uploads. The extension comes from the detected file type, never from the
+// client's file name, so nothing executable (e.g. a .php file) can be stored in the public uploads folder.
+function saveImageUpload($file, $prefix) {
+    if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) return null;
+    $tmp = $file['tmp_name'];
+    if (class_exists('finfo')) {
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->file($tmp);
+    } else {
+        $info = @getimagesize($tmp);
+        $mime = $info ? $info['mime'] : '';
+    }
+    if (!isset(IMAGE_TYPES[$mime])) return null;
+
+    $upload_dir = __DIR__ . '/../uploads';
+    if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+    $name = $prefix . '-' . time() . '-' . bin2hex(random_bytes(4)) . '.' . IMAGE_TYPES[$mime];
+    return move_uploaded_file($tmp, "$upload_dir/$name") ? "/uploads/$name" : null;
+}
+
+function uploadErrorMessage($file) {
+    $code = $file['error'] ?? UPLOAD_ERR_NO_FILE;
+    if ($code === UPLOAD_ERR_INI_SIZE || $code === UPLOAD_ERR_FORM_SIZE) return 'Image is too large for the server upload limit';
+    if ($code === UPLOAD_ERR_NO_FILE) return 'Please choose an image';
+    if ($code !== UPLOAD_ERR_OK) return 'Image upload failed';
+    return 'Only image files (JPG, PNG, WebP, AVIF) are allowed';
+}
+
+// Only removes files this API uploaded; the starter images in /project-images are part of the site.
+function deleteUploadedImage($path) {
+    if (strpos($path, '/uploads/') !== 0) return;
+    $file = realpath(__DIR__ . '/..' . $path);
+    $dir = realpath(__DIR__ . '/../uploads');
+    if ($file && $dir && strpos($file, $dir . DIRECTORY_SEPARATOR) === 0) @unlink($file);
+}
+
+function projectRow($r) {
+    return ['id' => (int)$r['id'], 'category' => $r['category'], 'nameEn' => $r['name_en'], 'nameAr' => $r['name_ar'], 'image' => $r['image']];
+}
+
+// Validates the text fields shared by create and update; returns an error message or null
+function validateProjectFields($data) {
+    if (!in_array($data['category'] ?? '', PROJECT_CATEGORIES, true)) return 'Please choose a category';
+    foreach (['nameEn' => 'English', 'nameAr' => 'Arabic'] as $key => $label) {
+        $value = trim($data[$key] ?? '');
+        if ($value === '') return "Please enter the $label name";
+        if (mb_strlen($value) > 120) return "The $label name must be 120 characters or fewer";
+    }
+    return null;
+}
+
 // Seed Admin User if empty
 $stmt = $db->query("SELECT COUNT(*) FROM users");
 if ($stmt->fetchColumn() == 0) {
@@ -120,39 +208,22 @@ elseif ($path === '/form/responses' && $method === 'POST') {
         if (json_last_error() === JSON_ERROR_NONE) $data[$key] = $decoded;
     }
 
-    $inspiration = [];
-    $current = [];
-    $upload_dir = __DIR__ . '/../uploads';
-    if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-
-    foreach (['inspirationImages', 'currentSpaceImages'] as $field) {
-        if (isset($files[$field])) {
-            // Handle both single and multiple files
-            $file_data = $files[$field];
-            if (is_array($file_data['name'])) {
-                $count = count($file_data['name']);
-                for ($i = 0; $i < $count; $i++) {
-                    if ($file_data['error'][$i] === UPLOAD_ERR_OK) {
-                        $ext = pathinfo($file_data['name'][$i], PATHINFO_EXTENSION);
-                        $name = $field . '-' . time() . '-' . rand(1000, 9999) . '.' . $ext;
-                        if (move_uploaded_file($file_data['tmp_name'][$i], "$upload_dir/$name")) {
-                            if ($field === 'inspirationImages') $inspiration[] = "/uploads/$name";
-                            else $current[] = "/uploads/$name";
-                        }
-                    }
-                }
-            } else {
-                if ($file_data['error'] === UPLOAD_ERR_OK) {
-                    $ext = pathinfo($file_data['name'], PATHINFO_EXTENSION);
-                    $name = $field . '-' . time() . '-' . rand(1000, 9999) . '.' . $ext;
-                    if (move_uploaded_file($file_data['tmp_name'], "$upload_dir/$name")) {
-                        if ($field === 'inspirationImages') $inspiration[] = "/uploads/$name";
-                        else $current[] = "/uploads/$name";
-                    }
-                }
-            }
+    $uploaded = ['inspirationImages' => [], 'currentSpaceImages' => []];
+    foreach (array_keys($uploaded) as $field) {
+        if (!isset($files[$field])) continue;
+        $file_data = $files[$field];
+        // Normalise single and multiple uploads into one list of files
+        $count = is_array($file_data['name']) ? count($file_data['name']) : 1;
+        for ($i = 0; $i < $count; $i++) {
+            $file = is_array($file_data['name'])
+                ? ['error' => $file_data['error'][$i], 'tmp_name' => $file_data['tmp_name'][$i]]
+                : $file_data;
+            $path = saveImageUpload($file, $field);
+            if ($path) $uploaded[$field][] = $path;
         }
     }
+    $inspiration = $uploaded['inspirationImages'];
+    $current = $uploaded['currentSpaceImages'];
 
     try {
         $db->beginTransaction();
@@ -221,6 +292,63 @@ elseif (preg_match('#^/admin/responses/(\d+)$#', $path, $matches) && $method ===
     if (!$admin) { http_response_code(401); exit; }
     $db->prepare("DELETE FROM responses WHERE id = ?")->execute([$matches[1]]);
     echo json_encode(['message' => 'Response deleted']);
+}
+
+// List Projects (public)
+elseif ($path === '/projects' && $method === 'GET') {
+    $rows = $db->query("SELECT * FROM projects ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    header('Content-Type: application/json');
+    echo json_encode(array_map('projectRow', $rows));
+}
+
+// Add Project
+elseif ($path === '/admin/projects' && $method === 'POST') {
+    if (!$admin) { http_response_code(401); exit; }
+    $error = validateProjectFields($_POST);
+    $image = $error ? null : saveImageUpload($_FILES['image'] ?? [], 'project');
+    if (!$error && !$image) $error = uploadErrorMessage($_FILES['image'] ?? []);
+    if ($error) { http_response_code(422); echo json_encode(['error' => $error]); exit; }
+
+    $db->prepare("INSERT INTO projects (category, name_en, name_ar, image) VALUES (?, ?, ?, ?)")
+       ->execute([$_POST['category'], trim($_POST['nameEn']), trim($_POST['nameAr']), $image]);
+    $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
+    $stmt->execute([$db->lastInsertId()]);
+    echo json_encode(projectRow($stmt->fetch(PDO::FETCH_ASSOC)));
+}
+
+// Update Project (image is optional; the old uploaded image is removed when replaced)
+elseif (preg_match('#^/admin/projects/(\d+)$#', $path, $matches) && $method === 'POST') {
+    if (!$admin) { http_response_code(401); exit; }
+    $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
+    $stmt->execute([$matches[1]]);
+    $project = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$project) { http_response_code(404); echo json_encode(['error' => 'Project not found']); exit; }
+
+    $error = validateProjectFields($_POST);
+    $image = $project['image'];
+    $has_new_image = isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE;
+    if (!$error && $has_new_image) {
+        $image = saveImageUpload($_FILES['image'], 'project');
+        if (!$image) $error = uploadErrorMessage($_FILES['image']);
+    }
+    if ($error) { http_response_code(422); echo json_encode(['error' => $error]); exit; }
+
+    $db->prepare("UPDATE projects SET category = ?, name_en = ?, name_ar = ?, image = ? WHERE id = ?")
+       ->execute([$_POST['category'], trim($_POST['nameEn']), trim($_POST['nameAr']), $image, $project['id']]);
+    if ($image !== $project['image']) deleteUploadedImage($project['image']);
+    $stmt->execute([$project['id']]);
+    echo json_encode(projectRow($stmt->fetch(PDO::FETCH_ASSOC)));
+}
+
+// Delete Project
+elseif (preg_match('#^/admin/projects/(\d+)$#', $path, $matches) && $method === 'DELETE') {
+    if (!$admin) { http_response_code(401); exit; }
+    $stmt = $db->prepare("SELECT image FROM projects WHERE id = ?");
+    $stmt->execute([$matches[1]]);
+    $image = $stmt->fetchColumn();
+    $db->prepare("DELETE FROM projects WHERE id = ?")->execute([$matches[1]]);
+    if ($image) deleteUploadedImage($image);
+    echo json_encode(['message' => 'Project deleted']);
 }
 
 // Update Credentials

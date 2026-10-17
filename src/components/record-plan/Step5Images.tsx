@@ -26,14 +26,14 @@ export default function Step5Images({
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
+      className="space-y-6 md:space-y-8"
     >
       <div className="text-center mb-8">
         <h2 className="text-white text-sm uppercase tracking-widest mb-2">{t('stepFive')}</h2>
-        <p className="text-4xl  text-main-text">{t('stepFiveDesc')}</p>
+        <p className="text-2xl md:text-4xl text-main-text">{t('stepFiveDesc')}</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         {/* Inspiration Images */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -43,7 +43,7 @@ export default function Step5Images({
           <p className="text-white/40  text-sm lowercase">{t('inspirationImagesDesc')}</p>
           <div 
             onClick={() => inspirationInputRef.current?.click()}
-            className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
+            className={`border-2 border-dashed border-main-text/20 rounded-2xl p-5 md:p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
           >
             <Upload className="text-main-text mb-2" size={32} />
             <span className="text-white/60 text-sm">{t('uploadLimit')}</span>
@@ -80,7 +80,7 @@ export default function Step5Images({
           <p className="text-white/40  text-sm lowercase">{t('currentSpaceImagesDesc')}</p>
           <div 
             onClick={() => currentSpaceInputRef.current?.click()}
-            className={`border-2 border-dashed border-main-text/20 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
+            className={`border-2 border-dashed border-main-text/20 rounded-2xl p-5 md:p-8 flex flex-col items-center justify-center cursor-pointer transition-colors hover:border-main-text/40 bg-header/20`}
           >
             <ImageIcon className="text-main-text mb-2" size={32} />
             <span className="text-white/60 text-sm">{t('uploadLimit')}</span>

@@ -8,15 +8,15 @@ type LanguageContextType = {
 };
 
 const LanguageContext = createContext<LanguageContextType>({
-  lang: 'en',
+  lang: 'ar',
   setLang: () => {},
-  t: (key) => translations['en'][key],
+  t: (key) => translations['ar'][key] || translations['en'][key],
 });
 
 export const useLanguage = () => useContext(LanguageContext);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>('en');
+  const [lang, setLang] = useState<Language>('ar');
 
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';

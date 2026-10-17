@@ -9,7 +9,7 @@ interface FormProgressProps {
 
 export default function FormProgress({ currentStep, totalSteps, onStepClick }: FormProgressProps) {
   return (
-    <div className="max-w-md mx-auto mb-12">
+    <div className="max-w-md mx-auto mb-6 md:mb-12">
       <div className="flex justify-between mb-2">
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
           <button 

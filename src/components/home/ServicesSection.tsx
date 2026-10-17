@@ -30,20 +30,20 @@ export default function ServicesSection() {
   });
 
   return (
-    <section className="py-8 px-6 relative">
-      <div className="max-w-7xl mx-auto px-6 mb-12" />
+    <section className="py-8 px-4 md:px-6 relative">
+      <div className="max-w-7xl mx-auto px-6 mb-6 md:mb-12" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
-        <div className="mb-16 text-center md:text-center">
-          <h2 className="py-8 text-4xl md:py-12 text-6xl font-bold mb-4 text-main-text">
+        <div className="mb-8 md:mb-16 text-center">
+          <h2 className="py-4 md:py-12 text-3xl sm:text-4xl md:text-6xl font-bold mb-2 md:mb-4 text-main-text">
             {t('services')}
           </h2>
         </div>
 
         {/* STACK CONTAINER */}
-        <div ref={containerRef} className="relative h-[500vh] md:h-[320vh]">
+        <div ref={containerRef} className="relative md:h-[320vh]">
 
           {servicesList.map((service, index) => {
             const start = index / servicesList.length;
@@ -62,12 +62,12 @@ export default function ServicesSection() {
               <motion.div
                 key={service.id}
                 style={{ scale, y, opacity}}
-                className="sticky top-32 mb-10 will-change-transform"
+                className="sticky top-20 md:top-32 mb-10 will-change-transform"
               >
-                <div className="bg-primary/90 rounded-3xl p-4 flex flex-col items-center md:flex-row items-center gap-6 md:gap-6 shadow-lg border-2 border-main-text">
+                <div className="bg-primary rounded-2xl md:rounded-3xl p-3 md:p-4 flex flex-col md:flex-row items-center gap-4 md:gap-6 shadow-lg border-2 border-main-text">
 
                   {/* Image */}
-                  <div className="w-full md:w-5/12 h-[300px] md:h-[400px] rounded-3xl overflow-hidden group">
+                  <div className="w-full md:w-5/12 h-[220px] sm:h-[300px] md:h-[400px] rounded-xl md:rounded-3xl overflow-hidden group">
                     <img 
                       src={service.image} 
                       alt={service.title}
@@ -78,17 +78,17 @@ export default function ServicesSection() {
                   </div>
 
                   {/* Text */}
-                  <div className="w-full md:w-5/12 flex flex-col justify-center items-start">
-                    <h3 className="text-3xl md:text-4xl  text-main-text mb-6">
+                  <div className="w-full md:w-5/12 px-2 pb-2 md:p-0 flex flex-col justify-center items-start">
+                    <h3 className="text-2xl md:text-4xl text-main-text mb-3 md:mb-6">
                       {service.title}
                     </h3>
-                    <p className="text-white/80 font-light text-lg mb-8 leading-relaxed">
+                    <p className="text-white/80 font-light text-sm md:text-lg mb-5 md:mb-8 leading-relaxed">
                       {service.description}
                     </p>
 
                     <Link 
                       to={`/services#${service.id}`} 
-                      className={`px-8 py-4 rounded-full inline-flex items-center space-x-2 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300`}
+                      className={`px-6 py-3 md:px-8 md:py-4 rounded-full inline-flex items-center gap-2 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300`}
                     >
                       <span className="uppercase tracking-widest text-xs font-medium">
                         {t('exploreService')}

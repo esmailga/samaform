@@ -42,21 +42,21 @@ export default function ServicesPage() {
   }, [location]);
 
   return (
-    <div className="pt-40 pb-32 px-6 min-h-screen max-w-7xl mx-auto relative">
-      <div className="max-w-7xl mx-auto px-6 mb-12" />
+    <div className="pt-28 md:pt-40 pb-20 md:pb-32 px-4 md:px-6 min-h-screen max-w-7xl mx-auto relative">
+      <div className="max-w-7xl mx-auto px-6 mb-6 md:mb-12" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="relative z-10"
       >
-        <h1 className="text-5xl md:text-7xl  text-main-text mb-8">{t('ourServices')}</h1>
-        <p className="text-white text-lg max-w-2xl mb-16 font-light">
+        <h1 className="text-4xl md:text-7xl text-main-text mb-4 md:mb-8">{t('ourServices')}</h1>
+        <p className="text-white text-base md:text-lg max-w-2xl mb-10 md:mb-16 font-light">
           {t('servicesPageDesc')}
         </p>
       </motion.div>
       
-      <div className="flex flex-col space-y-20">
+      <div className="flex flex-col space-y-14 md:space-y-20">
         {services.map((service, index) => (
           <motion.div
             key={service.id}
@@ -65,10 +65,10 @@ export default function ServicesPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
-            className="flex flex-col md:flex-row items-center gap-12 md:gap-20 scroll-mt-90"
+            className="flex flex-col md:flex-row items-center gap-6 md:gap-20 scroll-mt-24 md:scroll-mt-90"
           >
             {/* Image Left */}
-            <div className="w-full md:w-7/12 h-[400px] md:h-[600px] rounded-3xl overflow-hidden relative group border border-main-text/10 shadow-2xl">
+            <div className="w-full md:w-7/12 h-[260px] sm:h-[380px] md:h-[600px] rounded-2xl md:rounded-3xl overflow-hidden relative group border border-main-text/10 shadow-2xl">
               <img 
                 src={service.image} 
                 alt={service.title}
@@ -80,8 +80,8 @@ export default function ServicesPage() {
 
             {/* Text Right */}
             <div className="w-full md:w-5/12 flex flex-col justify-center items-start">
-              <h3 className="text-3xl md:text-4xl  text-main-text mb-6">{service.title}</h3>
-              <p className="text-white/80 font-light text-lg mb-8 leading-relaxed">
+              <h3 className="text-2xl md:text-4xl text-main-text mb-3 md:mb-6">{service.title}</h3>
+              <p className="text-white/80 font-light text-sm md:text-lg md:mb-8 leading-relaxed">
                 {service.description}
               </p>
             </div>
