@@ -11,19 +11,19 @@ export default function Step3ProjectDetails({ formData, updateFields }: StepProp
     { id: 'standard', tier: t('standard') },
     { id: 'premium', tier: t('premium') },
     { id: 'luxury', tier: t('luxury') },
-  ];
+  ] as const;
   const areaTiers = [
     { id: 'small', label: t('areaSmall') },
     { id: 'medium', label: t('areaMedium') },
     { id: 'large', label: t('areaLarge') },
     { id: 'veryLarge', label: t('areaVeryLarge') }
-  ];
+  ] as const;
   const timelines = [
     { id: 'urgent', label: t('urgent') },
     { id: 'normal', label: t('normal') },
     { id: 'relaxed', label: t('relaxed') },
     { id: 'flexible', label: t('flexible') }
-  ];
+  ] as const;
 
   return (
     <motion.div 
