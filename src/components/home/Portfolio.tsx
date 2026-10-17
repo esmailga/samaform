@@ -17,7 +17,7 @@ export const getProjectCategories = (t: any) => [
 ];
 
 export default function Portfolio() {
-  const { t } = useLanguage();
+  const { t, localePath } = useLanguage();
   const projectCategories = getProjectCategories(t);
   
   return (
@@ -66,7 +66,7 @@ export default function Portfolio() {
                   {category.description}
                 </p>
                 <Link 
-                  to={`/projects#${category.id}`} 
+                  to={localePath(`/projects#${category.id}`)} 
                   className={`px-6 py-3 md:px-8 md:py-4 rounded-full inline-flex items-center gap-2 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300`}
                 >
                   <span className="uppercase tracking-widest text-xs font-medium">{t('view')} {category.title}</span>

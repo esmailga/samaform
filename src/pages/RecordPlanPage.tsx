@@ -63,7 +63,7 @@ const INITIAL_DATA: ProjectFormData = {
 };
 
 export default function RecordPlanPage() {
-  const { t } = useLanguage();
+  const { t, localePath } = useLanguage();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ProjectFormData>(INITIAL_DATA);
@@ -221,7 +221,7 @@ export default function RecordPlanPage() {
       setCurrentStep(prev => prev - 1);
       window.scrollTo(0, 0);
     } else {
-      navigate('/');
+      navigate(localePath('/'));
     }
   };
 
@@ -257,7 +257,7 @@ export default function RecordPlanPage() {
 
       if (response.ok) {
         setIsSuccess(true);
-        setTimeout(() => navigate('/'), 3000);
+        setTimeout(() => navigate(localePath('/')), 3000);
       } else {
         alert('Failed to submit form. Please try again.');
       }

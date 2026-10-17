@@ -4,7 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import Logo from '../common/Logo';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, localePath } = useLanguage();
   return (
     <footer className="py-10 px-4 md:px-6 border-t border-main-text/10 bg-header/80 backdrop-blur-md relative overflow-hidden">
       <div className="absolute bottom-0 end-0 w-[500px] h-[500px] bg-main-text/5 rounded-full blur-[100px] pointer-events-none" />
@@ -22,11 +22,11 @@ export default function Footer() {
         <div>
           <h4 className="text-xs md:text-sm uppercase tracking-widest font-medium mb-4 md:mb-8 text-white">{t('navigation')}</h4>
           <ul className="space-y-3 md:space-y-4 text-sm md:text-base text-white font-light">
-            <li><Link to="/" className="hover:text-main-text transition-colors">{t('home')}</Link></li>
-            <li><Link to="/services" className="hover:text-main-text transition-colors">{t('services')}</Link></li>
-            <li><Link to="/projects" className="hover:text-main-text transition-colors">{t('ourProjects')}</Link></li>
-            <li><Link to="/record-plan" className="hover:text-main-text transition-colors">{t('recordPlan')}</Link></li>
-            <li><Link to="/contact" className="hover:text-main-text transition-colors">{t('contactUs')}</Link></li>
+            <li><Link to={localePath('/')} className="hover:text-main-text transition-colors">{t('home')}</Link></li>
+            <li><Link to={localePath('/services')} className="hover:text-main-text transition-colors">{t('services')}</Link></li>
+            <li><Link to={localePath('/projects')} className="hover:text-main-text transition-colors">{t('ourProjects')}</Link></li>
+            <li><Link to={localePath('/record-plan')} className="hover:text-main-text transition-colors">{t('recordPlan')}</Link></li>
+            <li><Link to={localePath('/contact')} className="hover:text-main-text transition-colors">{t('contactUs')}</Link></li>
           </ul>
         </div>
         <div>
@@ -52,8 +52,8 @@ export default function Footer() {
             </a>
           </div>
           <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-main-text/10 flex flex-wrap gap-x-8 gap-y-2">
-            <Link to="/terms" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('termsOfService')}</Link>
-            <Link to="/privacy" className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
+            <Link to={localePath('/terms')} className="text-xs text-white/40 hover:text-main-text transition-colors">{t('termsOfService')}</Link>
+            <Link to={localePath('/privacy')} className="text-xs text-white/40 hover:text-main-text transition-colors">{t('privacyPolicy')}</Link>
           </div>
         </div>
       </div>

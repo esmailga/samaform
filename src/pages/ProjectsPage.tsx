@@ -28,7 +28,7 @@ export default function ProjectsPage() {
     } else {
       window.scrollTo(0, 0);
     }
-  }, [location, status]);
+  }, [location.hash, status]);
 
   return (
     <div className="pt-28 md:pt-40 pb-20 md:pb-32 min-h-screen">

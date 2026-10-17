@@ -1,4 +1,5 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect, type ComponentType } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import ScrollToTop from './components/common/ScrollToTop';
 import Navbar from './components/layout/Navbar';
@@ -10,28 +11,57 @@ import RecordPlanPage from './pages/RecordPlanPage';
 import ContactPage from './pages/ContactPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
-import AdminPage from './pages/AdminPage';
-
+import NotFoundPage from './pages/NotFoundPage';
 import AssetPreloader from './components/common/AssetPreloader';
+import site from './seo/pages.json';
+import { applyHeadTags, findPage, headTags, localizedPath, noindexTags, splitLocale } from './seo/head';
+
+// Loaded on demand so public visitors never download the admin code (Excel/PDF export, forms)
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const ADMIN_PATH = '/adviechadowsecupor';
+
+// Every public page exists in Arabic (/services) and English (/en/services)
+const PAGES: [string, ComponentType][] = [
+  ['/', HomePage],
+  ['/services', ServicesPage],
+  ['/projects', ProjectsPage],
+  ['/record-plan', RecordPlanPage],
+  ['/contact', ContactPage],
+  ['/terms', TermsPage],
+  ['/privacy', PrivacyPage],
+];
+
+// Keeps the title, description, canonical and language links in <head> in sync with the current page
+function SeoHead() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (pathname === ADMIN_PATH) return applyHeadTags(noindexTags('Admin | SAMAFORM'));
+    const { lang, path } = splitLocale(pathname);
+    const page = findPage(site, path);
+    applyHeadTags(page
+      ? headTags(site, page, lang)
+      : noindexTags(lang === 'en' ? 'Page not found | SAMAFORM' : 'الصفحة غير موجودة | سما فورم'));
+  }, [pathname]);
+  return null;
+}
 
 function AppContent() {
   const location = useLocation();
-  const isAdminPage = location.pathname === '/adviechadowsecupor';
+  const isAdminPage = location.pathname === ADMIN_PATH;
 
   return (
     <div className="min-h-screen text-white selection:bg-main-text/30 font-sans">
       {!isAdminPage && <Navbar />}
       <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/record-plan" element={<RecordPlanPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/adviechadowsecupor" element={<AdminPage />} />
-        </Routes>
+        <Suspense fallback={<div className="min-h-screen bg-header" />}>
+          <Routes>
+            {(['ar', 'en'] as const).flatMap((lang) =>
+              PAGES.map(([path, Page]) => <Route key={lang + path} path={localizedPath(path, lang)} element={<Page />} />)
+            )}
+            <Route path={ADMIN_PATH} element={<AdminPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
       {!isAdminPage && <Footer />}
     </div>
@@ -40,12 +70,13 @@ function AppContent() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <Router>
+    <Router>
+      <LanguageProvider>
+        <SeoHead />
         <ScrollToTop />
         <AssetPreloader />
         <AppContent />
-      </Router>
-    </LanguageProvider>
+      </LanguageProvider>
+    </Router>
   );
 }

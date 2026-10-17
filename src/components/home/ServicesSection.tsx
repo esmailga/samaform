@@ -19,7 +19,7 @@ export const getServicesList = (t: any) => [
 ];
 
 export default function ServicesSection() {
-  const { t } = useLanguage();
+  const { t, localePath } = useLanguage();
   const servicesList = getServicesList(t);
 
   const containerRef = useRef(null);
@@ -87,7 +87,7 @@ export default function ServicesSection() {
                     </p>
 
                     <Link 
-                      to={`/services#${service.id}`} 
+                      to={localePath(`/services#${service.id}`)} 
                       className={`px-6 py-3 md:px-8 md:py-4 rounded-full inline-flex items-center gap-2 ${GLASS_CLASSES} ${GLASS_HOVER} text-white hover:text-main-text transition-all duration-300`}
                     >
                       <span className="uppercase tracking-widest text-xs font-medium">
