@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import heroBg from '../../assets/hero.avif';
 
 const CRITICAL_ASSETS = [
-  'logo2.png',
-  'logo3.png',
-  '/src/assets/hero.avif'
+  '/logo2.png',
+  '/logo3.png',
+  heroBg
   // Add other critical assets here if needed
 ];
 

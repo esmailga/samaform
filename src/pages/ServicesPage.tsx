@@ -39,7 +39,7 @@ export default function ServicesPage() {
       // If no hash, make sure we start at the top of the page
       window.scrollTo(0, 0);
     }
-  }, [location]);
+  }, [location.hash]);
 
   return (
     <div className="pt-28 md:pt-40 pb-20 md:pb-32 px-4 md:px-6 min-h-screen max-w-7xl mx-auto relative">

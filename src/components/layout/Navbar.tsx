@@ -4,10 +4,11 @@ import { ChevronDown, Menu, X, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { useScrolledPast, LOGO_HANDOFF_SCROLL } from '../../hooks/useScrolledPast';
+import { splitLocale } from '../../seo/head';
 import Logo, { LOGO_TRANSITION } from '../common/Logo';
 
 export default function Navbar() {
-  const { lang, setLang, t } = useLanguage();
+  const { lang, setLang, t, localePath } = useLanguage();
   const isScrolled = useScrolledPast(LOGO_HANDOFF_SCROLL);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function Navbar() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
   const location = useLocation();
-  const isHome = location.pathname === '/';
+  const isHome = splitLocale(location.pathname).path === '/';
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -50,7 +51,7 @@ export default function Navbar() {
               transition={{ duration: 0.3 }}
               className="shrink-0"
             >
-              <Link to="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center">
+              <Link to={localePath('/')} onClick={() => window.scrollTo(0, 0)} className="flex items-center">
                 <Logo showText={true} noAnim={!logoMorphs} />
               </Link>
             </motion.div>
@@ -70,7 +71,7 @@ export default function Navbar() {
                   onMouseEnter={() => setServicesDropdownOpen(true)}
                   onMouseLeave={() => setServicesDropdownOpen(false)}
                 >
-                  <Link to="/services" className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
+                  <Link to={localePath('/services')} className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
                     <span>{t('services')}</span>
                     <ChevronDown size={14} className={`transition-transform duration-300 ${servicesDropdownOpen ? 'rotate-180' : ''}`} />
                   </Link>
@@ -95,7 +96,7 @@ export default function Navbar() {
                           ] as const).map((item) => (
                             <Link 
                               key={item.id} 
-                              to={`/services#${item.id}`} 
+                              to={localePath(`/services#${item.id}`)} 
                               className="px-4 py-2 hover:bg-secondary/50 transition-colors text-sm text-white hover:text-main-text"
                             >
                               {t(item.name)}
@@ -113,7 +114,7 @@ export default function Navbar() {
                   onMouseEnter={() => setProjectsDropdownOpen(true)}
                   onMouseLeave={() => setProjectsDropdownOpen(false)}
                 >
-                  <Link to="/projects" className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
+                  <Link to={localePath('/projects')} className="flex items-center gap-1 hover:text-main-text transition-colors py-2">
                     <span>{t('ourProjects')}</span>
                     <ChevronDown size={14} className={`transition-transform duration-300 ${projectsDropdownOpen ? 'rotate-180' : ''}`} />
                   </Link>
@@ -135,7 +136,7 @@ export default function Navbar() {
                           ].map((item) => (
                             <Link 
                               key={item.id} 
-                              to={`/projects#${item.id}`} 
+                              to={localePath(`/projects#${item.id}`)} 
                               className="px-4 py-2 hover:bg-secondary/50 transition-colors text-sm text-white hover:text-main-text"
                             >
                               {item.name}
@@ -147,8 +148,8 @@ export default function Navbar() {
                   </AnimatePresence>
                 </div>
 
-                <Link to="/record-plan" className="hover:text-main-text transition-colors">{t('recordPlan')}</Link>
-                <Link to="/contact" className="hover:text-main-text transition-colors">{t('contactUs')}</Link>
+                <Link to={localePath('/record-plan')} className="hover:text-main-text transition-colors">{t('recordPlan')}</Link>
+                <Link to={localePath('/contact')} className="hover:text-main-text transition-colors">{t('contactUs')}</Link>
                 
                 {/* Language Dropdown */}
                 <div 
@@ -243,7 +244,7 @@ export default function Navbar() {
                       ] as const).map((item) => (
                         <Link 
                           key={item.id} 
-                          to={`/services#${item.id}`}
+                          to={localePath(`/services#${item.id}`)}
                           onClick={() => setMobileMenuOpen(false)} 
                           className="text-white/80 hover:text-main-text transition-colors py-1"
                         >
@@ -280,7 +281,7 @@ export default function Navbar() {
                       ].map((item) => (
                         <Link 
                           key={item.id} 
-                          to={`/projects#${item.id}`} 
+                          to={localePath(`/projects#${item.id}`)} 
                           onClick={() => setMobileMenuOpen(false)}
                           className="text-white/80 hover:text-main-text transition-colors py-1"
                         >
@@ -292,8 +293,8 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
-              <Link to="/record-plan" onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
+              <Link to={localePath('/record-plan')} onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('recordPlan')}</Link>
+              <Link to={localePath('/contact')} onClick={() => setMobileMenuOpen(false)} className="text-lg text-white hover:text-main-text transition-colors py-2">{t('contactUs')}</Link>
               
               <div className="pt-6 border-t border-main-text/20 flex items-center justify-between">
                 <div dir="ltr" className="flex justify-between w-full px-4">

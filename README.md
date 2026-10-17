@@ -2,7 +2,7 @@
 
 Modern, elegant architecture firm website and intake form. This repository contains a Vite + React frontend and a lightweight PHP + SQLite backend to collect multi-step project responses, upload images, and let an admin view/manage responses.
 
-Live preview: https://www.samaform.com
+Live site: https://www.samaform.com
 
 ---
 
@@ -126,19 +126,25 @@ Notes:
 
 ## Production / Deployment
 
-A simple deployment approach:
+1. Build: `npm run build`. This writes `dist/` with one HTML file per page and language (`services.html`,
+   `en/services.html`, ...), `sitemap.xml`, `robots.txt` and `.htaccess`. Page titles and descriptions live in
+   `src/seo/pages.json`.
+2. Upload the **contents** of `dist/` (including the hidden `.htaccess`) to the web root, alongside `api/`,
+   `uploads/` and `database.db`.
+3. The root `.htaccess` (from `public/.htaccess`):
+   - redirects every request to `https://www.samaform.com`,
+   - serves each page's own HTML file and falls back to the app for everything else,
+   - blocks downloading `database.db` and other private files,
+   - sends `X-Robots-Tag: noindex` for the admin page, `/api/` and `/uploads/`,
+   - caches the hashed files in `/assets/` for a year.
+4. Make sure `uploads/` is writable by the web server, and change the JWT secret in `api/index.php`.
 
-- Build frontend:
-  - `npm run build`
-  - Serve the built static files from any static host (Netlify, Vercel, static server, or a PHP-enabled host).
+### SEO
 
-- Backend:
-  - Deploy `api/index.php` and `database.db` to a PHP-enabled host.
-  - Ensure the `uploads` directory exists and is writable by the web server.
-  - Update the JWT secret in `api/index.php` (do not use the default secret in production).
-  - Secure `database.db` and `uploads` so they are not publicly writable except via the app.
-
-Alternatively, containerize the app with a small PHP image and static file server and mount persistent storage for `uploads` and `database.db`.
+- Arabic pages are at `/` (`/services`), English at `/en/` (`/en/services`); both are linked with `hreflang`.
+- After deploying, submit `https://www.samaform.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
+- To add a page: add it to `src/seo/pages.json` and to `PAGES` in `src/App.tsx`.
+- The admin page is deliberately not listed in `robots.txt` (that file is public) or the sitemap.
 
 ---
 

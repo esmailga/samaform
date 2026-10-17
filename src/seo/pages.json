@@ -1,0 +1,105 @@
+{
+  "siteUrl": "https://www.samaform.com",
+  "siteName": { "ar": "سما فورم", "en": "SAMAFORM" },
+  "image": "/og-image.jpg",
+  "pages": [
+    {
+      "key": "home",
+      "path": "/",
+      "changefreq": "monthly",
+      "priority": 1.0,
+      "title": {
+        "ar": "سما فورم | استوديو تصميم معماري وداخلي في صنعاء",
+        "en": "SAMAFORM | Architecture & Interior Design Studio in Sana'a"
+      },
+      "description": {
+        "ar": "سما فورم استوديو للتصميم المعماري والداخلي في صنعاء، اليمن. نصمم المنازل والفلل والمحلات والمكاتب والمطاعم والحدائق، من الفكرة الأولى حتى التسليم.",
+        "en": "SAMAFORM is an architecture and interior design studio in Sana'a, Yemen, designing homes, villas, shops, offices, restaurants and gardens from first idea to handover."
+      }
+    },
+    {
+      "key": "services",
+      "path": "/services",
+      "changefreq": "monthly",
+      "priority": 0.9,
+      "title": {
+        "ar": "خدمات التصميم المعماري والداخلي | سما فورم",
+        "en": "Architecture & Interior Design Services | SAMAFORM"
+      },
+      "description": {
+        "ar": "خدمات التصميم الداخلي والمعماري وتنسيق الحدائق وتصميم المساحات التجارية والتصميم ثلاثي الأبعاد للقطع، بحلول مدروسة تجمع الجمال والوظيفة.",
+        "en": "Interior design, architectural design, landscape design, commercial space design and 3D object design, with considered solutions that balance beauty and function."
+      }
+    },
+    {
+      "key": "projects",
+      "path": "/projects",
+      "changefreq": "weekly",
+      "priority": 0.9,
+      "title": {
+        "ar": "مشاريعنا: تصاميم سكنية وتجارية وحدائق | سما فورم",
+        "en": "Our Projects: Residential, Commercial & Garden Design | SAMAFORM"
+      },
+      "description": {
+        "ar": "استعرض مشاريع سما فورم في التصميم السكني والتجاري وتصميم الحدائق والتراسات، من الشقق والفلل إلى المكاتب والمحلات والمطاعم.",
+        "en": "Explore SAMAFORM's residential, commercial and garden & terrace design projects, from apartments and villas to offices, shops and restaurants."
+      }
+    },
+    {
+      "key": "record-plan",
+      "path": "/record-plan",
+      "changefreq": "yearly",
+      "priority": 0.8,
+      "title": {
+        "ar": "ابدأ مشروعك | سما فورم",
+        "en": "Start Your Project | SAMAFORM"
+      },
+      "description": {
+        "ar": "أخبرنا عن مشروعك في دقائق: نوع المساحة والميزانية والمساحة والأسلوب، وأرفق صوراً للإلهام. سيتواصل معك فريق سما فورم لمناقشة التفاصيل.",
+        "en": "Tell us about your project in a few minutes: space type, budget, area and style, plus inspiration photos. The SAMAFORM team will contact you to discuss it."
+      }
+    },
+    {
+      "key": "contact",
+      "path": "/contact",
+      "changefreq": "yearly",
+      "priority": 0.7,
+      "title": {
+        "ar": "اتصل بنا | سما فورم - صنعاء",
+        "en": "Contact Us | SAMAFORM, Sana'a"
+      },
+      "description": {
+        "ar": "تواصل مع سما فورم: الدور السادس، برج الشلال، شارع الأصبحي، صنعاء. اتصل بنا أو راسلنا عبر البريد الإلكتروني أو زر الاستوديو.",
+        "en": "Get in touch with SAMAFORM: 6th floor, Alshalal Tower, Al Asbahi St., Sana'a. Call, email or visit our studio."
+      }
+    },
+    {
+      "key": "terms",
+      "path": "/terms",
+      "changefreq": "yearly",
+      "priority": 0.3,
+      "title": {
+        "ar": "شروط الخدمة | سما فورم",
+        "en": "Terms of Service | SAMAFORM"
+      },
+      "description": {
+        "ar": "شروط استخدام موقع سما فورم ونموذج «ابدأ مشروعك»، بما في ذلك الملكية الفكرية وطلبات المشاريع وحدود المسؤولية.",
+        "en": "The terms for using the SAMAFORM website and the Record Your Plan form, including intellectual property, project requests and limitation of liability."
+      }
+    },
+    {
+      "key": "privacy",
+      "path": "/privacy",
+      "changefreq": "yearly",
+      "priority": 0.3,
+      "title": {
+        "ar": "سياسة الخصوصية | سما فورم",
+        "en": "Privacy Policy | SAMAFORM"
+      },
+      "description": {
+        "ar": "كيف تجمع سما فورم معلوماتك الشخصية وتستخدمها وتحميها عند استخدامك للموقع ونموذج «ابدأ مشروعك»، وحقوقك في الوصول إليها وحذفها.",
+        "en": "How SAMAFORM collects, uses and protects your personal information when you use the website and the Record Your Plan form, and your rights over it."
+      }
+    }
+  ]
+}
