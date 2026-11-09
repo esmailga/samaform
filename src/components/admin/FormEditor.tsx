@@ -154,7 +154,7 @@ function QuestionEditor({ field, conditionSources, onChange, onRemoveOption }: {
             maxFiles: type === 'images' ? field.maxFiles ?? 10 : undefined,
           })} />
         <div className="flex items-end pb-2">
-          <Toggle checked={field.required} onChange={(required) => onChange({ required })}>Required answer</Toggle>
+          <Toggle checked={field.required} onChange={(required) => onChange({ required })}> Required answer </Toggle>
         </div>
       </div>
 
@@ -443,8 +443,8 @@ export default function FormEditor({ token, onUnauthorized, onPublished }: {
                               <span className="block text-sm text-white truncate">{describe(field)}</span>
                               <span className="flex flex-wrap gap-1.5 mt-1">
                                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white/60">{FIELD_TYPE_LABELS[field.type]}</span>
-                                {field.required && <span className="text-[10px] px-1.5 py-0.5 rounded bg-main-text/20 text-main-text">Required</span>}
-                                {field.showIf && <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-300">Conditional</span>}
+                                {field.required && <span className="text-[10px] px-1.5 py-0.5 rounded bg-main-text/20 text-main-text"> Required </span>}
+                                {field.showIf && <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-300"> Conditional </span>}
                               </span>
                             </button>
                             <button type="button" className={ICON_BUTTON} disabled={fi === 0} aria-label="Move question up" onClick={() => update((s) => move(s.steps[si].fields, fi, fi - 1))}><ArrowUp size={15} /></button>
